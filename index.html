@@ -132,7 +132,7 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
 <div class="toast" id="toast"></div>
 <script>
 const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s),K="hrms_timesheet_v2";
-const API=""; // paste your Google Apps Script Web app URL between the quotes
+const API="https://script.google.com/macros/s/AKfycbxCWxQX9YnTTBCEVLOmAKuY5l07F1zectqndWLmRrHPGk3yoYdXXM8uCTOPe7uqy6Yv/exec"; // paste your Google Apps Script Web app URL between the quotes
 let db=null;try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
 db=Object.assign({prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}};
