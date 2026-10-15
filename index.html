@@ -132,10 +132,11 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
 <div class="toast" id="toast"></div>
 <script>
 const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s),K="hrms_timesheet_v2";
-const API="https://script.google.com/macros/s/AKfycbxCWxQX9YnTTBCEVLOmAKuY5l07F1zectqndWLmRrHPGk3yoYdXXM8uCTOPe7uqy6Yv/exec"; // paste your Google Apps Script Web app URL between the quotes
+const API=""; // paste your Google Apps Script Web app URL between the quotes
 let db=null;try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
 db=Object.assign({prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}};
+let storeOK=true;
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){if(!API&&storeOK){storeOK=false;alert("This page cannot save in this browser and no Google Sheet URL is set, so entries will be lost on refresh. Set the API URL in index.html, or open the page from GitHub Pages or your computer.")}}};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
@@ -148,19 +149,24 @@ const setSync=t=>$("#sync").textContent=t;
 
 // Google Sheet sync
 async function push(body){
-  if(!API)return;setSync("Saving...");
-  try{const r=await(await fetch(API,{method:"POST",body:JSON.stringify(body)})).json();if(r.error)throw r.error;setSync("Saved to Google Sheet")}
-  catch(e){setSync("Not saved");alert("Could not save to Google Sheet: "+e)}
+  if(!API)return true;setSync("Saving...");
+  try{const r=await(await fetch(API,{method:"POST",body:JSON.stringify(body)})).json();if(r.error)throw r.error;setSync("Saved to Google Sheet");
+    if(body.row){const x=db.rows.find(z=>z.id===body.row.id);if(x){delete x._u;save()}}return true}
+  catch(e){setSync("Not saved - will retry");alert("Could not save to Google Sheet: "+e+"\nYour entry is kept in this browser and will be retried on the next load.");return false}
 }
 async function pull(){
   if(!API){setSync("Offline mode: data stays in this browser");return}
   setSync("Loading...");
   try{const d=await(await fetch(API+"?action=load")).json();if(d.error)throw d.error;
-    Object.assign(db,d.masters,{rows:d.rows});save();setSync("Synced with Google Sheet");
+    const pend=db.rows.filter(r=>r._u);
+    if(!db._mp)Object.assign(db,d.masters);
+    db.rows=d.rows.filter(x=>!pend.some(p=>p.id===x.id)).concat(pend);
+    save();pend.forEach(r=>push({action:"upsertRow",row:r}));if(db._mp)pushMasters();
+    setSync("Synced with Google Sheet");
     fillSelects();renderM();renderRec();renderToday()}
   catch(e){setSync("Could not load: "+e)}
 }
-const pushMasters=()=>{const{prod,biz,stat,src}=db;return push({action:"setMasters",masters:{prod,biz,stat,src}})};
+const pushMasters=async()=>{db._mp=1;save();const{prod,biz,stat,src}=db;if(await push({action:"setMasters",masters:{prod,biz,stat,src}})){delete db._mp;save()}};
 
 // tabs
 $$("#nav button").forEach(b=>b.onclick=()=>{
@@ -187,7 +193,7 @@ $("#saveBtn").onclick=()=>{
   const r={};for(const k in F)r[k]=$("#"+F[k]).value.trim();
   if(!r.date){toast("Pick a date to save the entry.");return}
   r.code=$("#f_code").value;r.dur=$("#f_dur").value;
-  const was=!!editId,row={...r,id:editId||uid()};
+  const was=!!editId,row={...r,id:editId||uid(),...(API?{_u:1}:{})};
   if(was)db.rows[db.rows.findIndex(x=>x.id===editId)]=row;
   else db.rows.push(row);
   save();push({action:"upsertRow",row});clearForm();renderToday();toast(was?"Entry updated":"Entry saved");
@@ -301,7 +307,7 @@ $("#m_file").onchange=async e=>{
   }catch(err){toast("Could not read that file.")}
 };
 
-clearForm();fillSelects();renderM();renderToday();pull();
+save();clearForm();fillSelects();renderM();renderToday();pull();
 </script>
 </body>
 </html>

@@ -18,6 +18,12 @@ function sheet_(name, head) {
 function out_(o) {
   return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
 }
+function v_(v, k) {
+  if (v instanceof Date) {
+    return Utilities.formatDate(v, SpreadsheetApp.getActive().getSpreadsheetTimeZone(), k === 'date' ? 'yyyy-MM-dd' : 'HH:mm');
+  }
+  return String(v);
+}
 function ids_(ts) {
   return ts.getLastRow() > 1 ? ts.getRange(2, 1, ts.getLastRow() - 1, 1).getValues().map(x => String(x[0])) : [];
 }
@@ -40,7 +46,7 @@ function doGet() {
     });
     const n = ts.getLastRow() - 1;
     const rows = n > 0 ? ts.getRange(2, 1, n, HEAD.length).getValues().map(r => {
-      const o = {}; KEYS.forEach((k, i) => o[k] = String(r[i])); return o;
+      const o = {}; KEYS.forEach((k, i) => o[k] = v_(r[i], k)); return o;
     }) : [];
     return out_({ masters: m, rows: rows });
   } catch (err) { return out_({ error: String(err) }); }
@@ -55,7 +61,7 @@ function doPost(e) {
       const r = b.row, i = ids_(ts).indexOf(r.id);
       r.month = Utilities.formatDate(new Date(r.date + 'T00:00:00'), Session.getScriptTimeZone(), 'MMM yyyy');
       r.sl = '';
-      ts.getRange(i < 0 ? ts.getLastRow() + 1 : i + 2, 1, 1, HEAD.length).setValues([KEYS.map(k => r[k] == null ? '' : r[k])]);
+      ts.getRange(i < 0 ? ts.getLastRow() + 1 : i + 2, 1, 1, HEAD.length).setNumberFormat('@').setValues([KEYS.map(k => r[k] == null ? '' : r[k])]);
       renumber_(ts);
     } else if (b.action === 'deleteRow') {
       const i = ids_(ts).indexOf(b.id);
