@@ -1,103 +1,289 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRMS Timesheet</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Timesheet</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#68758a;--line:#dce3ed;--accent:#2357d8;--danger:#b42318;--good:#16794b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--ink)}
-header{background:#13264a;color:white;padding:22px max(20px,calc((100% - 1250px)/2));display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
-header h1{margin:0;font-size:23px}header p{margin:4px 0 0;color:#c8d5f0}.wrap{max-width:1250px;margin:22px auto;padding:0 18px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.tab{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:650}.tab.active{background:var(--accent);color:white;border-color:var(--accent)}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #1c31540a}
-h2{font-size:17px;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field.wide{grid-column:span 2}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:700;color:#536078}input,select,textarea{font:inherit;border:1px solid #cbd5e1;border-radius:8px;padding:9px 10px;background:#fff;color:var(--ink);width:100%;min-width:0}textarea{min-height:74px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #b7c9ff;border-color:var(--accent)}
-.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}button,.filebtn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 12px;font:inherit;font-weight:650;cursor:pointer}.primary{background:var(--accent);border-color:var(--accent);color:#fff}.danger{color:var(--danger);border-color:#f1c3c0}.small{padding:5px 8px;font-size:12px}.muted{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.stat{background:#fff;border:1px solid var(--line);padding:15px;border-radius:12px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:22px;margin-top:3px}
-.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toolbar>*{max-width:230px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;min-width:1200px;background:#fff}th,td{text-align:left;padding:10px;border-bottom:1px solid #e8edf4;vertical-align:top;max-width:240px}th{position:sticky;top:0;background:#f0f4fa;font-size:12px;white-space:nowrap;z-index:1}td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}td.long{max-width:280px}td[title]{cursor:help}tr:last-child td{border-bottom:0}.badge{display:inline-block;border-radius:20px;background:#eaf0ff;color:#2449a5;padding:3px 8px;font-size:12px}.hidden{display:none!important}.notice{padding:10px 12px;border-radius:8px;background:#eef4ff;margin-bottom:12px}.notice.error{background:#fff0ef;color:#8e2019}.notice.success{background:#eaf8f0;color:#12643e}.master-row{display:grid;grid-template-columns:1fr 2fr auto;gap:8px;align-items:center;margin:8px 0}.master-row input{min-width:0}.footer{font-size:12px;color:var(--muted);padding:5px 0 25px}
-@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.grid{grid-template-columns:1fr}.field.wide{grid-column:span 1}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:0 10px}header{padding:18px}}
-</style></head>
+:root{--bg:#f3f5f4;--card:#fff;--ink:#17231f;--mute:#5d6b66;--line:#d6ddda;--acc:#0f6b5c;--accink:#fff;--warn:#b3341f;--head:#e5ece9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121816;--card:#1a2320;--ink:#e6efeb;--mute:#93a39d;--line:#2d3b36;--acc:#4cc2ab;--accink:#07211b;--warn:#ff8a73;--head:#22302c}}
+:root[data-theme="dark"]{--bg:#121816;--card:#1a2320;--ink:#e6efeb;--mute:#93a39d;--line:#2d3b36;--acc:#4cc2ab;--accink:#07211b;--warn:#ff8a73;--head:#22302c}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 20px;background:var(--card);border-bottom:1px solid var(--line)}
+h1{font-size:18px;margin:0 16px 0 0;font-weight:700}
+nav{display:flex;gap:4px}
+nav button{border:0;background:none;color:var(--mute);padding:8px 14px;border-radius:6px;font:inherit;cursor:pointer}
+nav button.on{background:var(--acc);color:var(--accink)}
+main{max-width:1100px;margin:0 auto;padding:20px}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:18px}
+h2{font-size:16px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+label b{color:var(--warn)}
+input,select,textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);min-width:0}
+input[readonly]{opacity:.75}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.wide{grid-column:1/-1}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.btn{border:1px solid var(--acc);background:var(--acc);color:var(--accink);padding:8px 16px;border-radius:6px;font:inherit;cursor:pointer}
+.btn.alt{background:none;color:var(--acc)}
+.btn.sm{padding:3px 9px;font-size:13px}
+.btn.del{border-color:var(--warn);color:var(--warn);background:none}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{background:var(--head)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{flex-direction:row;align-items:center;gap:6px;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+.muted{color:var(--mute)}
+.msg{color:var(--acc);margin-left:8px}
+</style>
+</head>
 <body>
-<header><div><h1>HRMS Timesheet</h1><p>Personal work log · quick entry · Excel export</p></div><div class="muted" style="color:#d6e0f5">Data saved in this browser</div></header>
-<main class="wrap">
-<div id="notice" class="notice hidden" role="status"></div>
-<div class="tabs"><button class="tab active" data-tab="entry">Timesheet Entry</button><button class="tab" data-tab="records">Records & Export</button><button class="tab" data-tab="masters">Manage Dropdowns</button><button class="tab" data-tab="data">Import / Backup</button></div>
-<section id="entry" class="view">
-<div class="panel"><h2 id="formTitle">Add timesheet entry</h2>
-<form id="entryForm"><input type="hidden" id="editId">
-<div class="grid">
-<div class="field"><label for="date">Date *</label><input id="date" type="date" required></div>
-<div class="field"><label for="code">Code</label><select id="code"></select></div>
-<div class="field"><label for="source">Source</label><select id="source"><option value="">— Select —</option><option>Client</option><option>Internal</option><option>Email</option><option>Phone</option><option>WhatsApp</option><option>Other</option></select></div>
-<div class="field"><label for="product">Product</label><select id="product"></select></div>
-<div class="field"><label for="start">Transaction Start Time</label><input id="start" type="time"></div>
-<div class="field"><label for="end">Transaction End Time</label><input id="end" type="time"></div>
-<div class="field"><label>Total Duration (automatic)</label><input id="duration" readonly placeholder="Calculated from times"></div>
-<div class="field"><label for="contact">Contact No.</label><input id="contact" inputmode="tel" placeholder="Optional"></div>
-<div class="field"><label for="business">Business Name</label><select id="business"></select></div>
-<div class="field"><label for="ticket">Ticket No.</label><input id="ticket" placeholder="Optional"></div>
-<div class="field"><label for="status">Status</label><select id="status"></select></div>
-<div class="field full"><label for="issue">Issue / Request</label><textarea id="issue" placeholder="Describe the work or request (optional)"></textarea></div>
-<div class="field full"><label for="remarks">Remarks</label><textarea id="remarks" placeholder="Optional notes"></textarea></div>
-</div><div class="actions"><button class="primary" type="submit" id="saveBtn">Save entry</button><button type="button" id="resetBtn">Clear form</button><span class="muted">Month and serial number are generated automatically.</span></div>
-</form></div>
-<div class="stats"><div class="stat"><span>Total entries</span><strong id="statTotal">0</strong></div><div class="stat"><span>Duration today</span><strong id="statToday">0m</strong></div><div class="stat"><span>This month</span><strong id="statMonth">0</strong></div><div class="stat"><span>Completed</span><strong id="statDone">0</strong></div></div>
+<header>
+  <h1>Timesheet</h1>
+  <nav>
+    <button data-t="entry" class="on">Data entry</button>
+    <button data-t="rec">Records &amp; export</button>
+    <button data-t="mas">Masters</button>
+  </nav>
+  <span class="muted" id="sync" style="margin-left:auto"></span>
+</header>
+<main>
+
+<section class="tab on" id="entry">
+  <div class="card">
+    <h2 id="formTitle">New entry</h2>
+    <p class="muted" id="hint" style="margin-top:-6px"></p>
+    <div class="grid">
+      <label>Employee <b>*</b><select id="f_emp"></select></label>
+      <label>Date <b>*</b><input type="date" id="f_date"></label>
+      <label>Month<input id="f_month" readonly></label>
+      <label>Source<select id="f_src"></select></label>
+      <label>Product<select id="f_prod"></select></label>
+      <label>Transaction start time<input type="time" id="f_s"></label>
+      <label>Transaction end time<input type="time" id="f_e"></label>
+      <label>Total duration (auto)<input id="f_dur" readonly></label>
+      <label>Contact no<input id="f_contact" inputmode="tel"></label>
+      <label>Business name<select id="f_biz"></select></label>
+      <label>Code (auto)<input id="f_code" readonly></label>
+      <label>Ticket no<input id="f_ticket"></label>
+      <label>Status<select id="f_stat"></select></label>
+      <label>Issue / request<select id="f_issue"><option value=""></option><option>Issue</option><option>Request</option></select></label>
+      <label class="wide">Remarks<textarea id="f_rem" rows="2"></textarea></label>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn" id="saveBtn">Save entry</button>
+      <button class="btn alt" id="clearBtn">Clear</button>
+      <span class="msg" id="msg"></span>
+    </div>
+  </div>
 </section>
-<section id="records" class="view hidden"><div class="panel"><h2>Records & Excel export</h2>
-<div class="grid" style="margin-bottom:12px">
-<div class="field"><label for="filterFrom">From date</label><input id="filterFrom" type="date"></div><div class="field"><label for="filterTo">To date</label><input id="filterTo" type="date"></div>
-<div class="field"><label for="filterCode">Code</label><select id="filterCode"></select></div><div class="field"><label for="filterStatus">Status</label><select id="filterStatus"></select></div>
-<div class="field wide"><label for="search">Search all visible fields</label><input id="search" placeholder="Code, business, issue, ticket..."></div>
-</div><div class="toolbar"><button class="primary" id="exportBtn">Export filtered records to Excel</button><button id="exportDayBtn">Export selected day</button><button id="exportMonthBtn">Export selected month</button><button id="clearFilters">Clear filters</button><span id="recordCount" class="muted"></span></div>
-<p class="muted">Select a date range to export day-wise or month-wise data. The Excel file includes SL.no, Month and all timesheet columns.</p>
-<div class="tablewrap"><table><thead><tr><th>SL.no</th><th>Month</th><th>Date</th><th>Code</th><th>Source</th><th>Product</th><th>Start Time</th><th>End Time</th><th>Total Duration</th><th>Contact No.</th><th>Business Name</th><th>Issue / Request</th><th>Ticket No.</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div>
-</div></section>
-<section id="masters" class="view hidden"><div class="panel"><h2>Manage dropdown values</h2><p class="muted">Add, rename, or remove Code, Product, Business Name and Status values. Changes are saved in this browser.</p><div class="grid"><div class="field"><label>Master type</label><select id="masterType"><option value="codes">Code</option><option value="products">Product</option><option value="businesses">Business Name</option><option value="statuses">Status</option></select></div><div class="field wide"><label>New value</label><input id="masterNew" placeholder="Enter value"></div><div class="field"><label>&nbsp;</label><button class="primary" id="addMaster">Add value</button></div></div><div id="masterList"></div></div></section>
-<section id="data" class="view hidden"><div class="panel"><h2>Import / Backup</h2><p>Import an Excel (.xlsx/.xls) or CSV file. Expected column names may match your timesheet headings. Invalid rows are skipped and listed with a reason.</p><div class="field"><label for="importFile">Choose CSV or Excel file</label><input id="importFile" type="file" accept=".csv,.xlsx,.xls"></div><div class="actions"><button class="primary" id="importBtn">Import records</button><button id="downloadBackup">Download full backup (JSON)</button><label class="filebtn" for="restoreFile">Restore JSON backup</label><input id="restoreFile" class="hidden" type="file" accept=".json"></div><div id="importSummary" class="notice hidden" style="margin-top:12px"></div><div id="importErrors"></div><p class="muted">Import adds valid rows; it does not overwrite existing records. Review duplicate rows before importing again.</p></div>
-<div class="panel"><h2>Clear all timesheet entries</h2><p class="muted">This removes every saved timesheet entry from this browser. Dropdown master values are retained.</p><button class="danger" id="clearAll">Clear all entries…</button></div></section>
-<div class="footer">Privacy note: GitHub Pages hosts the app files, but timesheet entries stay in this browser's local storage. They do not automatically sync to another browser or device. Export regular backups.</div>
+
+<section class="tab" id="rec">
+  <div class="card">
+    <h2>Filter</h2>
+    <div class="row">
+      <label>View<select id="r_mode"><option value="day">Day-wise</option><option value="month">Month-wise</option></select></label>
+      <label id="r_dayw">Date<input type="date" id="r_day"></label>
+      <label id="r_monw" style="display:none">Month<input type="month" id="r_month"></label>
+      <button class="btn" id="expBtn">Export to Excel</button>
+    </div>
+    <p class="muted" style="margin:14px 0 6px">Employees (leave all ticked to include everyone)</p>
+    <div class="chips" id="r_emps"></div>
+  </div>
+  <div class="card">
+    <h2>Entries <span class="muted" id="r_tot"></span></h2>
+    <div class="scroll"><table id="r_tbl"></table></div>
+  </div>
+</section>
+
+<section class="tab" id="mas">
+  <div class="card">
+    <h2>Manage lists</h2>
+    <div class="row">
+      <label>List<select id="m_list">
+        <option value="emp">Employees</option><option value="prod">Products</option>
+        <option value="biz">Business names (with code)</option><option value="stat">Status</option><option value="src">Source</option>
+      </select></label>
+      <label>Name<input id="m_name"></label>
+      <label id="m_codew">Code (blank = auto)<input id="m_code" style="width:120px"></label>
+      <button class="btn" id="m_add">Add</button>
+      <button class="btn alt" id="m_cancel" style="display:none">Cancel</button>
+    </div>
+    <div class="scroll" style="margin-top:14px"><table id="m_tbl"></table></div>
+  </div>
+</section>
+
 </main>
 <script>
-const STORE='hrms_timesheet_v1';
-const defaultMasters={codes:[],products:[],businesses:[],statuses:['Completed','In Progress','Pending','On Hold']};
-let db=loadDB();
-function loadDB(){try{const d=JSON.parse(localStorage.getItem(STORE));if(d&&Array.isArray(d.entries))return {...d,masters:{...defaultMasters,...d.masters}}}catch(e){}return {entries:[],masters:structuredClone(defaultMasters),nextId:1}}
-function persist(){localStorage.setItem(STORE,JSON.stringify(db));renderAll()}
-function notify(msg,type='success'){const n=document.getElementById('notice');n.textContent=msg;n.className='notice '+type;setTimeout(()=>n.classList.add('hidden'),5000)}
-const $=id=>document.getElementById(id);
-function isoToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function monthOf(date){if(!date)return '';const d=new Date(date+'T00:00:00');return d.toLocaleString('en-US',{month:'long',year:'numeric'})}
-function duration(start,end){if(!start||!end)return '';let [sh,sm]=start.split(':').map(Number),[eh,em]=end.split(':').map(Number);let mins=eh*60+em-(sh*60+sm);if(mins<0)mins+=1440;return `${Math.floor(mins/60)}h ${mins%60}m`}
-function durationMinutes(e){if(!e.start||!e.end)return 0;let [a,b]=[e.start,e.end].map(x=>{const p=x.split(':').map(Number);return p[0]*60+p[1]});let m=b-a;return m<0?m+1440:m}
-function fillSelect(id,items,placeholder='— Select —',selected=''){const el=$(id),old=selected||el.value;el.innerHTML='';const op=document.createElement('option');op.value='';op.textContent=placeholder;el.append(op);items.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.append(o)});if(items.includes(old))el.value=old}
-function refreshSelects(){fillSelect('code',db.masters.codes);fillSelect('product',db.masters.products);fillSelect('business',db.masters.businesses);fillSelect('status',db.masters.statuses,'— Select —','Completed');fillSelect('filterCode',db.masters.codes,'All codes');fillSelect('filterStatus',db.masters.statuses,'All statuses');}
-function formData(){return {date:$('date').value,code:$('code').value,source:$('source').value,product:$('product').value,start:$('start').value,end:$('end').value,contact:$('contact').value.trim(),business:$('business').value,issue:$('issue').value.trim(),ticket:$('ticket').value.trim(),status:$('status').value,remarks:$('remarks').value.trim()}}
-function resetForm(){ $('entryForm').reset();$('editId').value='';$('date').value=isoToday();$('duration').value='';$('formTitle').textContent='Add timesheet entry';$('saveBtn').textContent='Save entry';refreshSelects()}
-function editEntry(id){const e=db.entries.find(x=>x.id===id);if(!e)return;Object.keys(e).forEach(k=>{if($(k))$(k).value=e[k]??''});$('editId').value=id;$('duration').value=duration(e.start,e.end);$('formTitle').textContent='Edit timesheet entry';$('saveBtn').textContent='Update entry';document.querySelector('[data-tab="entry"]').click();window.scrollTo({top:0,behavior:'smooth'})}
-$('entryForm').addEventListener('submit',ev=>{ev.preventDefault();const d=formData();if(!d.date){notify('Date is required.','error');return}if(d.start&&d.end&&d.start===d.end){if(!confirm('Start and end times are identical. Save as a 24-hour duration?'))return}const id=$('editId').value;if(id){const i=db.entries.findIndex(x=>x.id===Number(id));if(i<0)return;db.entries[i]={...db.entries[i],...d};notify('Timesheet entry updated.')}else{db.entries.push({id:db.nextId++,...d,createdAt:new Date().toISOString()});notify('Timesheet entry saved.')}persist();resetForm()});
-$('resetBtn').onclick=resetForm;
-['start','end'].forEach(id=>$(id).addEventListener('input',()=>$('duration').value=duration($('start').value,$('end').value)));
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.tab));if(b.dataset.tab==='records')renderRows();if(b.dataset.tab==='masters')renderMasters()}));
-function filtered(){const from=$('filterFrom').value,to=$('filterTo').value,code=$('filterCode').value,status=$('filterStatus').value,q=$('search').value.trim().toLowerCase();return db.entries.filter(e=>(!from||e.date>=from)&&(!to||e.date<=to)&&(!code||e.code===code)&&(!status||e.status===status)&&(!q||Object.values(e).some(v=>String(v??'').toLowerCase().includes(q)))).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id)}
-const cols=[['sl','SL.no'],['month','Month'],['date','Date'],['code','Code'],['source','Source'],['product','Product'],['start','Transaction Start Time'],['end','Transaction End Time'],['duration','Total Duration'],['contact','CONTACT NO'],['business','Business Name'],['issue','Issue/Request'],['ticket','Ticket No'],['status','Status'],['remarks','Remarks']];
-function rowObject(e,index){return {'SL.no':index+1,'Month':monthOf(e.date),'Date':e.date,'Code':e.code,'Source':e.source,'Product':e.product,'Transaction Start Time':e.start,'Transaction End time':e.end,'Total Duration':duration(e.start,e.end),'CONTACT NO':e.contact,'Business Name':e.business,'Issue/Request':e.issue,'Ticket No':e.ticket,'Status':e.status,'Remarks':e.remarks}}
-function renderRows(){const es=filtered();$('recordCount').textContent=`${es.length} record(s)`;const tbody=$('rows');tbody.innerHTML='';es.forEach((e,ix)=>{const tr=document.createElement('tr');const vals=[ix+1,monthOf(e.date),e.date,e.code,e.source,e.product,e.start,e.end,duration(e.start,e.end),e.contact,e.business,e.issue,e.ticket,e.status,e.remarks];vals.forEach((v,i)=>{const td=document.createElement('td');td.textContent=v||'—';td.title=v||'';if([10,11,14].includes(i))td.className='long';tr.append(td)});const td=document.createElement('td');td.style.overflow='visible';td.innerHTML=`<button class="small" data-edit="${e.id}">Edit</button> <button class="small danger" data-del="${e.id}">Delete</button>`;tr.append(td);tbody.append(tr)});tbody.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editEntry(Number(b.dataset.edit)));tbody.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteEntry(Number(b.dataset.del)));if(!es.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=16;td.textContent='No records match these filters.';td.style.textAlign='center';td.style.padding='24px';tr.append(td);tbody.append(tr)}}
-function deleteEntry(id){if(!confirm('Delete this timesheet entry? This cannot be undone.'))return;db.entries=db.entries.filter(e=>e.id!==id);persist();notify('Entry deleted.')}
-['filterFrom','filterTo','filterCode','filterStatus','search'].forEach(id=>$(id).addEventListener('input',renderRows));$('clearFilters').onclick=()=>{['filterFrom','filterTo','search'].forEach(id=>$(id).value='');$('filterCode').value='';$('filterStatus').value='';renderRows()};
-function exportExcel(entries,name){if(!entries.length){notify('No records to export. Adjust your filters/date.','error');return}if(!window.XLSX){notify('Excel library could not load. Check internet and retry.','error');return}const data=entries.map((e,i)=>rowObject(e,i));const ws=XLSX.utils.json_to_sheet(data);ws['!cols']=Object.keys(data[0]).map(k=>({wch:Math.min(34,Math.max(12,k.length+3))}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Timesheet');XLSX.writeFile(wb,name)}
-$('exportBtn').onclick=()=>exportExcel(filtered(),`Timesheet_${isoToday()}.xlsx`);
-$('exportDayBtn').onclick=()=>{const day=$('filterFrom').value||$('filterTo').value||isoToday();exportExcel(db.entries.filter(e=>e.date===day),`Timesheet_${day}.xlsx`)};
-$('exportMonthBtn').onclick=()=>{const d=$('filterFrom').value||isoToday(),month=d.slice(0,7);exportExcel(db.entries.filter(e=>e.date.startsWith(month)),`Timesheet_${month}.xlsx`)};
-function renderStats(){const today=isoToday(),month=today.slice(0,7);$('statTotal').textContent=db.entries.length;$('statToday').textContent=(()=>{let m=db.entries.filter(e=>e.date===today).reduce((s,e)=>s+durationMinutes(e),0);return `${Math.floor(m/60)}h ${m%60}m`})();$('statMonth').textContent=db.entries.filter(e=>e.date.startsWith(month)).length;$('statDone').textContent=db.entries.filter(e=>e.status.toLowerCase()==='completed').length}
-function renderMasters(){refreshSelects();const type=$('masterType').value,box=$('masterList');box.innerHTML='';const values=db.masters[type]||[];if(!values.length){box.innerHTML='<p class="muted">No values yet. Add one above.</p>';return}values.forEach((v,i)=>{const row=document.createElement('div');row.className='master-row';const input=document.createElement('input');input.value=v;input.setAttribute('aria-label','Master value');const save=document.createElement('button');save.className='small';save.textContent='Save';save.onclick=()=>{const nv=input.value.trim();if(!nv){notify('Value cannot be blank.','error');return}if(values.some((x,j)=>j!==i&&x.toLowerCase()===nv.toLowerCase())){notify('This value already exists.','error');return}db.masters[type][i]=nv;db.masters[type]=[...new Set(db.masters[type])];persist();renderMasters();notify('Master value updated.')};const del=document.createElement('button');del.className='small danger';del.textContent='Delete';del.onclick=()=>{if(!confirm(`Delete "${v}" from dropdown options? Existing records will be retained.`))return;db.masters[type].splice(i,1);persist();renderMasters();notify('Master value deleted.')};row.append(input,save,del);box.append(row)})}
-$('masterType').onchange=renderMasters;$('addMaster').onclick=()=>{const type=$('masterType').value,v=$('masterNew').value.trim();if(!v){notify('Enter a value first.','error');return}if(db.masters[type].some(x=>x.toLowerCase()===v.toLowerCase())){notify('This value already exists.','error');return}db.masters[type].push(v);$('masterNew').value='';persist();renderMasters();notify('Master value added.')};
-function norm(s){return String(s??'').trim().toLowerCase().replace(/[^a-z0-9]/g,'')}
-const aliases={date:['date','transactiondate'],code:['code'],source:['source'],product:['product'],start:['transactionstarttime','starttime','start'],end:['transactionendtime','endtime','end'],contact:['contactno','contactnumber','contact'],business:['businessname','business'],issue:['issuerequest','issue','request'],ticket:['ticketno','ticketnumber','ticket'],status:['status'],remarks:['remarks','remark']};
-function parseImportRow(row){const map={};Object.keys(row).forEach(k=>map[norm(k)]=row[k]);const out={};for(const [field,keys] of Object.entries(aliases)){let val='';for(const k of keys){const found=Object.keys(map).find(m=>m===norm(k));if(found!==undefined){val=map[found];break}}if(field==='date'){if(typeof val==='number'&&window.XLSX)val=XLSX.SSF.format('yyyy-mm-dd',val);else if(val instanceof Date)val=val.toISOString().slice(0,10);else if(val){const s=String(val).trim();if(/^\d{1,2}[/-]\d{1,2}[/-]\d{4}$/.test(s)){const p=s.split(/[/-]/);val=`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`}else if(/^\d{4}-\d{2}-\d{2}/.test(s))val=s.slice(0,10)}}else if(['start','end'].includes(field)&&typeof val==='number'&&window.XLSX){val=XLSX.SSF.format('hh:mm',val)}out[field]=String(val??'').trim()}return out}
-$('importBtn').onclick=async()=>{const file=$('importFile').files[0];if(!file){notify('Choose a CSV or Excel file first.','error');return}try{let rows;if(file.name.toLowerCase().endsWith('.csv')){const txt=await file.text();rows=parseCSV(txt)}else{if(!window.XLSX)throw Error('Excel library failed to load. Check internet.');const buf=await file.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''})}let success=0,failed=[];rows.forEach((r,i)=>{const d=parseImportRow(r);if(!d.date||!/^\d{4}-\d{2}-\d{2}$/.test(d.date)||isNaN(new Date(d.date+'T00:00:00').getTime())){failed.push({row:i+2,reason:'Missing or invalid Date'});return}if(d.start&&!/^\d{1,2}:\d{2}$/.test(d.start)){failed.push({row:i+2,reason:'Invalid start time'});return}if(d.end&&!/^\d{1,2}:\d{2}$/.test(d.end)){failed.push({row:i+2,reason:'Invalid end time'});return}const entry={id:db.nextId++,...d,createdAt:new Date().toISOString()};db.entries.push(entry);for(const [field,key] of [['code','codes'],['product','products'],['business','businesses'],['status','statuses']])if(d[field]&&!db.masters[key].includes(d[field]))db.masters[key].push(d[field]);success++});persist();$('importSummary').className='notice '+(failed.length?'error':'success');$('importSummary').classList.remove('hidden');$('importSummary').textContent=`Import complete — Total rows: ${rows.length}; Successful: ${success}; Failed: ${failed.length}.`;const errs=$('importErrors');errs.innerHTML='';if(failed.length){const h=document.createElement('p');h.textContent='Failed rows:';errs.append(h);const ul=document.createElement('ul');failed.slice(0,200).forEach(e=>{const li=document.createElement('li');li.textContent=`Row ${e.row}: ${e.reason}`;ul.append(li)});errs.append(ul);if(failed.length>200){const p=document.createElement('p');p.textContent=`Showing first 200 of ${failed.length} errors.`;errs.append(p)}}notify(`Import finished: ${success} successful, ${failed.length} failed.`,failed.length?'error':'success')}catch(e){notify('Import failed: '+e.message,'error')}};
-function parseCSV(text){const lines=[];let row=[],field='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'&&quoted&&text[i+1]==='"'){field+='"';i++}else if(c==='"')quoted=!quoted;else if(c===','&&!quoted){row.push(field);field=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(field);if(row.some(v=>v.trim()!==''))lines.push(row);row=[];field=''}else field+=c}if(field.length||row.length){row.push(field);lines.push(row)}if(!lines.length)return[];const headers=lines.shift().map(h=>h.trim());return lines.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])))}
-$('downloadBackup').onclick=()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`HRMS_Timesheet_Backup_${isoToday()}.json`;a.click();URL.revokeObjectURL(a.href)};
-$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d||!Array.isArray(d.entries)||!d.masters)throw Error('Invalid backup format');if(!confirm(`Restore backup with ${d.entries.length} entries? This replaces the current data.`))return;db={...d,masters:{...defaultMasters,...d.masters},nextId:Math.max(Number(d.nextId)||1,...d.entries.map(x=>Number(x.id||0)+1))};persist();resetForm();notify('Backup restored.')}catch(err){notify('Could not restore backup: '+err.message,'error')}finally{e.target.value=''}};
-$('clearAll').onclick=()=>{if(!confirm('Delete ALL timesheet entries? This cannot be undone.'))return;if(!confirm('Final confirmation: permanently clear every timesheet entry in this browser?'))return;db.entries=[];db.nextId=1;persist();resetForm();notify('All timesheet entries cleared.')};
-function renderAll(){refreshSelects();renderRows();renderStats();if(!$('masters').classList.contains('hidden'))renderMasters()}
-$('date').value=isoToday();refreshSelects();renderAll();
-</script></body></html>
+const $=s=>document.querySelector(s), K="hrms_timesheet_v1";
+let db=null;
+try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
+db=db||{emp:[],prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]};
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}};
+const API=""; // paste your Google Apps Script Web app URL between the quotes
+const setSync=t=>{const x=$("#sync");if(x)x.textContent=t};
+async function push(body){
+  if(!API)return;setSync("Saving...");
+  try{const r=await(await fetch(API,{method:"POST",body:JSON.stringify(body)})).json();if(r.error)throw r.error;setSync("Saved to Google Sheet")}
+  catch(e){setSync("Not saved");alert("Could not save to Google Sheet: "+e)}
+}
+async function pull(){
+  if(!API){setSync("Offline mode: data stays in this browser");return}
+  setSync("Loading...");
+  try{const d=await(await fetch(API+"?action=load")).json();if(d.error)throw d.error;
+    Object.assign(db,d.masters,{rows:d.rows});save();setSync("Synced with Google Sheet");
+    fillSelects();empChips();renderM();renderRec()}
+  catch(e){setSync("Could not load: "+e)}
+}
+const pushMasters=()=>{const{emp,prod,biz,stat,src}=db;return push({action:"setMasters",masters:{emp,prod,biz,stat,src}})};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const mon=d=>d?new Date(d+"T00:00").toLocaleString("en",{month:"short",year:"numeric"}):"";
+const toM=t=>{const[a,b]=t.split(":").map(Number);return a*60+b};
+const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+const dur=(s,e)=>{if(!s||!e)return"";let m=toM(e)-toM(s);if(m<0)m+=1440;return fmt(m)};
+const names={emp:"Employees",prod:"Products",biz:"Businesses",stat:"Status",src:"Source"};
+
+// tabs
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button,.tab").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");$("#"+b.dataset.t).classList.add("on");
+  if(b.dataset.t==="rec"){renderRec();pull()}
+});
+
+// selects
+function opts(id,list,blank=true){const el=$(id),v=el.value;
+  el.innerHTML=(blank?'<option value=""></option>':"")+list.map(x=>`<option>${esc(x)}</option>`).join("");
+  if(list.includes(v))el.value=v}
+function fillSelects(){
+  opts("#f_emp",db.emp,false);opts("#f_src",db.src);opts("#f_prod",db.prod);
+  opts("#f_biz",db.biz.map(b=>b.name));opts("#f_stat",db.stat);
+  $("#hint").textContent=db.emp.length?"":"Add employees in Masters first.";
+  syncAuto();
+}
+function syncAuto(){
+  $("#f_month").value=mon($("#f_date").value);
+  $("#f_dur").value=dur($("#f_s").value,$("#f_e").value);
+  const b=db.biz.find(x=>x.name===$("#f_biz").value);$("#f_code").value=b?b.code:"";
+}
+["f_date","f_s","f_e","f_biz"].forEach(i=>$("#"+i).addEventListener("input",syncAuto));
+
+// entry
+let editId=null;
+const F={emp:"f_emp",date:"f_date",src:"f_src",prod:"f_prod",s:"f_s",e:"f_e",contact:"f_contact",biz:"f_biz",issue:"f_issue",ticket:"f_ticket",stat:"f_stat",rem:"f_rem"};
+function clearForm(){
+  editId=null;$("#formTitle").textContent="New entry";$("#saveBtn").textContent="Save entry";
+  const emp=$("#f_emp").value;
+  Object.values(F).forEach(i=>$("#"+i).value="");
+  $("#f_emp").value=emp;$("#f_date").value=today();syncAuto();
+}
+$("#clearBtn").onclick=clearForm;
+$("#saveBtn").onclick=()=>{
+  const r={};for(const k in F)r[k]=$("#"+F[k]).value.trim();
+  if(!r.emp||!r.date){flash("Choose an employee and date.");return}
+  r.code=$("#f_code").value;r.dur=$("#f_dur").value;
+  const was=!!editId,row={...r,id:editId||uid()};
+  if(was)db.rows[db.rows.findIndex(x=>x.id===editId)]=row;
+  else db.rows.push(row);
+  save();push({action:"upsertRow",row});clearForm();flash(was?"Entry updated.":"Entry saved.");
+};
+function flash(t){$("#msg").textContent=t;setTimeout(()=>$("#msg").textContent="",3000)}
+function editRow(id){
+  const r=db.rows.find(x=>x.id===id);if(!r)return;
+  for(const k in F)$("#"+F[k]).value=r[k]||"";
+  editId=id;syncAuto();$("#formTitle").textContent="Edit entry";$("#saveBtn").textContent="Update entry";
+  document.querySelector('nav [data-t="entry"]').click();scrollTo(0,0);
+}
+
+// records
+$("#r_day").value=today();$("#r_month").value=today().slice(0,7);
+$("#r_mode").onchange=()=>{const d=$("#r_mode").value==="day";$("#r_dayw").style.display=d?"":"none";$("#r_monw").style.display=d?"none":"";renderRec()};
+$("#r_day").oninput=$("#r_month").oninput=()=>renderRec();
+function empChips(){
+  const had=[...document.querySelectorAll("#r_emps input")].reduce((o,i)=>(o[i.value]=i.checked,o),{});
+  $("#r_emps").innerHTML=db.emp.map(e=>`<label><input type="checkbox" value="${esc(e)}" ${had[e]===false?"":"checked"}>${esc(e)}</label>`).join("")||'<span class="muted">No employees yet.</span>';
+  document.querySelectorAll("#r_emps input").forEach(i=>i.onchange=renderRec);
+}
+function getRows(){
+  const sel=[...document.querySelectorAll("#r_emps input:checked")].map(i=>i.value);
+  const d=$("#r_mode").value==="day",v=d?$("#r_day").value:$("#r_month").value;
+  const rows=db.rows.filter(r=>sel.includes(r.emp)&&(d?r.date===v:r.date.startsWith(v)))
+    .sort((a,b)=>a.emp.localeCompare(b.emp)||a.date.localeCompare(b.date)||(a.s||"").localeCompare(b.s||""));
+  const c={};rows.forEach(r=>{c[r.emp]=(c[r.emp]||0)+1;r.sl=c[r.emp]});
+  return rows;
+}
+const H=["SL.no","Employee","Month","Date","Code","Source","Product","Transaction Start Time","Transaction End time","Total Duration","CONTACT NO","Business Name","Issue/Request","Ticket No","Status","Remarks"];
+const line=r=>[r.sl,r.emp,mon(r.date),r.date,r.code,r.src,r.prod,r.s,r.e,r.dur,r.contact,r.biz,r.issue,r.ticket,r.stat,r.rem].map(x=>x??"");
+const sum=rows=>{const m={};rows.forEach(r=>{const o=m[r.emp]=m[r.emp]||{n:0,t:0};o.n++;if(r.dur)o.t+=toM(r.dur)});return m};
+function renderRec(){
+  if(!document.querySelector("#r_emps input")&&db.emp.length)empChips();
+  const rows=getRows(),t=Object.values(sum(rows)).reduce((a,o)=>a+o.t,0);
+  $("#r_tot").textContent=`${rows.length} entries, ${fmt(t)} total`;
+  $("#r_tbl").innerHTML=rows.length?"<tr>"+H.map(h=>`<th>${h}</th>`).join("")+"<th></th></tr>"+
+    rows.map(r=>"<tr>"+line(r).map(x=>`<td>${esc(x)}</td>`).join("")+
+    `<td><button class="btn sm alt" onclick="editRow('${r.id}')">Edit</button> <button class="btn sm del" onclick="delRow('${r.id}')">Delete</button></td></tr>`).join(""):
+    '<tr><td class="muted">No entries for this selection.</td></tr>';
+}
+function delRow(id){if(confirm("Delete this entry?")){db.rows=db.rows.filter(r=>r.id!==id);save();push({action:"deleteRow",id});renderRec()}}
+$("#expBtn").onclick=()=>{
+  const rows=getRows();if(!rows.length){alert("No entries to export.");return}
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([H,...rows.map(line)]);
+  ws["!cols"]=H.map((h,i)=>({wch:[6,16,10,11,8,10,14,12,12,10,14,22,34,12,12,26][i]}));
+  XLSX.utils.book_append_sheet(wb,ws,"Timesheet");
+  const s=sum(rows),ss=XLSX.utils.aoa_to_sheet([["Employee","Entries","Total Duration"],...Object.entries(s).map(([e,o])=>[e,o.n,fmt(o.t)])]);
+  XLSX.utils.book_append_sheet(wb,ss,"Summary");
+  const d=$("#r_mode").value==="day";
+  XLSX.writeFile(wb,`Timesheet_${d?"Day":"Month"}_${d?$("#r_day").value:$("#r_month").value}.xlsx`);
+};
+
+// masters
+let mEdit=null;
+const mk=()=>$("#m_list").value;
+function codeFor(name){
+  const w=name.trim().split(/\s+/).filter(Boolean);
+  let base=(w.length>1?w.slice(0,3).map(x=>x[0]).join(""):name.slice(0,3)).toUpperCase().replace(/[^A-Z0-9]/g,"")||"BIZ";
+  let c=base,n=1;while(db.biz.some(b=>b.code===c&&b.name!==mEdit))c=base+(++n);return c;
+}
+function mReset(){mEdit=null;$("#m_name").value=$("#m_code").value="";$("#m_add").textContent="Add";$("#m_cancel").style.display="none"}
+$("#m_cancel").onclick=mReset;
+$("#m_list").onchange=()=>{mReset();$("#m_codew").style.display=mk()==="biz"?"":"none";renderM()};
+$("#m_add").onclick=()=>{
+  const k=mk(),n=$("#m_name").value.trim();if(!n)return;
+  const dup=k==="biz"?db.biz.some(b=>b.name.toLowerCase()===n.toLowerCase()&&b.name!==mEdit):db[k].some(x=>x.toLowerCase()===n.toLowerCase()&&x!==mEdit);
+  if(dup){alert("That name already exists.");return}
+  if(k==="biz"){
+    const code=($("#m_code").value.trim().toUpperCase())||codeFor(n);
+    if(mEdit!==null){const b=db.biz.find(x=>x.name===mEdit);b.name=n;b.code=code}else db.biz.push({name:n,code});
+  }else{
+    if(mEdit!==null)db[k][db[k].indexOf(mEdit)]=n;else db[k].push(n);
+  }
+  save();pushMasters();mReset();renderM();fillSelects();empChips();
+};
+function mEditStart(i){
+  const k=mk(),it=db[k][i];mEdit=k==="biz"?it.name:it;
+  $("#m_name").value=k==="biz"?it.name:it;$("#m_code").value=k==="biz"?it.code:"";
+  $("#m_add").textContent="Update";$("#m_cancel").style.display="";$("#m_name").focus();
+}
+function mDel(i){
+  if(!confirm("Delete this item? Existing entries keep their saved text."))return;
+  db[mk()].splice(i,1);save();pushMasters();mReset();renderM();fillSelects();empChips();
+}
+function renderM(){
+  const k=mk(),L=db[k];
+  $("#m_tbl").innerHTML=L.length?"<tr><th>"+names[k]+"</th>"+(k==="biz"?"<th>Code</th>":"")+"<th></th></tr>"+
+    L.map((it,i)=>`<tr><td>${esc(k==="biz"?it.name:it)}</td>${k==="biz"?`<td>${esc(it.code)}</td>`:""}<td><button class="btn sm alt" onclick="mEditStart(${i})">Edit</button> <button class="btn sm del" onclick="mDel(${i})">Delete</button></td></tr>`).join(""):
+    '<tr><td class="muted">Nothing here yet. Add the first item above.</td></tr>';
+}
+
+$("#m_codew").style.display="none";
+fillSelects();$("#f_date").value=today();syncAuto();renderM();empChips();pull();
+</script>
+</body>
+</html>
