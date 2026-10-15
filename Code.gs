@@ -1,7 +1,7 @@
 // Timesheet backend. Paste into Extensions > Apps Script of your Google Sheet.
 const TS = 'Timesheet', MS = 'Masters';
-const HEAD = ['ID','Employee','SL.no','Month','Date','Code','Source','Product','Transaction Start Time','Transaction End time','Total Duration','CONTACT NO','Business Name','Issue/Request','Ticket No','Status','Remarks'];
-const KEYS = ['id','emp','sl','month','date','code','src','prod','s','e','dur','contact','biz','issue','ticket','stat','rem'];
+const HEAD = ['ID','SL.no','Month','Date','Code','Source','Product','Transaction Start Time','Transaction End time','Total Duration','CONTACT NO','Business Name','Issue/Request','Ticket No','Status','Remarks'];
+const KEYS = ['id','sl','month','date','code','src','prod','s','e','dur','contact','biz','issue','ticket','stat','rem'];
 const DEFAULTS = { stat: ['Open','In Progress','Resolved','Closed'], src: ['Call','Email','WhatsApp','Chat'] };
 
 function sheet_(name, head) {
@@ -23,7 +23,7 @@ function ids_(ts) {
 }
 function renumber_(ts) {
   const n = ts.getLastRow() - 1;
-  if (n > 0) ts.getRange(2, 3, n, 1).setValues(Array.from({ length: n }, (_, i) => [i + 1]));
+  if (n > 0) ts.getRange(2, 2, n, 1).setValues(Array.from({ length: n }, (_, i) => [i + 1]));
 }
 
 function doGet() {
@@ -34,7 +34,7 @@ function doGet() {
       for (const t in DEFAULTS) DEFAULTS[t].forEach(n => seed.push([t, n, '']));
       ms.getRange(2, 1, seed.length, 3).setValues(seed);
     }
-    const m = { emp: [], prod: [], biz: [], stat: [], src: [] };
+    const m = { prod: [], biz: [], stat: [], src: [] };
     ms.getRange(2, 1, ms.getLastRow() - 1, 3).getValues().forEach(r => {
       if (m[r[0]]) m[r[0]].push(r[0] === 'biz' ? { name: String(r[1]), code: String(r[2]) } : String(r[1]));
     });

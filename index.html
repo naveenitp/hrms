@@ -2,132 +2,151 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Timesheet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f3f5f4;--card:#fff;--ink:#17231f;--mute:#5d6b66;--line:#d6ddda;--acc:#0f6b5c;--accink:#fff;--warn:#b3341f;--head:#e5ece9}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121816;--card:#1a2320;--ink:#e6efeb;--mute:#93a39d;--line:#2d3b36;--acc:#4cc2ab;--accink:#07211b;--warn:#ff8a73;--head:#22302c}}
-:root[data-theme="dark"]{--bg:#121816;--card:#1a2320;--ink:#e6efeb;--mute:#93a39d;--line:#2d3b36;--acc:#4cc2ab;--accink:#07211b;--warn:#ff8a73;--head:#22302c}
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
-header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 20px;background:var(--card);border-bottom:1px solid var(--line)}
-h1{font-size:18px;margin:0 16px 0 0;font-weight:700}
-nav{display:flex;gap:4px}
-nav button{border:0;background:none;color:var(--mute);padding:8px 14px;border-radius:6px;font:inherit;cursor:pointer}
-nav button.on{background:var(--acc);color:var(--accink)}
-main{max-width:1100px;margin:0 auto;padding:20px}
+:root{--bg:#f3f5fb;--card:#fff;--ink:#192038;--mute:#667094;--line:#e1e5f2;--acc:#3a55d6;--acc2:#e8ecff;--accink:#fff;--ok:#16895d;--okbg:#e2f6ed;--warn:#d1433a;--sh:0 1px 2px rgba(25,32,56,.06),0 10px 28px rgba(25,32,56,.07)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1425;--card:#181f36;--ink:#e8ecfb;--mute:#94a0c8;--line:#29324f;--acc:#8a9eff;--acc2:#232c54;--accink:#0f1425;--ok:#4fd6a1;--okbg:#15332a;--warn:#ff8a80;--sh:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.3)}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta Sans",system-ui,"Segoe UI",sans-serif}
+.top{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
+.brand i{width:28px;height:28px;border-radius:9px;background:var(--acc);position:relative}
+.brand i::after{content:"";position:absolute;left:12px;top:6px;width:3px;height:9px;border-radius:2px;background:var(--accink);box-shadow:4px 7px 0 -0.5px var(--accink)}
+.seg{display:inline-flex;gap:2px;padding:4px;border-radius:12px;background:var(--bg);flex-wrap:wrap}
+.seg button{border:0;background:none;padding:7px 16px;border-radius:9px;font:inherit;font-weight:600;color:var(--mute);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--acc);box-shadow:var(--sh)}
+.sync{margin-left:auto;font-size:12px;color:var(--mute)}
+main{max-width:1180px;margin:0 auto;padding:24px}
 .tab{display:none}.tab.on{display:block}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:18px}
-h2{font-size:16px;margin:0 0 14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
-label b{color:var(--warn)}
-input,select,textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);min-width:0}
-input[readonly]{opacity:.75}
-input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
-.wide{grid-column:1/-1}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
-.btn{border:1px solid var(--acc);background:var(--acc);color:var(--accink);padding:8px 16px;border-radius:6px;font:inherit;cursor:pointer}
-.btn.alt{background:none;color:var(--acc)}
-.btn.sm{padding:3px 9px;font-size:13px}
-.btn.del{border-color:var(--warn);color:var(--warn);background:none}
-.scroll{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
-th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
-th{background:var(--head)}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips label{flex-direction:row;align-items:center;gap:6px;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+@media(max-width:860px){.cols{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:24px}
+.head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+h2{font-size:19px;margin:0}
+h3{font-size:14px;margin:0 0 10px}
+.grp{margin-top:22px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--mute)}
+input,select,textarea{font:inherit;font-weight:500;color:var(--ink);padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);min-width:0;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc2)}
+.auto{background:var(--acc2);border-color:transparent;color:var(--acc);font-weight:700}
+.dur{font-size:18px}
+.btn{border:0;background:var(--acc);color:var(--accink);padding:10px 20px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}.btn:focus-visible,.seg button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.btn.ghost{background:var(--acc2);color:var(--acc)}
+.btn.del{background:none;color:var(--warn)}
+.btn.sm{padding:4px 11px;font-size:13px}
+.row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.today{position:sticky;top:84px}
+.big{font-size:44px;font-weight:800;letter-spacing:-1.5px;color:var(--acc);line-height:1.1;margin-top:10px}
+.today ul{list-style:none;padding:0;margin:14px 0 0}
+.today li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
 .muted{color:var(--mute)}
-.msg{color:var(--acc);margin-left:8px}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.bar input{width:auto}
+.grow{flex:1}
+.scroll{overflow-x:auto;margin-top:16px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;white-space:nowrap}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:600;background:var(--bg)}
+.chip{padding:2px 10px;border-radius:99px;background:var(--acc2);color:var(--acc);font-weight:600;font-size:12px}
+.chip.ok{background:var(--okbg);color:var(--ok)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:12px;font-weight:600;transition:.25s;z-index:9}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
 </head>
 <body>
-<header>
-  <h1>Timesheet</h1>
-  <nav>
-    <button data-t="entry" class="on">Data entry</button>
-    <button data-t="rec">Records &amp; export</button>
-    <button data-t="mas">Masters</button>
+<header class="top">
+  <div class="brand"><i></i>Timesheet</div>
+  <nav class="seg" id="nav">
+    <button data-t="entry" class="on">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
   </nav>
-  <span class="muted" id="sync" style="margin-left:auto"></span>
+  <span class="sync" id="sync"></span>
 </header>
 <main>
 
-<section class="tab on" id="entry">
+<section class="tab on" id="entry"><div class="cols">
   <div class="card">
-    <h2 id="formTitle">New entry</h2>
-    <p class="muted" id="hint" style="margin-top:-6px"></p>
-    <div class="grid">
-      <label>Employee <b>*</b><select id="f_emp"></select></label>
-      <label>Date <b>*</b><input type="date" id="f_date"></label>
-      <label>Month<input id="f_month" readonly></label>
+    <div class="head"><h2 id="formTitle">New entry</h2><span class="muted">Only the date is required</span></div>
+    <div class="grp"><h3>When</h3><div class="g">
+      <label>Date<input type="date" id="f_date"></label>
+      <label>Start time<input type="time" id="f_s"></label>
+      <label>End time<input type="time" id="f_e"></label>
+      <label>Total duration<input id="f_dur" class="auto dur" readonly placeholder="--:--"></label>
+    </div></div>
+    <div class="grp"><h3>Customer</h3><div class="g">
+      <label>Business name<select id="f_biz"></select></label>
+      <label>Code<input id="f_code" class="auto" readonly placeholder="Fills from business"></label>
+      <label>Contact no<input id="f_contact" inputmode="tel"></label>
+    </div></div>
+    <div class="grp"><h3>Details</h3><div class="g">
       <label>Source<select id="f_src"></select></label>
       <label>Product<select id="f_prod"></select></label>
-      <label>Transaction start time<input type="time" id="f_s"></label>
-      <label>Transaction end time<input type="time" id="f_e"></label>
-      <label>Total duration (auto)<input id="f_dur" readonly></label>
-      <label>Contact no<input id="f_contact" inputmode="tel"></label>
-      <label>Business name<select id="f_biz"></select></label>
-      <label>Code (auto)<input id="f_code" readonly></label>
+      <label>Issue / request<select id="f_issue"><option value=""></option><option>Issue</option><option>Request</option></select></label>
       <label>Ticket no<input id="f_ticket"></label>
       <label>Status<select id="f_stat"></select></label>
-      <label>Issue / request<select id="f_issue"><option value=""></option><option>Issue</option><option>Request</option></select></label>
-      <label class="wide">Remarks<textarea id="f_rem" rows="2"></textarea></label>
     </div>
-    <div class="row" style="margin-top:14px">
-      <button class="btn" id="saveBtn">Save entry</button>
-      <button class="btn alt" id="clearBtn">Clear</button>
-      <span class="msg" id="msg"></span>
-    </div>
+    <label style="margin-top:14px">Remarks<textarea id="f_rem" rows="2"></textarea></label></div>
+    <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button></div>
   </div>
-</section>
+  <aside class="card today">
+    <h2>Today</h2>
+    <div class="big" id="t_dur">00:00</div>
+    <div class="muted"><span id="t_n">0</span> entries logged</div>
+    <ul id="t_list"></ul>
+  </aside>
+</div></section>
 
-<section class="tab" id="rec">
-  <div class="card">
-    <h2>Filter</h2>
-    <div class="row">
-      <label>View<select id="r_mode"><option value="day">Day-wise</option><option value="month">Month-wise</option></select></label>
-      <label id="r_dayw">Date<input type="date" id="r_day"></label>
-      <label id="r_monw" style="display:none">Month<input type="month" id="r_month"></label>
-      <button class="btn" id="expBtn">Export to Excel</button>
-    </div>
-    <p class="muted" style="margin:14px 0 6px">Employees (leave all ticked to include everyone)</p>
-    <div class="chips" id="r_emps"></div>
+<section class="tab" id="rec"><div class="card">
+  <div class="bar">
+    <div class="seg" id="r_seg"><button data-m="day" class="on">Day</button><button data-m="month">Month</button></div>
+    <input type="date" id="r_day"><input type="month" id="r_month" style="display:none">
+    <span class="grow"></span><b id="r_tot"></b>
+    <button class="btn" id="expBtn">Export to Excel</button>
   </div>
-  <div class="card">
-    <h2>Entries <span class="muted" id="r_tot"></span></h2>
-    <div class="scroll"><table id="r_tbl"></table></div>
-  </div>
-</section>
+  <div class="scroll"><table id="r_tbl"></table></div>
+</div></section>
 
-<section class="tab" id="mas">
-  <div class="card">
-    <h2>Manage lists</h2>
-    <div class="row">
-      <label>List<select id="m_list">
-        <option value="emp">Employees</option><option value="prod">Products</option>
-        <option value="biz">Business names (with code)</option><option value="stat">Status</option><option value="src">Source</option>
-      </select></label>
-      <label>Name<input id="m_name"></label>
-      <label id="m_codew">Code (blank = auto)<input id="m_code" style="width:120px"></label>
-      <button class="btn" id="m_add">Add</button>
-      <button class="btn alt" id="m_cancel" style="display:none">Cancel</button>
-    </div>
-    <div class="scroll" style="margin-top:14px"><table id="m_tbl"></table></div>
+<section class="tab" id="mas"><div class="card">
+  <div class="seg" id="m_seg">
+    <button data-k="biz" class="on">Business names</button><button data-k="prod">Products</button><button data-k="stat">Status</button><button data-k="src">Source</button>
   </div>
-</section>
+  <div class="bar" style="margin-top:20px">
+    <label>Name<input id="m_name"></label>
+    <label id="m_codew">Code (blank = auto)<input id="m_code" style="width:140px"></label>
+    <button class="btn" id="m_add">Add</button><button class="btn ghost" id="m_cancel" style="display:none">Cancel</button>
+    <span class="grow"></span>
+    <button class="btn ghost" id="m_up">Upload CSV / Excel</button><button class="btn ghost" id="m_tpl">Download template</button>
+    <input type="file" id="m_file" accept=".csv,.xlsx,.xls" hidden>
+  </div>
+  <p class="muted" id="m_hint" style="margin:10px 0 0"></p>
+  <h3 id="m_h" style="margin-top:22px"></h3>
+  <div class="scroll" style="margin-top:0"><table id="m_tbl"></table></div>
+</div></section>
 
 </main>
+<div class="toast" id="toast"></div>
 <script>
-const $=s=>document.querySelector(s), K="hrms_timesheet_v1";
-let db=null;
-try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
-db=db||{emp:[],prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]};
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}};
+const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s),K="hrms_timesheet_v2";
 const API=""; // paste your Google Apps Script Web app URL between the quotes
-const setSync=t=>{const x=$("#sync");if(x)x.textContent=t};
+let db=null;try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
+db=Object.assign({prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const mon=d=>d?new Date(d+"T00:00").toLocaleString("en",{month:"short",year:"numeric"}):"";
+const toM=t=>{const[a,b]=t.split(":").map(Number);return a*60+b};
+const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+const dur=(s,e)=>{if(!s||!e)return"";let m=toM(e)-toM(s);if(m<0)m+=1440;return fmt(m)};
+let tt;const toast=t=>{const x=$("#toast");x.textContent=t;x.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>x.classList.remove("on"),2600)};
+const setSync=t=>$("#sync").textContent=t;
+
+// Google Sheet sync
 async function push(body){
   if(!API)return;setSync("Saving...");
   try{const r=await(await fetch(API,{method:"POST",body:JSON.stringify(body)})).json();if(r.error)throw r.error;setSync("Saved to Google Sheet")}
@@ -138,152 +157,151 @@ async function pull(){
   setSync("Loading...");
   try{const d=await(await fetch(API+"?action=load")).json();if(d.error)throw d.error;
     Object.assign(db,d.masters,{rows:d.rows});save();setSync("Synced with Google Sheet");
-    fillSelects();empChips();renderM();renderRec()}
+    fillSelects();renderM();renderRec();renderToday()}
   catch(e){setSync("Could not load: "+e)}
 }
-const pushMasters=()=>{const{emp,prod,biz,stat,src}=db;return push({action:"setMasters",masters:{emp,prod,biz,stat,src}})};
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
-const mon=d=>d?new Date(d+"T00:00").toLocaleString("en",{month:"short",year:"numeric"}):"";
-const toM=t=>{const[a,b]=t.split(":").map(Number);return a*60+b};
-const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
-const dur=(s,e)=>{if(!s||!e)return"";let m=toM(e)-toM(s);if(m<0)m+=1440;return fmt(m)};
-const names={emp:"Employees",prod:"Products",biz:"Businesses",stat:"Status",src:"Source"};
+const pushMasters=()=>{const{prod,biz,stat,src}=db;return push({action:"setMasters",masters:{prod,biz,stat,src}})};
 
 // tabs
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("nav button,.tab").forEach(x=>x.classList.remove("on"));
-  b.classList.add("on");$("#"+b.dataset.t).classList.add("on");
+$$("#nav button").forEach(b=>b.onclick=()=>{
+  $$("#nav button,.tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");$("#"+b.dataset.t).classList.add("on");
   if(b.dataset.t==="rec"){renderRec();pull()}
 });
 
-// selects
-function opts(id,list,blank=true){const el=$(id),v=el.value;
-  el.innerHTML=(blank?'<option value=""></option>':"")+list.map(x=>`<option>${esc(x)}</option>`).join("");
-  if(list.includes(v))el.value=v}
-function fillSelects(){
-  opts("#f_emp",db.emp,false);opts("#f_src",db.src);opts("#f_prod",db.prod);
-  opts("#f_biz",db.biz.map(b=>b.name));opts("#f_stat",db.stat);
-  $("#hint").textContent=db.emp.length?"":"Add employees in Masters first.";
-  syncAuto();
-}
+// entry form
+const F={date:"f_date",src:"f_src",prod:"f_prod",s:"f_s",e:"f_e",contact:"f_contact",biz:"f_biz",issue:"f_issue",ticket:"f_ticket",stat:"f_stat",rem:"f_rem"};
+function opts(id,list){const el=$(id),v=el.value;el.innerHTML='<option value=""></option>'+list.map(x=>`<option>${esc(x)}</option>`).join("");if(list.includes(v))el.value=v}
+function fillSelects(){opts("#f_src",db.src);opts("#f_prod",db.prod);opts("#f_biz",db.biz.map(b=>b.name));opts("#f_stat",db.stat);syncAuto()}
 function syncAuto(){
-  $("#f_month").value=mon($("#f_date").value);
   $("#f_dur").value=dur($("#f_s").value,$("#f_e").value);
   const b=db.biz.find(x=>x.name===$("#f_biz").value);$("#f_code").value=b?b.code:"";
 }
-["f_date","f_s","f_e","f_biz"].forEach(i=>$("#"+i).addEventListener("input",syncAuto));
-
-// entry
+["f_s","f_e","f_biz"].forEach(i=>$("#"+i).addEventListener("input",syncAuto));
 let editId=null;
-const F={emp:"f_emp",date:"f_date",src:"f_src",prod:"f_prod",s:"f_s",e:"f_e",contact:"f_contact",biz:"f_biz",issue:"f_issue",ticket:"f_ticket",stat:"f_stat",rem:"f_rem"};
 function clearForm(){
-  editId=null;$("#formTitle").textContent="New entry";$("#saveBtn").textContent="Save entry";
-  const emp=$("#f_emp").value;
-  Object.values(F).forEach(i=>$("#"+i).value="");
-  $("#f_emp").value=emp;$("#f_date").value=today();syncAuto();
+  editId=null;$("#formTitle").textContent="New entry";$("#saveBtn").textContent="Save entry";$("#clearBtn").textContent="Clear";
+  Object.values(F).forEach(i=>$("#"+i).value="");$("#f_date").value=today();syncAuto();
 }
 $("#clearBtn").onclick=clearForm;
 $("#saveBtn").onclick=()=>{
   const r={};for(const k in F)r[k]=$("#"+F[k]).value.trim();
-  if(!r.emp||!r.date){flash("Choose an employee and date.");return}
+  if(!r.date){toast("Pick a date to save the entry.");return}
   r.code=$("#f_code").value;r.dur=$("#f_dur").value;
   const was=!!editId,row={...r,id:editId||uid()};
   if(was)db.rows[db.rows.findIndex(x=>x.id===editId)]=row;
   else db.rows.push(row);
-  save();push({action:"upsertRow",row});clearForm();flash(was?"Entry updated.":"Entry saved.");
+  save();push({action:"upsertRow",row});clearForm();renderToday();toast(was?"Entry updated":"Entry saved");
 };
-function flash(t){$("#msg").textContent=t;setTimeout(()=>$("#msg").textContent="",3000)}
 function editRow(id){
   const r=db.rows.find(x=>x.id===id);if(!r)return;
   for(const k in F)$("#"+F[k]).value=r[k]||"";
-  editId=id;syncAuto();$("#formTitle").textContent="Edit entry";$("#saveBtn").textContent="Update entry";
-  document.querySelector('nav [data-t="entry"]').click();scrollTo(0,0);
+  editId=id;syncAuto();$("#formTitle").textContent="Edit entry";$("#saveBtn").textContent="Update entry";$("#clearBtn").textContent="Cancel edit";
+  $('#nav [data-t="entry"]').click();scrollTo(0,0);
+}
+function renderToday(){
+  const r=db.rows.filter(x=>x.date===today()).sort((a,b)=>(b.s||"").localeCompare(a.s||""));
+  $("#t_n").textContent=r.length;$("#t_dur").textContent=fmt(r.reduce((a,x)=>a+(x.dur?toM(x.dur):0),0));
+  $("#t_list").innerHTML=r.slice(0,6).map(x=>`<li><span>${esc(x.biz||"No business")}</span><b>${esc(x.dur||"--:--")}</b></li>`).join("")||'<li class="muted">Nothing logged today yet.</li>';
 }
 
 // records
+let rmode="day";
 $("#r_day").value=today();$("#r_month").value=today().slice(0,7);
-$("#r_mode").onchange=()=>{const d=$("#r_mode").value==="day";$("#r_dayw").style.display=d?"":"none";$("#r_monw").style.display=d?"none":"";renderRec()};
+$$("#r_seg button").forEach(b=>b.onclick=()=>{
+  rmode=b.dataset.m;$$("#r_seg button").forEach(x=>x.classList.toggle("on",x===b));
+  $("#r_day").style.display=rmode==="day"?"":"none";$("#r_month").style.display=rmode==="day"?"none":"";renderRec();
+});
 $("#r_day").oninput=$("#r_month").oninput=()=>renderRec();
-function empChips(){
-  const had=[...document.querySelectorAll("#r_emps input")].reduce((o,i)=>(o[i.value]=i.checked,o),{});
-  $("#r_emps").innerHTML=db.emp.map(e=>`<label><input type="checkbox" value="${esc(e)}" ${had[e]===false?"":"checked"}>${esc(e)}</label>`).join("")||'<span class="muted">No employees yet.</span>';
-  document.querySelectorAll("#r_emps input").forEach(i=>i.onchange=renderRec);
-}
 function getRows(){
-  const sel=[...document.querySelectorAll("#r_emps input:checked")].map(i=>i.value);
-  const d=$("#r_mode").value==="day",v=d?$("#r_day").value:$("#r_month").value;
-  const rows=db.rows.filter(r=>sel.includes(r.emp)&&(d?r.date===v:r.date.startsWith(v)))
-    .sort((a,b)=>a.emp.localeCompare(b.emp)||a.date.localeCompare(b.date)||(a.s||"").localeCompare(b.s||""));
-  const c={};rows.forEach(r=>{c[r.emp]=(c[r.emp]||0)+1;r.sl=c[r.emp]});
-  return rows;
+  const d=rmode==="day",v=d?$("#r_day").value:$("#r_month").value;
+  const rows=db.rows.filter(r=>r.date&&(d?r.date===v:r.date.startsWith(v))).sort((a,b)=>a.date.localeCompare(b.date)||(a.s||"").localeCompare(b.s||""));
+  rows.forEach((r,i)=>r.sl=i+1);return rows;
 }
-const H=["SL.no","Employee","Month","Date","Code","Source","Product","Transaction Start Time","Transaction End time","Total Duration","CONTACT NO","Business Name","Issue/Request","Ticket No","Status","Remarks"];
-const line=r=>[r.sl,r.emp,mon(r.date),r.date,r.code,r.src,r.prod,r.s,r.e,r.dur,r.contact,r.biz,r.issue,r.ticket,r.stat,r.rem].map(x=>x??"");
-const sum=rows=>{const m={};rows.forEach(r=>{const o=m[r.emp]=m[r.emp]||{n:0,t:0};o.n++;if(r.dur)o.t+=toM(r.dur)});return m};
+const H=["SL.no","Month","Date","Code","Source","Product","Transaction Start Time","Transaction End time","Total Duration","CONTACT NO","Business Name","Issue/Request","Ticket No","Status","Remarks"];
+const line=r=>[r.sl,mon(r.date),r.date,r.code,r.src,r.prod,r.s,r.e,r.dur,r.contact,r.biz,r.issue,r.ticket,r.stat,r.rem].map(x=>x??"");
+const total=rows=>rows.reduce((a,r)=>a+(r.dur?toM(r.dur):0),0);
+const chip=s=>s?`<span class="chip ${/resolv|clos|done|complet/i.test(s)?"ok":""}">${esc(s)}</span>`:"";
 function renderRec(){
-  if(!document.querySelector("#r_emps input")&&db.emp.length)empChips();
-  const rows=getRows(),t=Object.values(sum(rows)).reduce((a,o)=>a+o.t,0);
-  $("#r_tot").textContent=`${rows.length} entries, ${fmt(t)} total`;
+  const rows=getRows();
+  $("#r_tot").textContent=`${rows.length} entries · ${fmt(total(rows))}`;
   $("#r_tbl").innerHTML=rows.length?"<tr>"+H.map(h=>`<th>${h}</th>`).join("")+"<th></th></tr>"+
-    rows.map(r=>"<tr>"+line(r).map(x=>`<td>${esc(x)}</td>`).join("")+
-    `<td><button class="btn sm alt" onclick="editRow('${r.id}')">Edit</button> <button class="btn sm del" onclick="delRow('${r.id}')">Delete</button></td></tr>`).join(""):
+    rows.map(r=>"<tr>"+line(r).map((x,i)=>`<td>${i===13?chip(x):esc(x)}</td>`).join("")+
+    `<td><button class="btn sm ghost" onclick="editRow('${r.id}')">Edit</button> <button class="btn sm del" onclick="delRow('${r.id}')">Delete</button></td></tr>`).join(""):
     '<tr><td class="muted">No entries for this selection.</td></tr>';
 }
-function delRow(id){if(confirm("Delete this entry?")){db.rows=db.rows.filter(r=>r.id!==id);save();push({action:"deleteRow",id});renderRec()}}
+function delRow(id){if(confirm("Delete this entry?")){db.rows=db.rows.filter(r=>r.id!==id);save();push({action:"deleteRow",id});renderRec();renderToday();toast("Entry deleted")}}
 $("#expBtn").onclick=()=>{
-  const rows=getRows();if(!rows.length){alert("No entries to export.");return}
-  const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([H,...rows.map(line)]);
-  ws["!cols"]=H.map((h,i)=>({wch:[6,16,10,11,8,10,14,12,12,10,14,22,34,12,12,26][i]}));
+  const rows=getRows();if(!rows.length){toast("No entries to export.");return}
+  const t=H.map(()=>"");t[7]="Total";t[8]=fmt(total(rows));
+  const ws=XLSX.utils.aoa_to_sheet([H,...rows.map(line),t]),wb=XLSX.utils.book_new();
+  ws["!cols"]=[6,10,11,8,10,14,12,12,10,14,22,12,12,12,26].map(wch=>({wch}));
   XLSX.utils.book_append_sheet(wb,ws,"Timesheet");
-  const s=sum(rows),ss=XLSX.utils.aoa_to_sheet([["Employee","Entries","Total Duration"],...Object.entries(s).map(([e,o])=>[e,o.n,fmt(o.t)])]);
-  XLSX.utils.book_append_sheet(wb,ss,"Summary");
-  const d=$("#r_mode").value==="day";
-  XLSX.writeFile(wb,`Timesheet_${d?"Day":"Month"}_${d?$("#r_day").value:$("#r_month").value}.xlsx`);
+  const d=rmode==="day";XLSX.writeFile(wb,`Timesheet_${d?"Day":"Month"}_${d?$("#r_day").value:$("#r_month").value}.xlsx`);
 };
 
 // masters
-let mEdit=null;
-const mk=()=>$("#m_list").value;
+const NAMES={biz:"Business names",prod:"Products",stat:"Status",src:"Source"};
+let cur="biz",mEdit=null;
 function codeFor(name){
   const w=name.trim().split(/\s+/).filter(Boolean);
-  let base=(w.length>1?w.slice(0,3).map(x=>x[0]).join(""):name.slice(0,3)).toUpperCase().replace(/[^A-Z0-9]/g,"")||"BIZ";
+  const base=(w.length>1?w.slice(0,3).map(x=>x[0]).join(""):name.slice(0,3)).toUpperCase().replace(/[^A-Z0-9]/g,"")||"BIZ";
   let c=base,n=1;while(db.biz.some(b=>b.code===c&&b.name!==mEdit))c=base+(++n);return c;
 }
 function mReset(){mEdit=null;$("#m_name").value=$("#m_code").value="";$("#m_add").textContent="Add";$("#m_cancel").style.display="none"}
 $("#m_cancel").onclick=mReset;
-$("#m_list").onchange=()=>{mReset();$("#m_codew").style.display=mk()==="biz"?"":"none";renderM()};
+$$("#m_seg button").forEach(b=>b.onclick=()=>{cur=b.dataset.k;$$("#m_seg button").forEach(x=>x.classList.toggle("on",x===b));mReset();renderM()});
+const names=()=>db[cur].map(x=>cur==="biz"?x.name:x);
 $("#m_add").onclick=()=>{
-  const k=mk(),n=$("#m_name").value.trim();if(!n)return;
-  const dup=k==="biz"?db.biz.some(b=>b.name.toLowerCase()===n.toLowerCase()&&b.name!==mEdit):db[k].some(x=>x.toLowerCase()===n.toLowerCase()&&x!==mEdit);
-  if(dup){alert("That name already exists.");return}
-  if(k==="biz"){
-    const code=($("#m_code").value.trim().toUpperCase())||codeFor(n);
+  const n=$("#m_name").value.trim();if(!n)return;
+  if(names().some(x=>x.toLowerCase()===n.toLowerCase()&&x!==mEdit)){toast("That name already exists.");return}
+  if(cur==="biz"){
+    const code=$("#m_code").value.trim().toUpperCase()||codeFor(n);
     if(mEdit!==null){const b=db.biz.find(x=>x.name===mEdit);b.name=n;b.code=code}else db.biz.push({name:n,code});
-  }else{
-    if(mEdit!==null)db[k][db[k].indexOf(mEdit)]=n;else db[k].push(n);
-  }
-  save();pushMasters();mReset();renderM();fillSelects();empChips();
+  }else if(mEdit!==null)db[cur][db[cur].indexOf(mEdit)]=n;else db[cur].push(n);
+  const was=mEdit!==null;save();pushMasters();mReset();renderM();fillSelects();toast(was?"Updated":"Added");
 };
 function mEditStart(i){
-  const k=mk(),it=db[k][i];mEdit=k==="biz"?it.name:it;
-  $("#m_name").value=k==="biz"?it.name:it;$("#m_code").value=k==="biz"?it.code:"";
+  const it=db[cur][i];mEdit=cur==="biz"?it.name:it;
+  $("#m_name").value=mEdit;$("#m_code").value=cur==="biz"?it.code:"";
   $("#m_add").textContent="Update";$("#m_cancel").style.display="";$("#m_name").focus();
 }
 function mDel(i){
-  if(!confirm("Delete this item? Existing entries keep their saved text."))return;
-  db[mk()].splice(i,1);save();pushMasters();mReset();renderM();fillSelects();empChips();
+  if(!confirm("Delete this item? Saved entries keep their text."))return;
+  db[cur].splice(i,1);save();pushMasters();mReset();renderM();fillSelects();toast("Deleted");
 }
 function renderM(){
-  const k=mk(),L=db[k];
-  $("#m_tbl").innerHTML=L.length?"<tr><th>"+names[k]+"</th>"+(k==="biz"?"<th>Code</th>":"")+"<th></th></tr>"+
-    L.map((it,i)=>`<tr><td>${esc(k==="biz"?it.name:it)}</td>${k==="biz"?`<td>${esc(it.code)}</td>`:""}<td><button class="btn sm alt" onclick="mEditStart(${i})">Edit</button> <button class="btn sm del" onclick="mDel(${i})">Delete</button></td></tr>`).join(""):
-    '<tr><td class="muted">Nothing here yet. Add the first item above.</td></tr>';
+  const L=db[cur],b=cur==="biz";
+  $("#m_codew").style.display=b?"":"none";
+  $("#m_hint").textContent=b?"Upload columns: Business Name, Code (code is optional and auto-generated if blank).":"Upload a file with one column: Name.";
+  $("#m_h").textContent=`${NAMES[cur]} (${L.length})`;
+  $("#m_tbl").innerHTML=L.length?`<tr><th>${b?"Business name":"Name"}</th>${b?"<th>Code</th>":""}<th></th></tr>`+
+    L.map((it,i)=>`<tr><td>${esc(b?it.name:it)}</td>${b?`<td><span class="chip">${esc(it.code)}</span></td>`:""}<td><button class="btn sm ghost" onclick="mEditStart(${i})">Edit</button> <button class="btn sm del" onclick="mDel(${i})">Delete</button></td></tr>`).join(""):
+    '<tr><td class="muted">Nothing here yet. Add an item or upload a file.</td></tr>';
 }
+$("#m_up").onclick=()=>$("#m_file").click();
+$("#m_tpl").onclick=()=>{
+  const b=cur==="biz",ws=XLSX.utils.aoa_to_sheet(b?[["Business Name","Code"],["Example Traders","EXT"]]:[["Name"],["Example"]]),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Masters");XLSX.writeFile(wb,cur+"_template.xlsx");
+};
+$("#m_file").onchange=async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;
+  try{
+    const wb=XLSX.read(await f.arrayBuffer(),{type:"array"}),rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""});
+    let add=0,upd=0;
+    rows.forEach(r=>{
+      const g=n=>{const k=Object.keys(r).find(x=>x.toLowerCase().replace(/[^a-z]/g,"")===n);return k?String(r[k]).trim():""};
+      const name=g("businessname")||g("name")||String(Object.values(r)[0]||"").trim();
+      if(!name)return;
+      if(cur==="biz"){
+        const code=g("code").toUpperCase(),b=db.biz.find(x=>x.name.toLowerCase()===name.toLowerCase());
+        if(b){if(code&&code!==b.code){b.code=code;upd++}}else{db.biz.push({name,code:code||codeFor(name)});add++}
+      }else if(!db[cur].some(x=>x.toLowerCase()===name.toLowerCase())){db[cur].push(name);add++}
+    });
+    save();pushMasters();renderM();fillSelects();toast(`${add} added, ${upd} updated`);
+  }catch(err){toast("Could not read that file.")}
+};
 
-$("#m_codew").style.display="none";
-fillSelects();$("#f_date").value=today();syncAuto();renderM();empChips();pull();
+clearForm();fillSelects();renderM();renderToday();pull();
 </script>
 </body>
 </html>
