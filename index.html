@@ -43,7 +43,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box
 .today{position:sticky;top:84px}
 .big{font-size:44px;font-weight:800;letter-spacing:-1.5px;color:var(--acc);line-height:1.1;margin-top:10px}
 .today ul{list-style:none;padding:0;margin:14px 0 0}
-.today li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.today li{display:block;padding:11px 0;border-top:1px solid var(--line);font-size:14px;cursor:pointer}
+.today li:hover b.t{color:var(--acc)}
+.tl{display:flex;justify-content:space-between;gap:8px}
+.sub{font-size:12px;color:var(--mute);display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:3px}
+#t_list{max-height:calc(100vh - 300px);overflow:auto}
+.stack{display:grid;gap:20px;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tp{display:inline-flex;border-radius:99px;background:var(--acc2);overflow:hidden}
+.tp button{border:0;background:none;color:var(--acc);font:inherit;font-weight:600;font-size:13px;padding:6px 12px;cursor:pointer}
+.tp button:hover{background:var(--acc);color:var(--accink)}
+.tp button+button{padding:6px 9px}
 .muted{color:var(--mute)}
 .bar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
 .bar input{width:auto}
@@ -70,6 +80,17 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
 <main>
 
 <section class="tab on" id="entry"><div class="cols">
+  <div class="stack">
+  <div class="card">
+    <div class="head"><h3 style="margin:0">Quick templates</h3><button class="btn sm ghost" id="tplNew">Save current form as template</button></div>
+    <div class="chips" id="tplList"></div>
+    <div class="bar" id="tplForm" style="display:none;margin-top:14px">
+      <label>Template name<input id="tpl_name"></label>
+      <label>Default minutes (optional)<input id="tpl_min" type="number" min="1" style="width:170px"></label>
+      <button class="btn sm" id="tplSave">Save template</button>
+    </div>
+    <p class="muted" style="margin:10px 0 0;font-size:12px">Tap a template to fill the form. Tap the lightning icon to save it instantly. With default minutes, the end time is now and the start time is set back by that many minutes.</p>
+  </div>
   <div class="card">
     <div class="head"><h2 id="formTitle">New entry</h2><span class="muted">Only the date is required</span></div>
     <div class="grp"><h3>When</h3><div class="g">
@@ -92,6 +113,7 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
     </div>
     <label style="margin-top:14px">Remarks<textarea id="f_rem" rows="2"></textarea></label></div>
     <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button></div>
+  </div>
   </div>
   <aside class="card today">
     <h2>Today</h2>
@@ -132,9 +154,9 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
 <div class="toast" id="toast"></div>
 <script>
 const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s),K="hrms_timesheet_v2";
-const API="https://script.google.com/macros/s/AKfycbxCWxQX9YnTTBCEVLOmAKuY5l07F1zectqndWLmRrHPGk3yoYdXXM8uCTOPe7uqy6Yv/exec"; // paste your Google Apps Script Web app URL between the quotes
+const API=""; // paste your Google Apps Script Web app URL between the quotes
 let db=null;try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
-db=Object.assign({prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
+db=Object.assign({tpl:[],prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
 let storeOK=true;
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){if(!API&&storeOK){storeOK=false;alert("This page cannot save in this browser and no Google Sheet URL is set, so entries will be lost on refresh. Set the API URL in index.html, or open the page from GitHub Pages or your computer.")}}};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -163,10 +185,10 @@ async function pull(){
     db.rows=d.rows.filter(x=>!pend.some(p=>p.id===x.id)).concat(pend);
     save();pend.forEach(r=>push({action:"upsertRow",row:r}));if(db._mp)pushMasters();
     setSync("Synced with Google Sheet");
-    fillSelects();renderM();renderRec();renderToday()}
+    fillSelects();renderM();renderRec();renderToday();renderTpl()}
   catch(e){setSync("Could not load: "+e)}
 }
-const pushMasters=async()=>{db._mp=1;save();const{prod,biz,stat,src}=db;if(await push({action:"setMasters",masters:{prod,biz,stat,src}})){delete db._mp;save()}};
+const pushMasters=async()=>{db._mp=1;save();const{prod,biz,stat,src,tpl}=db;if(await push({action:"setMasters",masters:{prod,biz,stat,src,tpl}})){delete db._mp;save()}};
 
 // tabs
 $$("#nav button").forEach(b=>b.onclick=()=>{
@@ -205,9 +227,33 @@ function editRow(id){
   $('#nav [data-t="entry"]').click();scrollTo(0,0);
 }
 function renderToday(){
-  const r=db.rows.filter(x=>x.date===today()).sort((a,b)=>(b.s||"").localeCompare(a.s||""));
+  const r=db.rows.filter(x=>x.date===today()).sort((a,b)=>(a.s||"99").localeCompare(b.s||"99"));
   $("#t_n").textContent=r.length;$("#t_dur").textContent=fmt(r.reduce((a,x)=>a+(x.dur?toM(x.dur):0),0));
-  $("#t_list").innerHTML=r.slice(0,6).map(x=>`<li><span>${esc(x.biz||"No business")}</span><b>${esc(x.dur||"--:--")}</b></li>`).join("")||'<li class="muted">Nothing logged today yet.</li>';
+  $("#t_list").innerHTML=r.map(x=>`<li onclick="editRow('${x.id}')" title="Click to edit"><div class="tl"><b class="t">${esc(x.biz||"No business")}</b><b>${esc(x.dur||"--:--")}</b></div><div class="sub">${x.s?esc(x.s)+" - "+esc(x.e||"..."):"No time"}${x.prod?" · "+esc(x.prod):""}${x.issue?" · "+esc(x.issue):""} ${chip(x.stat)}</div></li>`).join("")||'<li class="muted" style="cursor:default">Nothing logged today yet.</li>';
+}
+
+// templates
+const TF=["biz","src","prod","issue","stat","contact","rem"];
+function renderTpl(){
+  $("#tplList").innerHTML=db.tpl.map((t,i)=>`<span class="tp"><button onclick="applyTpl(${i})" title="Fill the form">${esc(t.name)}${t.mins?" · "+t.mins+"m":""}</button><button onclick="applyTpl(${i},1)" title="Save now" aria-label="Save now">&#9889;</button><button onclick="delTpl(${i})" title="Remove" aria-label="Remove template">&times;</button></span>`).join("")||'<span class="muted">No templates yet. Fill the form, then save it as a template.</span>';
+}
+$("#tplNew").onclick=()=>{$("#tplForm").style.display="";$("#tpl_name").focus()};
+$("#tplSave").onclick=()=>{
+  const name=$("#tpl_name").value.trim();if(!name){toast("Give the template a name.");return}
+  const t={name,mins:parseInt($("#tpl_min").value)||0};TF.forEach(k=>t[k]=$("#"+F[k]).value.trim());
+  const i=db.tpl.findIndex(x=>x.name.toLowerCase()===name.toLowerCase());
+  if(i<0)db.tpl.push(t);else db.tpl[i]=t;
+  save();pushMasters();renderTpl();$("#tplForm").style.display="none";$("#tpl_name").value=$("#tpl_min").value="";toast("Template saved");
+};
+function delTpl(i){if(confirm("Remove this template?")){db.tpl.splice(i,1);save();pushMasters();renderTpl()}}
+function applyTpl(i,go){
+  const t=db.tpl[i];if(!t)return;
+  if(editId)clearForm();
+  TF.forEach(k=>$("#"+F[k]).value=t[k]||"");
+  if(!$("#f_date").value)$("#f_date").value=today();
+  if(t.mins){const n=new Date(),e=n.getHours()*60+n.getMinutes();$("#f_e").value=fmt(e);$("#f_s").value=fmt((e-t.mins+1440)%1440)}
+  syncAuto();
+  if(go)$("#saveBtn").click();else toast('"'+t.name+'" applied');
 }
 
 // records
@@ -307,7 +353,7 @@ $("#m_file").onchange=async e=>{
   }catch(err){toast("Could not read that file.")}
 };
 
-save();clearForm();fillSelects();renderM();renderToday();pull();
+save();clearForm();fillSelects();renderM();renderToday();renderTpl();pull();
 </script>
 </body>
 </html>

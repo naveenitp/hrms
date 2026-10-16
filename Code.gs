@@ -40,9 +40,9 @@ function doGet() {
       for (const t in DEFAULTS) DEFAULTS[t].forEach(n => seed.push([t, n, '']));
       ms.getRange(2, 1, seed.length, 3).setValues(seed);
     }
-    const m = { prod: [], biz: [], stat: [], src: [] };
+    const m = { prod: [], biz: [], stat: [], src: [], tpl: [] };
     ms.getRange(2, 1, ms.getLastRow() - 1, 3).getValues().forEach(r => {
-      if (m[r[0]]) m[r[0]].push(r[0] === 'biz' ? { name: String(r[1]), code: String(r[2]) } : String(r[1]));
+      if (m[r[0]]) { const t = r[0]; let x = String(r[1]); if (t === 'biz') x = { name: x, code: String(r[2]) }; else if (t === 'tpl') { try { x = JSON.parse(String(r[2])); } catch (e) { return; } } m[t].push(x); }
     });
     const n = ts.getLastRow() - 1;
     const rows = n > 0 ? ts.getRange(2, 1, n, HEAD.length).getValues().map(r => {
@@ -69,7 +69,7 @@ function doPost(e) {
       renumber_(ts);
     } else if (b.action === 'setMasters') {
       const ms = sheet_(MS, ['Type', 'Name', 'Code']), rows = [];
-      for (const t in b.masters) b.masters[t].forEach(x => rows.push(t === 'biz' ? [t, x.name, x.code] : [t, x, '']));
+      for (const t in b.masters) b.masters[t].forEach(x => rows.push(t === 'biz' ? [t, x.name, x.code] : t === 'tpl' ? [t, x.name, JSON.stringify(x)] : [t, x, '']));
       if (ms.getLastRow() > 1) ms.getRange(2, 1, ms.getLastRow() - 1, 3).clearContent();
       if (rows.length) ms.getRange(2, 1, rows.length, 3).setValues(rows);
     }
