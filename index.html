@@ -48,6 +48,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box
 .today li:hover b.t{color:var(--acc)}
 .tl{display:flex;justify-content:space-between;gap:8px}
 .sub{font-size:12px;color:var(--mute);display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:3px}
+.rm{min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
 #t_list{max-height:calc(100vh - 560px);min-height:140px;overflow:auto}
 .stack{display:grid;gap:20px;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -119,7 +120,7 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
     <p class="muted" style="margin:10px 0 0;font-size:12px">Templates keep business, source, product, Issue/Request, status, contact and remarks. Date and times are always yours to set.</p>
   </div>
   <aside class="card today">
-    <h2>Today</h2>
+    <div class="head" style="align-items:flex-start"><h2>Today</h2><div style="text-align:right"><div id="clk_d" class="muted" style="font-size:13px"></div><b id="clk_t" style="font-size:20px;font-variant-numeric:tabular-nums"></b></div></div>
     <div class="big" id="t_dur">00:00</div>
     <div class="muted"><span id="t_n">0</span> entries logged</div>
     <ul id="t_list"></ul>
@@ -232,9 +233,9 @@ function editRow(id){
   $('#nav [data-t="entry"]').click();scrollTo(0,0);
 }
 function renderToday(){
-  const r=db.rows.filter(x=>x.date===today()).sort((a,b)=>(a.s||"99").localeCompare(b.s||"99"));
+  const r=db.rows.filter(x=>x.date===today()).reverse();
   $("#t_n").textContent=r.length;$("#t_dur").textContent=fmt(r.reduce((a,x)=>a+(x.dur?toM(x.dur):0),0));
-  $("#t_list").innerHTML=r.map(x=>`<li onclick="editRow('${x.id}')" title="Click to edit"><div class="tl"><b class="t">${esc(x.biz||"No business")}</b><b>${esc(x.dur||"--:--")}</b></div><div class="sub">${x.s?esc(x.s)+" - "+esc(x.e||"..."):"No time"}${x.prod?" · "+esc(x.prod):""}${x.issue?" · "+esc(x.issue):""} ${chip(x.stat)}</div></li>`).join("")||'<li class="muted" style="cursor:default">Nothing logged today yet.</li>';
+  $("#t_list").innerHTML=r.map(x=>`<li onclick="editRow('${x.id}')" title="Click to edit"><div class="tl"><b class="t rm">${esc(x.rem||"No remarks")}</b><b>${esc(x.dur||"--:--")}</b></div><div class="sub">${x.s?esc(x.s)+" - "+esc(x.e||"..."):"No time"}${x.prod?" · "+esc(x.prod):""}${x.issue?" · "+esc(x.issue):""} ${chip(x.stat)}</div></li>`).join("")||'<li class="muted" style="cursor:default">Nothing logged today yet.</li>';
 }
 
 // templates
@@ -362,6 +363,14 @@ $("#m_file").onchange=async e=>{
   }catch(err){toast("Could not read that file.")}
 };
 
+let lastDay=today();
+function tick(){
+  const n=new Date();
+  $("#clk_d").textContent=n.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+  $("#clk_t").textContent=n.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  if(today()!==lastDay){lastDay=today();renderToday()}
+}
+setInterval(tick,1000);tick();
 save();clearForm();fillSelects();renderM();renderToday();renderTpl();showLink();pull();
 </script>
 </body>
