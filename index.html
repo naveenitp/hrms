@@ -19,9 +19,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta 
 .seg button{border:0;background:none;padding:7px 16px;border-radius:9px;font:inherit;font-weight:600;color:var(--mute);cursor:pointer}
 .seg button.on{background:var(--card);color:var(--acc);box-shadow:var(--sh)}
 .sync{margin-left:auto;font-size:12px;color:var(--mute)}
-main{max-width:1180px;margin:0 auto;padding:24px}
+main{max-width:none;margin:0;padding:24px 28px}
 .tab{display:none}.tab.on{display:block}
-.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
 @media(max-width:860px){.cols{grid-template-columns:1fr}}
 .card{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:24px}
 .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
@@ -40,14 +40,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box
 .btn.del{background:none;color:var(--warn)}
 .btn.sm{padding:4px 11px;font-size:13px}
 .row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
-.today{position:sticky;top:84px}
+.side{position:sticky;top:84px;display:grid;gap:20px;min-width:0}
+.sel{display:grid;gap:10px;margin-top:12px}
 .big{font-size:44px;font-weight:800;letter-spacing:-1.5px;color:var(--acc);line-height:1.1;margin-top:10px}
 .today ul{list-style:none;padding:0;margin:14px 0 0}
 .today li{display:block;padding:11px 0;border-top:1px solid var(--line);font-size:14px;cursor:pointer}
 .today li:hover b.t{color:var(--acc)}
 .tl{display:flex;justify-content:space-between;gap:8px}
 .sub{font-size:12px;color:var(--mute);display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:3px}
-#t_list{max-height:calc(100vh - 300px);overflow:auto}
+#t_list{max-height:calc(100vh - 560px);min-height:140px;overflow:auto}
 .stack{display:grid;gap:20px;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .tp{display:inline-flex;border-radius:99px;background:var(--acc2);overflow:hidden}
@@ -75,23 +76,12 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
   <nav class="seg" id="nav">
     <button data-t="entry" class="on">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
   </nav>
-  <span class="sync" id="sync"></span>
+  <div style="margin-left:auto;display:flex;gap:14px;align-items:center"><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none">Open Google Sheet</a><span class="sync" id="sync"></span></div>
 </header>
 <main>
 
 <section class="tab on" id="entry"><div class="cols">
-  <div class="stack">
-  <div class="card">
-    <div class="head"><h3 style="margin:0">Quick templates</h3><button class="btn sm ghost" id="tplNew">Save current form as template</button></div>
-    <div class="chips" id="tplList"></div>
-    <div class="bar" id="tplForm" style="display:none;margin-top:14px">
-      <label>Template name<input id="tpl_name"></label>
-      <label>Default minutes (optional)<input id="tpl_min" type="number" min="1" style="width:170px"></label>
-      <button class="btn sm" id="tplSave">Save template</button>
-    </div>
-    <p class="muted" style="margin:10px 0 0;font-size:12px">Tap a template to fill the form. Tap the lightning icon to save it instantly. With default minutes, the end time is now and the start time is set back by that many minutes.</p>
-  </div>
-  <div class="card">
+    <div class="card">
     <div class="head"><h2 id="formTitle">New entry</h2><span class="muted">Only the date is required</span></div>
     <div class="grp"><h3>When</h3><div class="g">
       <label>Date<input type="date" id="f_date"></label>
@@ -114,6 +104,19 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
     <label style="margin-top:14px">Remarks<textarea id="f_rem" rows="2"></textarea></label></div>
     <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button></div>
   </div>
+  <div class="side">
+  <div class="card">
+    <h2 style="font-size:17px">Quick templates</h2>
+    <div class="sel">
+      <select id="tplSel"></select>
+      <div class="row" style="margin:0"><button class="btn" id="tplApply">Apply to form</button><button class="btn del" id="tplDel">Delete</button></div>
+      <button class="btn ghost" id="tplNew">Save current form as template</button>
+      <div id="tplForm" style="display:none" class="sel">
+        <label>Template name<input id="tpl_name"></label>
+        <button class="btn sm" id="tplSave">Save template</button>
+      </div>
+    </div>
+    <p class="muted" style="margin:10px 0 0;font-size:12px">Templates keep business, source, product, Issue/Request, status, contact and remarks. Date and times are always yours to set.</p>
   </div>
   <aside class="card today">
     <h2>Today</h2>
@@ -121,6 +124,7 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
     <div class="muted"><span id="t_n">0</span> entries logged</div>
     <ul id="t_list"></ul>
   </aside>
+  </div>
 </div></section>
 
 <section class="tab" id="rec"><div class="card">
@@ -154,7 +158,7 @@ th{color:var(--mute);font-weight:600;background:var(--bg)}
 <div class="toast" id="toast"></div>
 <script>
 const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s),K="hrms_timesheet_v2";
-const API="https://script.google.com/macros/s/AKfycbxCWxQX9YnTTBCEVLOmAKuY5l07F1zectqndWLmRrHPGk3yoYdXXM8uCTOPe7uqy6Yv/exec"; // paste your Google Apps Script Web app URL between the quotes
+const API="https://script.google.com/macros/s/AKfycbxCWxQX9YnTTBCEVLOmAKuY5l07F1zectqndWLmRrHPGk3yoYdXXM8uCTOPe7uqy6Yv/exec"; // Google Apps Script Web app URL (keep the same deployment so this never changes)
 let db=null;try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
 db=Object.assign({tpl:[],prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
 let storeOK=true;
@@ -168,6 +172,7 @@ const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(
 const dur=(s,e)=>{if(!s||!e)return"";let m=toM(e)-toM(s);if(m<0)m+=1440;return fmt(m)};
 let tt;const toast=t=>{const x=$("#toast");x.textContent=t;x.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>x.classList.remove("on"),2600)};
 const setSync=t=>$("#sync").textContent=t;
+function showLink(){const a=$("#sheetLink");if(db.link){a.href=db.link;a.style.display=""}}
 
 // Google Sheet sync
 async function push(body){
@@ -184,7 +189,7 @@ async function pull(){
     if(!db._mp)Object.assign(db,d.masters);
     db.rows=d.rows.filter(x=>!pend.some(p=>p.id===x.id)).concat(pend);
     save();pend.forEach(r=>push({action:"upsertRow",row:r}));if(db._mp)pushMasters();
-    setSync("Synced with Google Sheet");
+    if(d.link)db.link=d.link;save();showLink();setSync("Synced with Google Sheet");
     fillSelects();renderM();renderRec();renderToday();renderTpl()}
   catch(e){setSync("Could not load: "+e)}
 }
@@ -235,26 +240,30 @@ function renderToday(){
 // templates
 const TF=["biz","src","prod","issue","stat","contact","rem"];
 function renderTpl(){
-  $("#tplList").innerHTML=db.tpl.map((t,i)=>`<span class="tp"><button onclick="applyTpl(${i})" title="Fill the form">${esc(t.name)}${t.mins?" · "+t.mins+"m":""}</button><button onclick="applyTpl(${i},1)" title="Save now" aria-label="Save now">&#9889;</button><button onclick="delTpl(${i})" title="Remove" aria-label="Remove template">&times;</button></span>`).join("")||'<span class="muted">No templates yet. Fill the form, then save it as a template.</span>';
+  const el=$("#tplSel"),v=el.value;
+  el.innerHTML='<option value="">'+(db.tpl.length?"Choose a template...":"No templates yet")+'</option>'+db.tpl.map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join("");
+  el.value=v&&db.tpl[v]?v:"";
 }
 $("#tplNew").onclick=()=>{$("#tplForm").style.display="";$("#tpl_name").focus()};
 $("#tplSave").onclick=()=>{
   const name=$("#tpl_name").value.trim();if(!name){toast("Give the template a name.");return}
-  const t={name,mins:parseInt($("#tpl_min").value)||0};TF.forEach(k=>t[k]=$("#"+F[k]).value.trim());
+  const t={name};TF.forEach(k=>t[k]=$("#"+F[k]).value.trim());
   const i=db.tpl.findIndex(x=>x.name.toLowerCase()===name.toLowerCase());
   if(i<0)db.tpl.push(t);else db.tpl[i]=t;
-  save();pushMasters();renderTpl();$("#tplForm").style.display="none";$("#tpl_name").value=$("#tpl_min").value="";toast("Template saved");
+  save();pushMasters();renderTpl();$("#tplSel").value=String(i<0?db.tpl.length-1:i);
+  $("#tplForm").style.display="none";$("#tpl_name").value="";toast("Template saved");
 };
-function delTpl(i){if(confirm("Remove this template?")){db.tpl.splice(i,1);save();pushMasters();renderTpl()}}
-function applyTpl(i,go){
-  const t=db.tpl[i];if(!t)return;
+$("#tplApply").onclick=()=>{
+  const t=db.tpl[$("#tplSel").value];if(!t){toast("Choose a template first.");return}
   if(editId)clearForm();
   TF.forEach(k=>$("#"+F[k]).value=t[k]||"");
   if(!$("#f_date").value)$("#f_date").value=today();
-  if(t.mins){const n=new Date(),e=n.getHours()*60+n.getMinutes();$("#f_e").value=fmt(e);$("#f_s").value=fmt((e-t.mins+1440)%1440)}
-  syncAuto();
-  if(go)$("#saveBtn").click();else toast('"'+t.name+'" applied');
-}
+  syncAuto();toast('"'+t.name+'" applied. Set the times and save.');$("#f_s").focus();
+};
+$("#tplDel").onclick=()=>{
+  const i=$("#tplSel").value;if(i===""||!db.tpl[i]){toast("Choose a template first.");return}
+  if(confirm('Delete template "'+db.tpl[i].name+'"?')){db.tpl.splice(i,1);save();pushMasters();renderTpl()}
+};
 
 // records
 let rmode="day";
@@ -353,7 +362,7 @@ $("#m_file").onchange=async e=>{
   }catch(err){toast("Could not read that file.")}
 };
 
-save();clearForm();fillSelects();renderM();renderToday();renderTpl();pull();
+save();clearForm();fillSelects();renderM();renderToday();renderTpl();showLink();pull();
 </script>
 </body>
 </html>
