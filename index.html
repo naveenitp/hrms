@@ -195,6 +195,42 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
 .lg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-top:6px}
 @media(max-width:1100px){.sp8{grid-column:1/-1}.sp4{grid-column:span 6}}
 @media(max-width:700px){.sp4{grid-column:1/-1}.hero{padding:20px}.hl{font-size:22px}.hclock{font-size:30px}}
+.st{display:inline-flex;align-items:center;gap:6px;padding:3px 11px 3px 9px;border-radius:99px;background:var(--acc2);color:var(--ink);font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mute);flex:none}
+.st.ok::before{background:var(--c2)}.st.pr::before{background:var(--c3)}.st.op::before{background:var(--c4)}
+:root[data-theme="bw"] .st{border:1px solid #000}
+#r_tbl td[data-label="Status"]{white-space:nowrap}
+.pet{position:fixed;left:0;bottom:6px;z-index:8;width:130px;height:84px;pointer-events:none}
+.pet .flip{position:absolute;inset:0;pointer-events:auto;cursor:pointer}
+.pet svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.pet svg *{transform-box:fill-box}
+:root[data-theme="bw"] .pet svg{filter:grayscale(1)}
+.pet .tail{transform-origin:100% 100%;animation:wag 1.8s ease-in-out infinite}
+.pet .la,.pet .lb{transform-origin:50% 0}
+.pet.walk .la{animation:legA .5s linear infinite}
+.pet.walk .lb{animation:legB .5s linear infinite}
+.pet .head{transform-origin:30% 90%;transition:transform .4s}
+.pet .bd{transition:transform .4s}
+.pet .eye{transform-origin:50% 50%;animation:blink 4.5s infinite}
+.pet.sit .legs,.pet.sleep .legs{display:none}
+.pet.sit .bd,.pet.sit .head,.pet.sleep .bd{transform:translateY(8px)}
+.pet.sleep .head{transform:translate(-3px,12px) rotate(14deg)}
+.pet.sleep .eye{animation:none;transform:scaleY(.12)}
+.pet.eat .head{animation:nom .7s ease-in-out infinite}
+.pet .bowl{display:none}.pet.eat .bowl{display:block}
+.pet svg.hop{animation:jump .6s ease}
+.pet .bub{position:absolute;bottom:100%;margin-bottom:2px;max-width:210px;width:max-content;background:var(--ink);color:var(--bg);font-size:12px;font-weight:600;line-height:1.35;padding:7px 11px;border-radius:12px;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s;pointer-events:none}
+.pet .bub.on{opacity:1;transform:none}
+.pet .zz{position:absolute;left:70px;top:4px;font-weight:800;font-size:13px;color:var(--mute);opacity:0;pointer-events:none}
+.pet.sleep .zz{animation:zz 2.4s ease-in-out infinite}
+@keyframes legA{0%,100%{transform:rotate(28deg)}50%{transform:rotate(-28deg)}}
+@keyframes legB{0%,100%{transform:rotate(-28deg)}50%{transform:rotate(28deg)}}
+@keyframes wag{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(14deg)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes nom{0%,100%{transform:translate(14px,12px) rotate(20deg)}50%{transform:translate(18px,17px) rotate(32deg)}}
+@keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px)}}
+@keyframes zz{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-22px)}}
+@media(max-width:700px){.pet{width:100px;height:65px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -205,7 +241,7 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
     <button data-t="dash" class="on">Dashboard</button><button data-t="entry">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
   </nav></div>
   <div class="clock"><div id="clk_d"></div><b id="clk_t"></b></div>
-  <div class="tools"><select id="themeSel" class="themesel" aria-label="Theme"></select><button class="btn sm ghost" id="syncBtn">Sync now</button><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open Google Sheet</a><span class="sync" id="sync"></span></div>
+  <div class="tools"><button class="btn sm ghost" id="petBtn">Hide pet</button><select id="themeSel" class="themesel" aria-label="Theme"></select><button class="btn sm ghost" id="syncBtn">Sync now</button><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open Google Sheet</a><span class="sync" id="sync"></span></div>
 </header>
 <main>
 
@@ -350,7 +386,7 @@ async function push(body){
   if(!API)return true;setSync("Saving...");
   try{const r=await(await fetch(API,{method:"POST",body:JSON.stringify(body)})).json();if(r.error)throw r.error;setSync("Saved to Google Sheet");
     if(body.row){const x=db.rows.find(z=>z.id===body.row.id);if(x){delete x._u;save()}}updBtn();return true}
-  catch(e){setSync("Not saved - will retry");updBtn();alert("Could not save to Google Sheet: "+e+"\nYour entry is kept in this browser and will be retried on the next load.");return false}
+  catch(e){setSync("Not saved - will retry");updBtn();petSay("That did not save. Try Retry save.");alert("Could not save to Google Sheet: "+e+"\nYour entry is kept in this browser and will be retried on the next load.");return false}
 }
 async function pull(){
   if(!API){setSync("Offline mode: data stays in this browser");return}
@@ -405,7 +441,7 @@ $("#saveBtn").onclick=()=>{
   const was=!!editId,row={...r,id:editId||uid(),...(API?{_u:1}:{})};
   if(was)db.rows[db.rows.findIndex(x=>x.id===editId)]=row;
   else db.rows.push(row);
-  save();push({action:"upsertRow",row});clearForm();justSaved=row.id;renderToday();toast(was?"Entry updated":"Entry saved");flashBtn();
+  save();push({action:"upsertRow",row});clearForm();justSaved=row.id;renderToday();toast(was?"Entry updated":"Entry saved");flashBtn();petSay(was?"Entry updated. Neat!":"Saved! Great work.",1);
 };
 function editRow(id){
   const r=db.rows.find(x=>x.id===id);if(!r)return;
@@ -543,6 +579,90 @@ $("#d_edit").onclick=()=>{const v=prompt("Your name for the welcome message:",un
 $("#d_target").value=tgt;
 $("#d_target").oninput=e=>{const v=parseFloat(e.target.value);if(v>0){tgt=v;try{localStorage.setItem("hrms_target",v)}catch(x){}renderDash()}};
 
+// pet assistant
+const PET_ENABLED=true;  // set to false to remove the pet completely
+const PET_HOSTS=[];      // e.g. ["yourname.github.io"]. The pet runs only on these addresses. Empty = wherever this file is hosted.
+const pet={x:0,el:null,on:true,t:null,bt:null,walking:false};
+const calm=!!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
+const CAT=`<svg viewBox="0 0 130 84" aria-hidden="true">
+<ellipse cx="62" cy="79" rx="38" ry="3.2" fill="rgba(0,0,0,.14)"/>
+<path class="tail" d="M30 56 C10 58 6 38 16 28" fill="none" stroke="#e48a2f" stroke-width="7" stroke-linecap="round"/>
+<g class="legs"><rect class="lb" x="44" y="62" width="9" height="16" rx="4.5" fill="#c9701f"/><rect class="la" x="76" y="62" width="9" height="16" rx="4.5" fill="#c9701f"/></g>
+<g class="bd"><ellipse cx="56" cy="56" rx="30" ry="17" fill="#f4a85c"/><path d="M38 48q4-6 8 0M54 43q4-6 8 0M70 47q4-6 8 0" stroke="#e48a2f" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+<g class="legs"><rect class="la" x="34" y="62" width="9" height="16" rx="4.5" fill="#e48a2f"/><rect class="lb" x="66" y="62" width="9" height="16" rx="4.5" fill="#e48a2f"/></g>
+<g class="head"><polygon points="76,30 78,12 90,24" fill="#f4a85c"/><polygon points="92,24 104,12 106,31" fill="#f4a85c"/><polygon points="79,26 80,17 86,24" fill="#f6b6b0"/><polygon points="96,24 102,17 103,27" fill="#f6b6b0"/><circle cx="91" cy="40" r="16" fill="#f4a85c"/>
+<ellipse class="eye" cx="85" cy="38" rx="2.4" ry="3" fill="#1e1e2a"/><ellipse class="eye" cx="98" cy="38" rx="2.4" ry="3" fill="#1e1e2a"/>
+<path d="M89 45l2 2.4 2-2.4z" fill="#e0707a"/><path d="M91 47.4q-3 3-6 1M91 47.4q3 3 6 1" stroke="#1e1e2a" stroke-width="1.2" fill="none"/>
+<path d="M79 45l-10-2M79 48l-10 3M103 45l10-2M103 48l10 3" stroke="#1e1e2a" stroke-width=".9" opacity=".55"/></g>
+<g class="bowl"><path d="M103 70Q104 81 116 81Q128 81 129 70Z" fill="#5f7690"/><ellipse cx="116" cy="70" rx="13" ry="3.5" fill="#7a8fa6"/><ellipse cx="116" cy="69" rx="10" ry="2.8" fill="#8b5a2b"/></g>
+</svg>`;
+const pose=c=>{pet.el.className="pet "+c};
+const face=d=>{pet.el.querySelector(".flip").style.transform=d<0?"scaleX(-1)":"scaleX(1)"};
+function setX(x,ms){pet.el.style.transition=ms?"transform "+ms+"ms linear":"none";pet.el.style.transform="translateX("+x+"px)";pet.x=x}
+function go(x,cb){
+  const d=x-pet.x;
+  if(Math.abs(d)<8){pet.walking=false;cb&&cb();return}
+  face(d);pose("walk");pet.walking=true;const ms=Math.abs(d)/55*1000;setX(x,ms);
+  clearTimeout(pet.t);pet.t=setTimeout(()=>{pet.walking=false;cb&&cb()},ms+50);
+}
+function stay(c,ms,say){pose(c);if(say)petSay(say);clearTimeout(pet.t);pet.t=setTimeout(next,ms)}
+function petSay(t,hop){
+  if(!pet.el||pet.el.style.display==="none")return;
+  const b=pet.el.querySelector(".bub"),r=pet.x>innerWidth-240;
+  b.textContent=t;b.style.left=r?"auto":"0";b.style.right=r?"0":"auto";b.classList.add("on");
+  clearTimeout(pet.bt);pet.bt=setTimeout(()=>b.classList.remove("on"),3400);
+  if(hop){const v=pet.el.querySelector("svg");v.classList.remove("hop");void v.getBoundingClientRect();v.classList.add("hop")}
+}
+function tip(){
+  const tr=db.rows.filter(r=>r.date===today()),m=tr.reduce((a,r)=>a+durOf(r),0),h=new Date().getHours();
+  const L=[tr.length?`You have ${tr.length} ${tr.length===1?"entry":"entries"} today (${hm(m)}).`:"No entries yet today. Shall we log one?","Remember to log your end times.",h>=17?"Wrapping up? Check today's total on the dashboard.":"Good pace! Keep going.","Tip: save a template for repeat tasks."];
+  petSay(L[Math.floor(Math.random()*L.length)]);
+}
+function leave(){
+  go(innerWidth+20,()=>{
+    pet.el.style.opacity=0;
+    pet.t=setTimeout(()=>{setX(-pet.el.offsetWidth-20,0);pet.el.style.opacity=1;face(1);pose("walk");
+      pet.t=setTimeout(()=>go(60+Math.random()*innerWidth*.4,()=>stay("sit",3000)),60)},4000+Math.random()*4000);
+  });
+}
+function next(){
+  if(!pet.on||calm)return;
+  const max=innerWidth-pet.el.offsetWidth,r=Math.random();
+  if(r<.4)go(Math.random()*max,()=>stay("sit",3000+Math.random()*4000));
+  else if(r<.6)go(Math.random()*max,()=>stay("eat",3500+Math.random()*2500,"Nom nom nom"));
+  else if(r<.75)stay("sleep",5000+Math.random()*4000);
+  else if(r<.9){tip();stay("sit",4500)}
+  else leave();
+}
+function setPet(on){
+  pet.on=on;clearTimeout(pet.t);try{localStorage.setItem("hrms_pet",on?"1":"0")}catch(e){}
+  $("#petBtn").textContent=on?"Hide pet":"Show pet";
+  const w=pet.el.offsetWidth||130;
+  if(on){
+    pet.el.style.display="";pet.el.style.opacity=1;
+    if(calm){setX(innerWidth-w-16,0);pose("sit");return}
+    setX(-w-10,0);face(1);pose("walk");
+    pet.t=setTimeout(()=>{petSay("Hi! I'm Mochi.",1);go(60+Math.random()*innerWidth*.3,()=>stay("sit",3500))},80);
+  }else{
+    petSay("See you soon!");
+    if(calm){pet.el.style.display="none";return}
+    pet.t=setTimeout(()=>go(innerWidth+20,()=>{pet.el.style.display="none"}),900);
+  }
+}
+(function(){
+  if(!PET_ENABLED||(PET_HOSTS.length&&!PET_HOSTS.includes(location.hostname))){$("#petBtn").style.display="none";return}
+  const d=document.createElement("div");d.className="pet sit";d.title="Mochi";
+  d.innerHTML='<div class="bub"></div><div class="zz">z z Z</div><div class="flip">'+CAT+'</div>';
+  document.body.appendChild(d);pet.el=d;
+  const f=d.querySelector(".flip"),L=["Purr... thank you!","Meow!","That tickles!","Need a break? I'll watch your entries."];
+  f.onclick=()=>{if(!pet.walking){clearTimeout(pet.t);pose("sit");pet.t=setTimeout(next,5000)}petSay(L[Math.floor(Math.random()*L.length)],1)};
+  f.ondblclick=()=>setPet(false);
+  $("#petBtn").onclick=()=>setPet(!pet.on);
+  addEventListener("resize",()=>{const m=innerWidth-d.offsetWidth;if(!pet.walking&&pet.x>m&&m>0)setX(m,0)});
+  let on=true;try{on=localStorage.getItem("hrms_pet")!=="0"}catch(e){}
+  if(on)setPet(true);else{pet.on=false;d.style.display="none";$("#petBtn").textContent="Show pet"}
+})();
+
 // records
 let rmode="day";
 $("#r_day").value=today();$("#r_month").value=today().slice(0,7);
@@ -559,7 +679,8 @@ function getRows(){
 const H=["SL.no","Month","Date","Code","Source","Product","Transaction Start Time","Transaction End time","Total Duration","CONTACT NO","Business Name","Issue/Request","Ticket No","Status","Remarks"];
 const line=r=>[r.sl,mon(r.date),r.date,r.code,r.src,r.prod,r.s,r.e,r.dur,r.contact,r.biz,r.issue,r.ticket,r.stat,r.rem].map(x=>x??"");
 const total=rows=>rows.reduce((a,r)=>a+(r.dur?toM(r.dur):0),0);
-const chip=s=>s?`<span class="chip ${/resolv|clos|done|complet/i.test(s)?"ok":""}">${esc(s)}</span>`:"";
+const stc=s=>isDone(s)?"ok":/progress|pending|wip|working|hold|wait/i.test(s)?"pr":/open|new/i.test(s)?"op":"";
+const chip=s=>s?`<span class="st ${stc(s)}">${esc(s)}</span>`:"";
 function renderRec(){
   const rows=getRows();
   $("#r_tot").textContent=`${rows.length} entries · ${fmt(total(rows))}`;
