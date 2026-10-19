@@ -644,13 +644,16 @@ function setPet(on){
     setX(-w-10,0);face(1);pose("walk");
     pet.t=setTimeout(()=>{petSay("Hi! I'm Mochi.",1);go(60+Math.random()*innerWidth*.3,()=>stay("sit",3500))},80);
   }else{
-    petSay("See you soon!");
-    if(calm){pet.el.style.display="none";return}
-    pet.t=setTimeout(()=>go(innerWidth+20,()=>{pet.el.style.display="none"}),900);
+    pet.walking=false;
+    try{setX(new DOMMatrix(getComputedStyle(pet.el).transform).m41,0)}catch(e){}
+    pet.el.querySelector(".bub").classList.remove("on");
+    pet.el.style.transition="opacity .3s";pet.el.style.opacity=0;
+    pet.t=setTimeout(()=>{pet.el.style.display="none"},320);
   }
 }
 (function(){
-  if(!PET_ENABLED||(PET_HOSTS.length&&!PET_HOSTS.includes(location.hostname))){$("#petBtn").style.display="none";return}
+  let framed=false;try{framed=window.top!==window}catch(e){framed=true}
+  if(!PET_ENABLED||framed||(PET_HOSTS.length&&!PET_HOSTS.includes(location.hostname))){$("#petBtn").style.display="none";return}
   const d=document.createElement("div");d.className="pet sit";d.title="Mochi";
   d.innerHTML='<div class="bub"></div><div class="zz">z z Z</div><div class="flip">'+CAT+'</div>';
   document.body.appendChild(d);pet.el=d;
