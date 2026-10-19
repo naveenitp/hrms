@@ -128,20 +128,113 @@ th{color:var(--mute);font-weight:600;background:var(--head)}
  #r_tbl td:last-child{justify-content:flex-end;gap:8px;padding-top:8px}
  #r_tbl td:last-child::before{content:none}
 }
+@keyframes tabIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tab.on{animation:tabIn .3s ease}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#r_tbl tr{animation:rowIn .3s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateY(-10px);background:var(--acc2)}to{opacity:1;transform:none;background:transparent}}
+.today li.new{animation:slideIn .5s ease}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.big.bump{animation:bump .4s ease;transform-origin:left center}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
+.btn.okb{background:var(--okbg);color:var(--ok);animation:pop .35s ease}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sync.busy::before{content:"";display:inline-block;width:11px;height:11px;margin-right:6px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-1px}
+@keyframes flashBg{from{box-shadow:0 0 0 3px var(--acc)}to{box-shadow:0 0 0 3px transparent}}
+.flash{animation:flashBg .9s ease}
+.card,.top,.seg,.chip,input,select,textarea,th,td{transition:background-color .25s,color .25s,border-color .25s,box-shadow .25s}
+.btn{transition:background-color .25s,color .25s,box-shadow .25s,transform .12s,filter .15s}
+.btn:active{transform:scale(.96)}
+.dgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.sp4{grid-column:span 4}.sp8{grid-column:span 8}.sp12{grid-column:1/-1}
+:root{--c1:#3a55d6;--c2:#16895d;--c3:#e0a020;--c4:#d1433a;--c5:#8a63d2}
+:root[data-theme="dark"]{--c1:#fff;--c2:#c4c4c4;--c3:#919191;--c4:#666;--c5:#444}
+:root[data-theme="soft"]{--c1:#4a63d8;--c2:#1f8f66;--c3:#d79a1e;--c4:#c9463d;--c5:#8a63d2}
+:root[data-theme="bw"]{--c1:#000;--c2:#444;--c3:#777;--c4:#aaa;--c5:#ccc}
+:root[data-theme="paper"]{--c1:#2f5d62;--c2:#3b6b3b;--c3:#b07d2b;--c4:#a8412f;--c5:#6b5b95}
+.hero{position:relative;overflow:hidden;border-radius:var(--r);padding:28px 30px;background:var(--acc);color:var(--accink);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;box-shadow:var(--sh);border:var(--bw) solid var(--line)}
+.hero::after{content:"";position:absolute;right:-70px;top:-90px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.14)}
+.hero>*{position:relative;z-index:1}
+.hl{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.hs{opacity:.85;margin-top:2px}
+.hclock{font-size:42px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.hq{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.hq button{background:transparent;color:inherit;border:1.5px solid currentColor;border-radius:var(--ri);padding:7px 14px;font:inherit;font-weight:600;cursor:pointer}
+.hq button:hover{background:rgba(255,255,255,.18)}
+.lnk{background:none;border:0;color:inherit;opacity:.75;text-decoration:underline;cursor:pointer;font:inherit;font-size:12px;padding:0;margin-top:10px}
+.dh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+label.tg{flex-direction:row;align-items:center;gap:6px;font-size:12px}
+label.tg input{width:64px;padding:4px 8px;font-size:13px}
+.rg{position:relative;width:170px;margin:8px auto 14px}.rg svg{width:100%;display:block}
+.rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.rc b{font-size:30px;font-weight:800}.rc span{font-size:11px;color:var(--mute);max-width:110px}
+.tm{display:flex;justify-content:space-around;text-align:center;border-top:1px solid var(--line);padding-top:12px}
+.tm div{display:flex;flex-direction:column}.tm b{font-size:16px}.tm span{font-size:11px;color:var(--mute)}
+.dbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}
+.kpi{position:relative;padding:18px 20px 18px 24px}
+.kpi::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0;background:var(--k)}
+.kl{font-size:12px;color:var(--mute);font-weight:600}
+.kv{font-size:28px;font-weight:800;letter-spacing:-.5px;margin:2px 0}
+.kd{font-size:12px;font-weight:700;color:var(--mute)}.kd span{font-weight:500}
+.kd.up{color:var(--c2)}.kd.dn{color:var(--c4)}
+.hb{margin-bottom:12px}.hbt{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.hbt span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbk{height:8px;border-radius:8px;background:var(--head);margin:5px 0 2px;overflow:hidden}
+.hbk i{display:block;height:100%;border-radius:8px;transform-origin:left;animation:growX .6s ease both}
+.hbs{font-size:11px;color:var(--mute)}
+@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.bar-r{transform-box:fill-box;transform-origin:50% 100%;animation:grow .6s ease both}
+.dn{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.dn svg{width:150px;flex:none}
+.dn ul{list-style:none;margin:0;padding:0;flex:1;min-width:120px}
+.dn li{display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0}
+.dn li i{width:10px;height:10px;border-radius:3px;flex:none}
+.dn li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stk{display:flex;height:12px;border-radius:12px;overflow:hidden;background:var(--head)}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-top:6px}
+@media(max-width:1100px){.sp8{grid-column:1/-1}.sp4{grid-column:span 6}}
+@media(max-width:700px){.sp4{grid-column:1/-1}.hero{padding:20px}.hl{font-size:22px}.hclock{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="lf"><div class="brand"><i></i>Timesheet</div>
   <nav class="seg" id="nav">
-    <button data-t="entry" class="on">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
+    <button data-t="dash" class="on">Dashboard</button><button data-t="entry">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
   </nav></div>
   <div class="clock"><div id="clk_d"></div><b id="clk_t"></b></div>
   <div class="tools"><select id="themeSel" class="themesel" aria-label="Theme"></select><button class="btn sm ghost" id="syncBtn">Sync now</button><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open Google Sheet</a><span class="sync" id="sync"></span></div>
 </header>
 <main>
 
-<section class="tab on" id="entry"><div class="cols">
+<section class="tab on" id="dash"><div class="dgrid">
+  <div class="hero sp8">
+    <div>
+      <div class="hl"><span id="d_greet">Welcome</span><span id="d_name"></span></div>
+      <div class="hs" id="d_date"></div><div class="hs" id="d_hs2"></div>
+      <div class="hq"><button id="d_new">+ New entry</button><button id="d_rec">View records</button></div>
+      <button class="lnk" id="d_edit">Edit name</button>
+    </div>
+    <div class="hclock" id="d_time"></div>
+  </div>
+  <div class="card sp4">
+    <div class="dh"><h3>Today's utilisation</h3><label class="tg">Target <input id="d_target" type="number" min="1" max="24" step="0.5"> h</label></div>
+    <div class="rg"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--head)" stroke-width="9"/><circle id="ring" cx="50" cy="50" r="42" fill="none" stroke="var(--c2)" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .9s ease"/></svg><div class="rc"><b id="d_ringp">0%</b><span id="d_tsub"></span></div></div>
+    <div class="tm" id="d_tmeta"></div>
+  </div>
+  <div class="dbar sp12"><div><h2>Performance overview</h2><div class="muted" id="d_range" style="font-size:12px"></div></div>
+    <div class="seg" id="d_seg"><button data-p="7" class="on">7 days</button><button data-p="30">30 days</button><button data-p="m">This month</button></div></div>
+  <div class="kpis sp12" id="d_kpis"></div>
+  <div class="card sp8"><div class="dh"><h3>Activity: hours per day</h3><span class="muted" id="d_busy" style="font-size:12px"></span></div><div id="d_act"></div></div>
+  <div class="card sp4"><h3>Status breakdown</h3><div id="d_status"></div></div>
+  <div class="card sp4"><h3>Top businesses</h3><div id="d_biz"></div></div>
+  <div class="card sp4"><h3>By product</h3><div id="d_prod"></div></div>
+  <div class="card sp4"><h3>Source and type</h3><div id="d_src"></div><div id="d_ir" style="margin-top:14px"></div></div>
+</div></section>
+
+<section class="tab" id="entry"><div class="cols">
     <div class="card fcard">
     <div class="head"><h2 id="formTitle">New entry</h2><span class="muted">Only the date is required</span></div>
     <div class="grp"><h3>When</h3><div class="g">
@@ -233,7 +326,7 @@ const toM=t=>{const[a,b]=t.split(":").map(Number);return a*60+b};
 const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
 const dur=(s,e)=>{if(!s||!e)return"";let m=toM(e)-toM(s);if(m<0)m+=1440;return fmt(m)};
 let tt;const toast=t=>{const x=$("#toast");x.textContent=t;x.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>x.classList.remove("on"),2600)};
-const setSync=t=>$("#sync").textContent=t;
+const setSync=t=>{const x=$("#sync");x.textContent=t;x.classList.toggle("busy",/\.\.\.$/.test(t))};
 function showLink(){$("#sheetLink").href=db.link||"#"}
 $("#sheetLink").onclick=e=>{
   if(db.link)return;
@@ -286,7 +379,7 @@ $("#syncBtn").onclick=syncNow;
 // tabs
 $$("#nav button").forEach(b=>b.onclick=()=>{
   $$("#nav button,.tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");$("#"+b.dataset.t).classList.add("on");
-  if(b.dataset.t==="rec"){renderRec();pull()}
+  if(b.dataset.t==="rec"){renderRec();pull()}else if(b.dataset.t==="dash")pull();
 });
 
 // entry form
@@ -312,7 +405,7 @@ $("#saveBtn").onclick=()=>{
   const was=!!editId,row={...r,id:editId||uid(),...(API?{_u:1}:{})};
   if(was)db.rows[db.rows.findIndex(x=>x.id===editId)]=row;
   else db.rows.push(row);
-  save();push({action:"upsertRow",row});clearForm();renderToday();toast(was?"Entry updated":"Entry saved");
+  save();push({action:"upsertRow",row});clearForm();justSaved=row.id;renderToday();toast(was?"Entry updated":"Entry saved");flashBtn();
 };
 function editRow(id){
   const r=db.rows.find(x=>x.id===id);if(!r)return;
@@ -320,10 +413,12 @@ function editRow(id){
   editId=id;syncAuto();$("#formTitle").textContent="Edit entry";$("#saveBtn").textContent="Update entry";$("#clearBtn").textContent="Cancel edit";
   $('#nav [data-t="entry"]').click();scrollTo(0,0);
 }
+let justSaved=null;
+function flashBtn(){const b=$("#saveBtn");b.classList.add("okb");b.textContent="Saved \u2713";setTimeout(()=>{b.classList.remove("okb");if(!editId)b.textContent="Save entry"},1200)}
 function renderToday(){
   const r=db.rows.filter(x=>x.date===today()).reverse();
-  $("#t_n").textContent=r.length;$("#t_dur").textContent=fmt(r.reduce((a,x)=>a+(x.dur?toM(x.dur):0),0));
-  $("#t_list").innerHTML=r.map(x=>`<li onclick="editRow('${x.id}')" title="Click to edit"><div class="tl"><b class="t rm">${esc(x.rem||"No remarks")}</b><b>${esc(x.dur||"--:--")}</b></div><div class="sub">${x.s?esc(x.s)+" - "+esc(x.e||"..."):"No time"}${x.prod?" · "+esc(x.prod):""}${x.issue?" · "+esc(x.issue):""} ${chip(x.stat)}</div></li>`).join("")||'<li class="muted" style="cursor:default">Nothing logged today yet.</li>';
+  $("#t_n").textContent=r.length;{const el=$("#t_dur"),v=fmt(r.reduce((a,x)=>a+(x.dur?toM(x.dur):0),0));if(el.textContent!==v){el.textContent=v;el.classList.remove("bump");void el.offsetWidth;el.classList.add("bump")}}
+  $("#t_list").innerHTML=r.map(x=>`<li class="${x.id===justSaved?"new":""}" onclick="editRow('${x.id}')" title="Click to edit"><div class="tl"><b class="t rm">${esc(x.rem||"No remarks")}</b><b>${esc(x.dur||"--:--")}</b></div><div class="sub">${x.s?esc(x.s)+" - "+esc(x.e||"..."):"No time"}${x.prod?" · "+esc(x.prod):""}${x.issue?" · "+esc(x.issue):""} ${chip(x.stat)}</div></li>`).join("")||'<li class="muted" style="cursor:default">Nothing logged today yet.</li>';justSaved=null;renderDash();
 }
 
 // templates
@@ -345,7 +440,7 @@ $("#tplSave").onclick=()=>{
 $("#tplApply").onclick=()=>{
   const t=db.tpl[$("#tplSel").value];if(!t){toast("Choose a template first.");return}
   if(editId)clearForm();
-  TF.forEach(k=>$("#"+F[k]).value=t[k]||"");
+  TF.forEach(k=>{const el=$("#"+F[k]);el.value=t[k]||"";el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")});
   if(!$("#f_date").value)$("#f_date").value=today();
   syncAuto();toast('"'+t.name+'" applied. Set the times and save.');$("#f_s").focus();
 };
@@ -358,6 +453,95 @@ function setTpl(open){const b=$("#tplToggle");$("#tplBody").style.display=open?"
 $("#tplToggle").onclick=()=>setTpl($("#tplBody").style.display==="none");
 let tplOpen=true;try{tplOpen=localStorage.getItem("hrms_tpl_open")!=="0"}catch(e){}
 setTpl(tplOpen);
+
+// dashboard
+const hm=m=>Math.floor(m/60)+"h "+String(m%60).padStart(2,"0")+"m";
+const dstr=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const isDone=s=>/resolv|clos|done|complet/i.test(s||"");
+const sd=d=>new Date(d+"T00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+let dp="7",uname="",tgt=8;
+try{uname=localStorage.getItem("hrms_name")||"";tgt=parseFloat(localStorage.getItem("hrms_target"))||8}catch(e){}
+function range(p){
+  const t=new Date();t.setHours(0,0,0,0);
+  if(p==="m"){
+    const last=new Date(t.getFullYear(),t.getMonth(),0).getDate();
+    return[dstr(new Date(t.getFullYear(),t.getMonth(),1)),dstr(t),dstr(new Date(t.getFullYear(),t.getMonth()-1,1)),dstr(new Date(t.getFullYear(),t.getMonth()-1,Math.min(t.getDate(),last)))];
+  }
+  const n=+p;return[dstr(addD(t,-(n-1))),dstr(t),dstr(addD(t,-(2*n-1))),dstr(addD(t,-n))];
+}
+const inR=(a,b)=>db.rows.filter(r=>r.date&&r.date>=a&&r.date<=b);
+const durOf=r=>r.dur?toM(r.dur):0;
+function stats(rows){
+  const n=rows.length,mins=rows.reduce((a,r)=>a+durOf(r),0);
+  return{n,mins,avg:n?Math.round(mins/n):0,res:n?Math.round(100*rows.filter(r=>isDone(r.stat)).length/n):0,biz:new Set(rows.filter(r=>r.biz).map(r=>r.biz)).size,open:rows.filter(r=>r.stat&&!isDone(r.stat)).length};
+}
+function delta(a,b,pts){
+  const d=pts?a-b:(b?Math.round(100*(a-b)/b):(a?100:0)),c=d>0?"up":d<0?"dn":"";
+  return `<div class="kd ${c}">${d>0?"\u25B2":d<0?"\u25BC":"\u2013"} ${Math.abs(d)}${pts?" pts":"%"} <span>vs previous</span></div>`;
+}
+function grp(rows,key,n){
+  const m={};rows.forEach(r=>{const k=(r[key]||"").trim()||"Not specified";const o=m[k]=m[k]||[k,0,0];o[1]++;o[2]+=durOf(r)});
+  return Object.values(m).sort((a,b)=>b[1]-a[1]||b[2]-a[2]).slice(0,n);
+}
+function hbars(list,c){
+  if(!list.length)return'<p class="muted" style="margin:0">No data for this period.</p>';
+  const mx=Math.max(...list.map(x=>x[1]));
+  return list.map(x=>`<div class="hb"><div class="hbt"><span>${esc(x[0])}</span><b>${x[1]}</b></div><div class="hbk"><i style="width:${Math.max(4,100*x[1]/mx)}%;background:var(${c})"></i></div><div class="hbs">${hm(x[2])}</div></div>`).join("");
+}
+function donut(list){
+  const total=list.reduce((a,x)=>a+x[1],0);
+  if(!total)return'<p class="muted" style="margin:0">No data for this period.</p>';
+  let off=25,seg="",leg="";
+  list.forEach((x,i)=>{const pc=100*x[1]/total;seg+=`<circle r="15.9155" cx="21" cy="21" fill="none" stroke="var(--c${i+1})" stroke-width="5" stroke-dasharray="${pc} ${100-pc}" stroke-dashoffset="${off}"/>`;off-=pc;leg+=`<li><i style="background:var(--c${i+1})"></i><span>${esc(x[0])}</span><b>${x[1]}</b></li>`});
+  return `<div class="dn"><svg viewBox="0 0 42 42" role="img" aria-label="Status breakdown"><circle r="15.9155" cx="21" cy="21" fill="none" stroke="var(--head)" stroke-width="5"/>${seg}<text x="21" y="22.5" text-anchor="middle" font-size="7" font-weight="800" fill="var(--ink)">${total}</text><text x="21" y="28" text-anchor="middle" font-size="3.2" fill="var(--mute)">entries</text></svg><ul>${leg}</ul></div>`;
+}
+function barChart(days,hrs){
+  const W=600,H=220,L=36,T=12,B=26,R=8,iw=W-L-R,ih=H-T-B,top=Math.max(2,Math.ceil(Math.max(tgt,...hrs)/2)*2),bw=iw/hrs.length;
+  let g="";
+  for(let i=0;i<=2;i++){const y=T+ih-ih*i/2;g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${L-6}" y="${y+3.5}" text-anchor="end" font-size="10" fill="var(--mute)">${top*i/2}h</text>`}
+  hrs.forEach((v,i)=>{
+    const h=ih*v/top,x=L+i*bw+bw*.2,w=bw*.6;
+    g+=`<rect class="bar-r" x="${x}" y="${T+ih-h}" width="${w}" height="${v?Math.max(h,2):0}" rx="${Math.min(4,w/2)}" fill="var(--c1)"><title>${sd(days[i])}: ${hm(Math.round(v*60))}</title></rect>`;
+    if(hrs.length<=10||i%Math.ceil(hrs.length/10)===0)g+=`<text x="${x+w/2}" y="${H-8}" text-anchor="middle" font-size="10" fill="var(--mute)">${hrs.length<=7?new Date(days[i]+"T00:00").toLocaleDateString("en-GB",{weekday:"short"}):+days[i].slice(8)}</text>`;
+  });
+  const ty=T+ih-ih*tgt/top;
+  g+=`<line x1="${L}" x2="${W-R}" y1="${ty}" y2="${ty}" stroke="var(--c4)" stroke-dasharray="4 4"/><text x="${W-R}" y="${ty-4}" text-anchor="end" font-size="10" fill="var(--c4)">Target ${tgt}h</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" role="img" aria-label="Hours logged per day">${g}</svg>`;
+}
+function renderDash(){
+  if(!$("#d_kpis"))return;
+  $("#d_name").textContent=uname?", "+uname:"";
+  const tr=db.rows.filter(r=>r.date===today()),ts=stats(tr),pct=ts.mins/(tgt*60);
+  $("#d_hs2").textContent=ts.n?`You have logged ${ts.n} ${ts.n===1?"entry":"entries"} (${hm(ts.mins)}) today.`:"No entries logged yet today. Let's get started.";
+  $("#d_ringp").textContent=Math.round(pct*100)+"%";
+  $("#ring").style.strokeDashoffset=263.9*(1-Math.min(pct,1));
+  $("#d_tsub").textContent=hm(ts.mins)+" of "+tgt+"h";
+  const ss=tr.map(r=>r.s).filter(Boolean).sort(),ee=tr.map(r=>r.e).filter(Boolean).sort();
+  $("#d_tmeta").innerHTML=`<div><b>${ts.n}</b><span>entries</span></div><div><b>${ss[0]||"--:--"}</b><span>first start</span></div><div><b>${ee.length?ee[ee.length-1]:"--:--"}</b><span>last end</span></div>`;
+
+  const r4=range(dp),rows=inR(r4[0],r4[1]),c=stats(rows),p=stats(inR(r4[2],r4[3]));
+  $("#d_range").textContent=sd(r4[0])+" - "+sd(r4[1])+"  |  compared with "+sd(r4[2])+" - "+sd(r4[3]);
+  const k=[["Entries",c.n,delta(c.n,p.n),"--c1"],["Hours logged",hm(c.mins),delta(c.mins,p.mins),"--c2"],["Avg per entry",c.n?hm(c.avg):"-",delta(c.avg,p.avg),"--c3"],["Resolution rate",c.res+"%",delta(c.res,p.res,1),"--c4"],["Businesses served",c.biz,'<div class="kd"><span>unique customers</span></div>',"--c5"],["Open items",c.open,'<div class="kd"><span>need follow-up</span></div>',"--c1"]];
+  $("#d_kpis").innerHTML=k.map(x=>`<div class="card kpi" style="--k:var(${x[3]})"><div class="kl">${x[0]}</div><div class="kv">${x[1]}</div>${x[2]}</div>`).join("");
+
+  const days=[];for(let d=new Date(r4[0]+"T00:00");dstr(d)<=r4[1];d=addD(d,1))days.push(dstr(d));
+  const hrs=days.map(x=>rows.filter(r=>r.date===x).reduce((a,r)=>a+durOf(r),0)/60),mx=Math.max(...hrs),bi=hrs.indexOf(mx);
+  $("#d_busy").textContent=mx>0?"Busiest day: "+sd(days[bi])+" ("+hm(Math.round(mx*60))+")":"";
+  $("#d_act").innerHTML=barChart(days,hrs);
+  $("#d_status").innerHTML=donut(grp(rows,"stat",5));
+  $("#d_biz").innerHTML=hbars(grp(rows,"biz",5),"--c1");
+  $("#d_prod").innerHTML=hbars(grp(rows,"prod",5),"--c2");
+  const iss=rows.filter(r=>r.issue==="Issue").length,req=rows.filter(r=>r.issue==="Request").length,oth=rows.length-iss-req;
+  $("#d_src").innerHTML=hbars(grp(rows,"src",4),"--c3");
+  $("#d_ir").innerHTML=rows.length?`<div class="hbt"><span>Issues vs requests</span></div><div class="stk" style="margin-top:6px"><i style="flex:${iss};background:var(--c4)"></i><i style="flex:${req};background:var(--c1)"></i><i style="flex:${oth};background:var(--line)"></i></div><div class="lg"><span>Issues ${iss}</span><span>Requests ${req}</span><span>Other ${oth}</span></div>`:"";
+}
+$("#d_new").onclick=()=>$('#nav [data-t="entry"]').click();
+$("#d_rec").onclick=()=>$('#nav [data-t="rec"]').click();
+$$("#d_seg button").forEach(b=>b.onclick=()=>{dp=b.dataset.p;$$("#d_seg button").forEach(x=>x.classList.toggle("on",x===b));renderDash()});
+$("#d_edit").onclick=()=>{const v=prompt("Your name for the welcome message:",uname);if(v!==null){uname=v.trim();try{localStorage.setItem("hrms_name",uname)}catch(e){}renderDash()}};
+$("#d_target").value=tgt;
+$("#d_target").oninput=e=>{const v=parseFloat(e.target.value);if(v>0){tgt=v;try{localStorage.setItem("hrms_target",v)}catch(x){}renderDash()}};
 
 // records
 let rmode="day";
@@ -460,7 +644,10 @@ let lastDay=today();
 function tick(){
   const n=new Date();
   $("#clk_d").textContent=n.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
-  $("#clk_t").textContent=n.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  const tm=n.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"}),hr=n.getHours();
+  $("#clk_t").textContent=tm;$("#d_time").textContent=tm;
+  $("#d_greet").textContent=hr<12?"Good morning":hr<17?"Good afternoon":"Good evening";
+  $("#d_date").textContent=n.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   if(today()!==lastDay){lastDay=today();renderToday()}
 }
 setInterval(tick,1000);tick();
