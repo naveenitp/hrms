@@ -251,7 +251,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
   <div class="msgerr" id="lg_err" role="alert"></div>
   <button class="btn" id="lg_btn" type="submit" style="width:100%;margin-top:10px">Sign in</button>
   <p class="muted" style="text-align:center;font-size:12px;margin:14px 0 0">Accounts are created by your administrator.</p>
-  <p style="text-align:center;margin:6px 0 0"><button type="button" class="lnk2" id="lg_srv">Server address</button></p>
+  <p style="text-align:center;margin:6px 0 0"><button type="button" class="lnk2" id="lg_test">Test connection</button> &nbsp;|&nbsp; <button type="button" class="lnk2" id="lg_srv">Server address</button></p>
 </form></div>
 <header class="top">
   <div class="lf"><div class="brand"><i></i>Timesheet</div>
@@ -833,7 +833,7 @@ setInterval(tick,1000);tick();
 function saveSession(){try{localStorage.setItem("hrms_session",JSON.stringify(session))}catch(e){}}
 async function doLogin(){
   const u=$("#lg_u").value.trim().toLowerCase(),p=$("#lg_p").value,er=$("#lg_err"),b=$("#lg_btn");
-  er.textContent="";
+  er.textContent="";er.style.color="";
   if(!u||!p){er.textContent="Enter your username and password.";return}
   b.disabled=true;b.textContent="Signing in...";
   try{
@@ -844,6 +844,16 @@ async function doLogin(){
   b.disabled=false;b.textContent="Sign in";
 }
 $("#lg_form").onsubmit=e=>{e.preventDefault();doLogin()};
+$("#lg_test").onclick=async()=>{
+  const er=$("#lg_err"),bad=m=>{er.style.color="";er.textContent=m};
+  er.style.color="var(--mute)";er.textContent="Testing connection...";
+  let t="";
+  try{t=await(await fetch(API)).text()}catch(e){return bad("Could not reach the server. Check your internet connection and the server address.")}
+  let d;try{d=JSON.parse(t)}catch(e){const m=t.match(/<title>([^<]*)<\/title>/i);return bad("Google returned a web page"+(m?" ("+m[1].trim()+")":"")+" instead of data. Set the deployment access to Anyone, redeploy as a new version, and check the server address.")}
+  if(!d.multi)bad("Connected, but the deployed code is the old single-user version. Paste the new Code.gs and deploy a new version.");
+  else if(!d.ready)bad("Connected to the new code, but no accounts exist yet. Run setupAdmin once in the Apps Script editor.");
+  else er.textContent="Connection is fine. If sign-in still fails, check your username and password.";
+};
 $("#lg_srv").onclick=()=>{
   const u=prompt("Paste your Google Apps Script web app URL (it ends with /exec). Leave it empty to use the built-in one.",API);
   if(u===null)return;const v=u.trim();
