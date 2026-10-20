@@ -231,17 +231,35 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
 @keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px)}}
 @keyframes zz{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-22px)}}
 @media(max-width:700px){.pet{width:100px;height:65px}}
+.lnk2{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;font:inherit;font-size:12px}
+#login{display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px}
+body.locked #login{display:flex}
+body.locked>header,body.locked>main,body.locked>.pet{display:none!important}
+.lgc{width:100%;max-width:380px}
+.msgerr{color:var(--warn);font-size:13px;min-height:18px;margin-top:8px}
+dialog{border:var(--bw) solid var(--line);border-radius:var(--r);background:var(--card);color:var(--ink);box-shadow:var(--sh);padding:22px;width:calc(100% - 32px);max-width:360px}
+dialog::backdrop{background:rgba(0,0,0,.45)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
-<body>
+<body class="locked">
+<div id="login"><form class="card lgc" id="lg_form">
+  <div class="brand" style="justify-content:center;margin-bottom:6px"><i></i>Timesheet</div>
+  <p class="muted" style="text-align:center;margin:0 0 16px">Sign in to your own timesheet</p>
+  <label>Username<input id="lg_u" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+  <label style="margin-top:12px">Password<input id="lg_p" type="password" autocomplete="current-password"></label>
+  <div class="msgerr" id="lg_err" role="alert"></div>
+  <button class="btn" id="lg_btn" type="submit" style="width:100%;margin-top:10px">Sign in</button>
+  <p class="muted" style="text-align:center;font-size:12px;margin:14px 0 0">Accounts are created by your administrator.</p>
+  <p style="text-align:center;margin:6px 0 0"><button type="button" class="lnk2" id="lg_srv">Server address</button></p>
+</form></div>
 <header class="top">
   <div class="lf"><div class="brand"><i></i>Timesheet</div>
   <nav class="seg" id="nav">
-    <button data-t="dash" class="on">Dashboard</button><button data-t="entry">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
+    <button data-t="dash" class="on">Dashboard</button><button data-t="entry">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button><button data-t="usr" id="navUsr" style="display:none">Users</button>
   </nav></div>
   <div class="clock"><div id="clk_d"></div><b id="clk_t"></b></div>
-  <div class="tools"><button class="btn sm ghost" id="petBtn">Hide pet</button><select id="themeSel" class="themesel" aria-label="Theme"></select><button class="btn sm ghost" id="syncBtn">Sync now</button><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open Google Sheet</a><span class="sync" id="sync"></span></div>
+  <div class="tools"><span class="muted" id="whoami" style="font-size:13px"></span><button class="btn sm ghost" id="pwBtn">Password</button><button class="btn sm ghost" id="outBtn">Sign out</button><button class="btn sm ghost" id="petBtn">Hide pet</button><select id="themeSel" class="themesel" aria-label="Theme"></select><button class="btn sm ghost" id="syncBtn">Sync now</button><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open Google Sheet</a><span class="sync" id="sync"></span></div>
 </header>
 <main>
 
@@ -345,13 +363,35 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
   <div class="scroll" style="margin-top:0"><table id="m_tbl"></table></div>
 </div></section>
 
+<section class="tab" id="usr"><div class="card">
+  <h2>Team accounts</h2>
+  <p class="muted">Each person signs in with their own username and password and only ever sees their own timesheet. Admins create and manage accounts here. Admins cannot open other people's entries in the app.</p>
+  <div class="bar" style="margin-top:14px">
+    <label>Username<input id="u_name" autocapitalize="none"></label>
+    <label>Display name<input id="u_disp"></label>
+    <label>Temporary password<input id="u_pw"></label>
+    <label>Role<select id="u_role"><option value="user">User</option><option value="admin">Admin</option></select></label>
+    <button class="btn" id="u_add">Create account</button>
+  </div>
+  <div class="scroll"><table id="u_tbl"></table></div>
+</div></section>
 </main>
+<dialog id="pwd"><h2 style="font-size:17px;margin-bottom:12px">Change password</h2>
+  <label>Current password<input id="pw_o" type="password" autocomplete="current-password"></label>
+  <label style="margin-top:10px">New password (at least 8 characters)<input id="pw_n" type="password" autocomplete="new-password"></label>
+  <label style="margin-top:10px">Repeat new password<input id="pw_r" type="password" autocomplete="new-password"></label>
+  <div class="msgerr" id="pw_err"></div>
+  <div class="row" style="margin-top:8px"><button class="btn" id="pw_ok">Save</button><button class="btn ghost" id="pw_x">Cancel</button></div>
+</dialog>
 <div class="toast" id="toast"></div>
 <script>
-const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s),K="hrms_timesheet_v2";
-const API="https://script.google.com/macros/s/AKfycbxCWxQX9YnTTBCEVLOmAKuY5l07F1zectqndWLmRrHPGk3yoYdXXM8uCTOPe7uqy6Yv/exec"; // Google Apps Script Web app URL (keep the same deployment so this never changes)
-let db=null;try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
-db=Object.assign({tpl:[],prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
+const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s);
+let K="hrms_timesheet_v2";
+let API=(()=>{try{return localStorage.getItem("hrms_api")}catch(e){return null}})()||"https://script.google.com/macros/s/AKfycbxCWxQX9YnTTBCEVLOmAKuY5l07F1zectqndWLmRrHPGk3yoYdXXM8uCTOPe7uqy6Yv/exec"; // default web app URL; can be changed from the sign-in screen (Server address)
+const blank=()=>({tpl:[],prod:[],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]});
+let db=blank(),session=null;
+try{const x=JSON.parse(localStorage.getItem("hrms_session"));if(x&&x.token&&x.exp>Date.now())session=x}catch(e){}
+function loadDb(){let d=null;try{d=JSON.parse(localStorage.getItem(K))}catch(e){}db=Object.assign(blank(),d||{})}
 let storeOK=true;
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){if(!API&&storeOK){storeOK=false;alert("This page cannot save in this browser and no Google Sheet URL is set, so entries will be lost on refresh. Set the API URL in index.html, or open the page from GitHub Pages or your computer.")}}};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -363,7 +403,7 @@ const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(
 const dur=(s,e)=>{if(!s||!e)return"";let m=toM(e)-toM(s);if(m<0)m+=1440;return fmt(m)};
 let tt;const toast=t=>{const x=$("#toast");x.textContent=t;x.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>x.classList.remove("on"),2600)};
 const setSync=t=>{const x=$("#sync");x.textContent=t;x.classList.toggle("busy",/\.\.\.$/.test(t))};
-function showLink(){$("#sheetLink").href=db.link||"#"}
+function showLink(){const a=!!(session&&session.user.role==="admin");$("#sheetLink").style.display=a?"":"none";$("#recSheet").style.display=a?"":"none";$("#sheetLink").href=db.link||"#"}
 $("#sheetLink").onclick=e=>{
   if(db.link)return;
   e.preventDefault();
@@ -382,21 +422,36 @@ $("#themeSel").onchange=e=>setTheme(e.target.value);
 setTheme(THEMES.some(x=>x[0]===document.documentElement.dataset.theme)?document.documentElement.dataset.theme:"light");
 
 // Google Sheet sync
+async function post(body){
+  let t="";
+  try{t=await(await fetch(API,{method:"POST",body:JSON.stringify(body)})).text()}
+  catch(e){throw "Could not reach the Google Sheet service. Check your internet connection."}
+  try{return JSON.parse(t)}
+  catch(e){
+    const m=t.match(/<title>([^<]*)<\/title>/i);
+    throw "The Google Sheet service sent back a web page instead of data"+(m?" ("+m[1].trim()+")":"")+". Check that the web app is deployed with access set to Anyone, and that the URL in index.html is the current deployment.";
+  }
+}
+async function api(body){
+  const r=await post({...body,token:session&&session.token});
+  if(r.error==="auth"){doLogout(true);throw "Your session has expired. Please sign in again."}
+  if(r.error)throw r.error;return r;
+}
 async function push(body){
-  if(!API)return true;setSync("Saving...");
-  try{const r=await(await fetch(API,{method:"POST",body:JSON.stringify(body)})).json();if(r.error)throw r.error;setSync("Saved to Google Sheet");
+  if(!API||!session)return true;setSync("Saving...");
+  try{await api(body);setSync("Saved to Google Sheet");
     if(body.row){const x=db.rows.find(z=>z.id===body.row.id);if(x){delete x._u;save()}}updBtn();return true}
-  catch(e){setSync("Not saved - will retry");updBtn();petSay("That did not save. Try Retry save.");alert("Could not save to Google Sheet: "+e+"\nYour entry is kept in this browser and will be retried on the next load.");return false}
+  catch(e){setSync("Not saved - will retry");updBtn();petSay("That did not save. Try Retry save.");alert("Could not save to Google Sheet: "+e+"\nYour entry is kept in this browser and will be retried.");return false}
 }
 async function pull(){
-  if(!API){setSync("Offline mode: data stays in this browser");return}
+  if(!API||!session)return;
   setSync("Loading...");
-  try{const d=await(await fetch(API+"?action=load")).json();if(d.error)throw d.error;
+  try{const d=await api({action:"load"});
     const pend=db.rows.filter(r=>r._u);
     if(!db._mp)Object.assign(db,d.masters);
     db.rows=d.rows.filter(x=>!pend.some(p=>p.id===x.id)).concat(pend);
     save();pend.forEach(r=>push({action:"upsertRow",row:r}));if(db._mp)pushMasters();
-    if(d.link)db.link=d.link;save();showLink();setSync("Synced with Google Sheet");updBtn();
+    db.link=d.link||"";save();showLink();setSync("Synced with Google Sheet");updBtn();
     fillSelects();renderM();renderRec();renderToday();renderTpl()}
   catch(e){setSync("Could not load: "+e)}
 }
@@ -415,7 +470,7 @@ $("#syncBtn").onclick=syncNow;
 // tabs
 $$("#nav button").forEach(b=>b.onclick=()=>{
   $$("#nav button,.tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");$("#"+b.dataset.t).classList.add("on");
-  if(b.dataset.t==="rec"){renderRec();pull()}else if(b.dataset.t==="dash")pull();
+  if(b.dataset.t==="rec"){renderRec();pull()}else if(b.dataset.t==="dash")pull();else if(b.dataset.t==="usr")loadUsers();
 });
 
 // entry form
@@ -775,7 +830,68 @@ function tick(){
   if(today()!==lastDay){lastDay=today();renderToday()}
 }
 setInterval(tick,1000);tick();
-save();clearForm();fillSelects();renderM();renderToday();renderTpl();showLink();updBtn();pull();
+function saveSession(){try{localStorage.setItem("hrms_session",JSON.stringify(session))}catch(e){}}
+async function doLogin(){
+  const u=$("#lg_u").value.trim().toLowerCase(),p=$("#lg_p").value,er=$("#lg_err"),b=$("#lg_btn");
+  er.textContent="";
+  if(!u||!p){er.textContent="Enter your username and password.";return}
+  b.disabled=true;b.textContent="Signing in...";
+  try{
+    const r=await post({action:"login",user:u,pass:p});
+    if(r.error)throw r.error;
+    session={token:r.token,user:r.user,exp:Date.now()+6*3600e3-120e3};saveSession();$("#lg_p").value="";startApp();
+  }catch(e){er.textContent=String(e)}
+  b.disabled=false;b.textContent="Sign in";
+}
+$("#lg_form").onsubmit=e=>{e.preventDefault();doLogin()};
+$("#lg_srv").onclick=()=>{
+  const u=prompt("Paste your Google Apps Script web app URL (it ends with /exec). Leave it empty to use the built-in one.",API);
+  if(u===null)return;const v=u.trim();
+  if(v&&!/^https:\/\/script\.google\.com\/macros\/s\/\S+\/exec$/.test(v)){$("#lg_err").textContent="That does not look like a web app URL ending in /exec.";return}
+  try{v?localStorage.setItem("hrms_api",v):localStorage.removeItem("hrms_api")}catch(e){}
+  location.reload();
+};
+function doLogout(expired){
+  if(!expired){
+    if(unsaved()&&!confirm("Some entries are not saved to Google Sheet yet. Sign out anyway? They will be lost."))return;
+    try{fetch(API,{method:"POST",body:JSON.stringify({action:"logout",token:session&&session.token}),keepalive:true})}catch(e){}
+    try{localStorage.removeItem(K)}catch(e){}
+  }
+  try{localStorage.removeItem("hrms_session")}catch(e){}
+  session=null;location.reload();
+}
+$("#outBtn").onclick=()=>doLogout(false);
+$("#pwBtn").onclick=()=>{["pw_o","pw_n","pw_r"].forEach(i=>$("#"+i).value="");$("#pw_err").textContent="";$("#pwd").showModal()};
+$("#pw_x").onclick=()=>$("#pwd").close();
+$("#pw_ok").onclick=async()=>{
+  const o=$("#pw_o").value,n=$("#pw_n").value,r=$("#pw_r").value,er=$("#pw_err");
+  if(n.length<8){er.textContent="New password must be at least 8 characters.";return}
+  if(n!==r){er.textContent="The new passwords do not match.";return}
+  try{const d=await api({action:"changePassword",old:o,pass:n});session.token=d.token;saveSession();$("#pwd").close();toast("Password changed")}
+  catch(e){er.textContent=String(e)}
+};
+async function loadUsers(){
+  if(!session||session.user.role!=="admin")return;
+  try{const d=await api({action:"listUsers"});
+    $("#u_tbl").innerHTML="<tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th></th></tr>"+d.users.map(u=>`<tr><td>${esc(u.username)}</td><td>${esc(u.name)}</td><td>${esc(u.role)}</td><td>${u.active?"Active":"Disabled"}</td><td><button class="btn sm ghost" onclick="resetPw('${esc(u.username)}')">Reset password</button> <button class="btn sm del" onclick="setActive('${esc(u.username)}',${!u.active})">${u.active?"Disable":"Enable"}</button></td></tr>`).join("")}
+  catch(e){toast(String(e))}
+}
+async function resetPw(u){const p=prompt("New temporary password for "+u+" (at least 8 characters):");if(!p)return;try{await api({action:"resetPassword",username:u,pass:p});toast("Password reset. "+u+" must sign in again.")}catch(e){toast(String(e))}}
+async function setActive(u,a){try{await api({action:"setActive",username:u,active:a});toast(a?"Account enabled":"Account disabled");loadUsers()}catch(e){toast(String(e))}}
+$("#u_add").onclick=async()=>{
+  try{await api({action:"addUser",username:$("#u_name").value,name:$("#u_disp").value,pass:$("#u_pw").value,role:$("#u_role").value});
+    ["u_name","u_disp","u_pw"].forEach(i=>$("#"+i).value="");toast("Account created");loadUsers()}
+  catch(e){toast(String(e))}
+};
+function startApp(){
+  K="hrms_ts_"+session.user.username;loadDb();
+  document.body.classList.remove("locked");
+  uname=session.user.name||session.user.username;$("#d_edit").style.display="none";
+  $("#whoami").textContent=uname+(session.user.role==="admin"?" (admin)":"");
+  $("#navUsr").style.display=session.user.role==="admin"?"":"none";
+  save();clearForm();fillSelects();renderM();renderToday();renderTpl();showLink();updBtn();pull();
+}
+if(session)startApp();
 </script>
 </body>
 </html>
