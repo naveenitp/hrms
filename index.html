@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Timesheet</title>
-<script>try{var t=localStorage.getItem("hrms_theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){}</script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap">
+<script>try{var d=document.documentElement,t=localStorage.getItem("hrms_theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;var f=localStorage.getItem("hrms_font"),i=localStorage.getItem("hrms_ink"),z=localStorage.getItem("hrms_size");if(f)d.dataset.font=f;if(i)d.style.setProperty("--ink",i);if(z)d.style.setProperty("--fs",z+"px")}catch(e){}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&family=Inter:wght@400;500;600;800&family=Poppins:wght@400;500;600;800&family=Nunito:wght@400;600;800&family=Roboto:wght@400;500;700&family=Lora:wght@400;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f3f5fb;--card:#fff;--ink:#192038;--mute:#667094;--line:#e1e5f2;--acc:#3a55d6;--acc2:#e8ecff;--accink:#fff;--ok:#16895d;--okbg:#e2f6ed;--warn:#d1433a;--sh:0 1px 2px rgba(25,32,56,.06),0 10px 28px rgba(25,32,56,.07);--shb:0 1px 2px rgba(25,32,56,.18);--shin:none;--inbg:var(--bg);--head:var(--bg);--r:16px;--ri:10px;--bw:0px;--sb:#c8cde0;color-scheme:light;--font:"Plus Jakarta Sans",system-ui,"Segoe UI",sans-serif}
+:root{--bg:#f3f5fb;--card:#fff;--ink:#192038;--mute:#667094;--line:#e1e5f2;--acc:#3a55d6;--acc2:#e8ecff;--accink:#fff;--ok:#16895d;--okbg:#e2f6ed;--warn:#d1433a;--sh:0 1px 2px rgba(25,32,56,.06),0 10px 28px rgba(25,32,56,.07);--shb:0 1px 2px rgba(25,32,56,.18);--shin:none;--inbg:var(--bg);--head:var(--bg);--r:16px;--ri:10px;--bw:0px;--sb:#c8cde0;color-scheme:light;--sok:#16a34a;--spr:#d97706;--sop:#dc2626;--font:"Plus Jakarta Sans",system-ui,"Segoe UI",sans-serif}
 :root[data-theme="dark"]{color-scheme:dark;--bg:#000;--card:#111;--ink:#fff;--mute:#a6a6a6;--line:#2c2c2c;--acc:#fff;--acc2:#262626;--accink:#000;--ok:#000;--okbg:#fff;--warn:#ff7b72;--sh:none;--shb:none;--inbg:#0a0a0a;--head:#1b1b1b;--bw:1px;--sb:#3b3b3b}
 :root[data-theme="soft"]{--bg:#e0e5ec;--card:#e0e5ec;--ink:#3b4357;--mute:#6d7790;--line:#cfd6e2;--acc:#4a63d8;--acc2:#d3daea;--accink:#fff;--ok:#1f8f66;--okbg:#d3e8e0;--warn:#c9463d;--sh:9px 9px 18px #a3b1c6,-9px -9px 18px #fff;--shb:5px 5px 10px #a3b1c6,-5px -5px 10px #fff;--shin:inset 3px 3px 6px #a3b1c6,inset -3px -3px 6px #fff;--inbg:#e0e5ec;--head:#d6dce6;--r:22px;--ri:14px;--sb:#b4bdd0}
 :root[data-theme="bw"]{--bg:#fff;--card:#fff;--ink:#000;--mute:#444;--line:#000;--acc:#000;--acc2:#eee;--accink:#fff;--ok:#fff;--okbg:#000;--warn:#000;--sh:none;--shb:none;--head:#eee;--r:4px;--ri:3px;--bw:2px;--sb:#000}
 :root[data-theme="paper"]{--bg:#ece3cf;--card:#fbf6e9;--ink:#2d2a24;--mute:#6e6552;--line:#d6c9a8;--acc:#2f5d62;--acc2:#e5ddc4;--accink:#fbf6e9;--ok:#3b6b3b;--okbg:#e1ead3;--warn:#a8412f;--sh:0 1px 0 rgba(0,0,0,.06),0 3px 10px rgba(90,70,20,.14);--shb:0 1px 0 rgba(0,0,0,.2);--head:#efe6cf;--r:6px;--ri:4px;--bw:1px;--sb:#c9b98f;--font:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--font)}
+body{margin:0;background:var(--bg);color:var(--ink);font:var(--fs,15px)/1.5 var(--font)}
 .top{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
 .brand i{width:28px;height:28px;border-radius:9px;background:var(--acc);position:relative}
@@ -103,9 +103,6 @@ th{color:var(--mute);font-weight:600;background:var(--head)}
 .fcard .dur{font-size:15px}
 .fcard textarea{padding:10px 12px;font-size:15px;min-height:88px}
 #r_tbl{white-space:normal;font-size:13px}
-#r_tbl th,#r_tbl td{padding:8px;vertical-align:top;overflow-wrap:anywhere}
-#r_tbl td[data-label="SL.no"],#r_tbl td[data-label="Date"],#r_tbl td[data-label="Month"],#r_tbl td[data-label="Code"],#r_tbl td[data-label="Transaction Start Time"],#r_tbl td[data-label="Transaction End time"],#r_tbl td[data-label="Total Duration"],#r_tbl td:last-child{white-space:nowrap}
-#r_tbl td[data-label="Remarks"],#r_tbl td[data-label="Issue/Request"]{min-width:110px}
 @media(max-width:1100px){.top{grid-template-columns:1fr auto}.tools{grid-column:1/-1;justify-self:start}}
 @media(max-width:860px){.side{position:static;max-height:none}#t_list{max-height:none}}
 @media(max-width:700px){
@@ -197,7 +194,7 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
 @media(max-width:700px){.sp4{grid-column:1/-1}.hero{padding:20px}.hl{font-size:22px}.hclock{font-size:30px}}
 .st{display:inline-flex;align-items:center;gap:6px;padding:3px 11px 3px 9px;border-radius:99px;background:var(--acc2);color:var(--ink);font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap}
 .st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mute);flex:none}
-.st.ok::before{background:var(--c2)}.st.pr::before{background:var(--c3)}.st.op::before{background:var(--c4)}
+.st.ok::before{background:var(--sok)}.st.pr::before{background:var(--spr)}.st.op::before{background:var(--sop)}
 :root[data-theme="bw"] .st{border:1px solid #000}
 #r_tbl td[data-label="Status"]{white-space:nowrap}
 .pet{position:fixed;left:0;bottom:6px;z-index:8;width:130px;height:84px;pointer-events:none}
@@ -231,6 +228,42 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
 @keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px)}}
 @keyframes zz{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-22px)}}
 @media(max-width:700px){.pet{width:100px;height:65px}}
+#r_tbl th,#r_tbl td{padding:8px 10px;vertical-align:top;overflow-wrap:break-word;word-break:normal}
+#r_tbl th{line-height:1.25}
+#r_tbl td[data-label="SL"],#r_tbl td[data-label="Month"],#r_tbl td[data-label="Date"],#r_tbl td[data-label="Code"],#r_tbl td[data-label="Start"],#r_tbl td[data-label="End"],#r_tbl td[data-label="Duration"],#r_tbl td[data-label="Contact"],#r_tbl td[data-label="Ticket"],#r_tbl td[data-label="Status"],#r_tbl td:last-child{white-space:nowrap}
+#r_tbl td[data-label="Business"]{min-width:130px;max-width:210px}
+#r_tbl td[data-label="Product"],#r_tbl td[data-label="Source"],#r_tbl td[data-label="Issue/Request"]{min-width:80px;max-width:150px}
+#r_tbl td[data-label="Remarks"]{min-width:190px;max-width:340px}
+#r_tbl tr.s-ok{--rc:var(--sok)}#r_tbl tr.s-pr{--rc:var(--spr)}#r_tbl tr.s-op{--rc:var(--sop)}
+#r_tbl tr.s-ok td,#r_tbl tr.s-pr td,#r_tbl tr.s-op td{background:color-mix(in srgb,var(--rc) 10%,transparent)}
+#r_tbl tr.s-ok td:first-child,#r_tbl tr.s-pr td:first-child,#r_tbl tr.s-op td:first-child{box-shadow:inset 4px 0 0 var(--rc)}
+.lgd{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-top:14px}
+.lgd i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+:root[data-theme="dark"],:root[data-theme="midnight"],:root[data-theme="violet"]{--sok:#4ade80;--spr:#fbbf24;--sop:#f87171}
+:root[data-theme="bw"]{--sok:#000;--spr:#555;--sop:#999}
+:root[data-theme="ocean"]{--bg:#e9f5fa;--card:#fff;--ink:#0b2a3a;--mute:#4d6b7b;--line:#cfe5ee;--acc:#0a7ea4;--acc2:#d6eef7;--accink:#fff;--ok:#0e8a5f;--okbg:#def5ec;--warn:#d1433a;--sb:#b6d6e3;--c1:#0a7ea4;--c2:#12a594;--c3:#f2a93b;--c4:#e4572e;--c5:#6c63ff}
+:root[data-theme="forest"]{--bg:#edf3ea;--card:#fbfdfa;--ink:#1d2b1f;--mute:#5b6d5d;--line:#d3e0d0;--acc:#2e7d32;--acc2:#dcebd8;--accink:#fff;--ok:#2e7d32;--okbg:#dcebd8;--warn:#b23b2e;--sb:#bcd0b8;--c1:#2e7d32;--c2:#8a6d3b;--c3:#d99a2b;--c4:#b23b2e;--c5:#4a7c8a}
+:root[data-theme="sunset"]{--bg:#fff1e6;--card:#fffdfb;--ink:#3a1f1a;--mute:#8a6258;--line:#f3d6c4;--acc:#e4572e;--acc2:#ffe0d1;--accink:#fff;--ok:#2a9d8f;--okbg:#d8f1ee;--warn:#c0392b;--sb:#ecc3ad;--c1:#e4572e;--c2:#f2a93b;--c3:#8e44ad;--c4:#2a9d8f;--c5:#c0392b}
+:root[data-theme="rose"]{--bg:#fdeff4;--card:#fff;--ink:#3b1d2a;--mute:#8a5a6e;--line:#f3d3df;--acc:#d6336c;--acc2:#fddde8;--accink:#fff;--ok:#12886a;--okbg:#d9f3ec;--warn:#c92a2a;--sb:#eebbcc;--c1:#d6336c;--c2:#7048e8;--c3:#f59f00;--c4:#12b886;--c5:#e8590c}
+:root[data-theme="midnight"]{color-scheme:dark;--bg:#0b1020;--card:#141b34;--ink:#e6ebff;--mute:#8f9bc7;--line:#252f55;--acc:#6d8bff;--acc2:#1f2a52;--accink:#0b1020;--ok:#4fd6a1;--okbg:#12352c;--warn:#ff8a80;--sh:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.35);--shb:0 1px 2px rgba(0,0,0,.5);--sb:#2c3866;--c1:#6d8bff;--c2:#4fd6a1;--c3:#f5c451;--c4:#ff7b72;--c5:#b48cff}
+:root[data-theme="violet"]{color-scheme:dark;--bg:#16101f;--card:#211833;--ink:#f1e9ff;--mute:#a897c9;--line:#35274f;--acc:#b794f6;--acc2:#32244d;--accink:#16101f;--ok:#5eead4;--okbg:#123a36;--warn:#ff8fa3;--sh:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.35);--shb:0 1px 2px rgba(0,0,0,.5);--sb:#40305f;--c1:#b794f6;--c2:#5eead4;--c3:#fcd34d;--c4:#ff8fa3;--c5:#7dd3fc}
+:root[data-font="inter"]{--font:"Inter",system-ui,sans-serif}
+:root[data-font="poppins"]{--font:"Poppins",system-ui,sans-serif}
+:root[data-font="nunito"]{--font:"Nunito",system-ui,sans-serif}
+:root[data-font="roboto"]{--font:"Roboto",system-ui,sans-serif}
+:root[data-font="lora"]{--font:"Lora",Georgia,serif}
+:root[data-font="mono"]{--font:"JetBrains Mono",ui-monospace,Consolas,monospace}
+:root[data-font="system"]{--font:system-ui,-apple-system,"Segoe UI",sans-serif}
+dialog{border:var(--bw) solid var(--line);border-radius:var(--r);background:var(--card);color:var(--ink);box-shadow:var(--sh);padding:22px;width:calc(100% - 32px);max-width:380px}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.sw{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sw button{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}
+.sw button.on{outline:2px solid var(--acc);outline-offset:2px}
+.sw input{width:34px;height:30px;padding:0;border:0;background:none;box-shadow:none}
+@media(max-width:700px){
+ #r_tbl td{min-width:0!important;max-width:none!important;background:transparent!important;box-shadow:none!important}
+ #r_tbl tr.s-ok,#r_tbl tr.s-pr,#r_tbl tr.s-op{border-left:4px solid var(--rc);background:color-mix(in srgb,var(--rc) 9%,var(--card))}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -241,7 +274,7 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
     <button data-t="dash" class="on">Dashboard</button><button data-t="entry">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
   </nav></div>
   <div class="clock"><div id="clk_d"></div><b id="clk_t"></b></div>
-  <div class="tools"><button class="btn sm ghost" id="srvBtn">Server</button><button class="btn sm ghost" id="petBtn">Hide pet</button><select id="themeSel" class="themesel" aria-label="Theme"></select><button class="btn sm ghost" id="syncBtn">Sync now</button><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open Google Sheet</a><span class="sync" id="sync"></span></div>
+  <div class="tools"><button class="btn sm ghost" id="srvBtn">Server</button><button class="btn sm ghost" id="petBtn">Hide pet</button><button class="btn sm ghost" id="styBtn">Appearance</button><button class="btn sm ghost" id="syncBtn">Sync now</button><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open Google Sheet</a><span class="sync" id="sync"></span></div>
 </header>
 <main>
 
@@ -325,6 +358,7 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
     <span class="grow"></span><b id="r_tot"></b>
     <button class="btn ghost" id="recSheet">Open Google Sheet</button><button class="btn" id="expBtn">Export to Excel</button>
   </div>
+  <div class="lgd"><span><i style="background:var(--sok)"></i>Done / resolved</span><span><i style="background:var(--spr)"></i>In progress</span><span><i style="background:var(--sop)"></i>Open / new</span><span><i style="background:var(--line)"></i>Other</span></div>
   <div class="scroll"><table id="r_tbl"></table></div>
 </div></section>
 
@@ -346,6 +380,13 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
 </div></section>
 
 </main>
+<dialog id="sty"><h2 style="font-size:17px;margin-bottom:12px">Appearance</h2>
+  <label>Theme<select id="themeSel"></select></label>
+  <label style="margin-top:12px">Font<select id="fontSel"></select></label>
+  <label style="margin-top:12px">Text size<select id="sizeSel"></select></label>
+  <div style="margin-top:12px"><div class="muted" style="font-size:13px;font-weight:600;margin-bottom:6px">Text colour</div><div class="sw" id="inkSw"></div></div>
+  <div class="row" style="margin-top:14px"><button class="btn" id="styX">Done</button></div>
+</dialog>
 <div class="toast" id="toast"></div>
 <script>
 const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s),K="hrms_timesheet_v2";
@@ -375,11 +416,28 @@ $("#sheetLink").onclick=e=>{
 $("#recSheet").onclick=()=>$("#sheetLink").click();
 
 // themes
-const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["paper","Paper"]];
+const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["paper","Paper"],["ocean","Ocean"],["forest","Forest"],["sunset","Sunset"],["rose","Rose"],["midnight","Midnight"],["violet","Violet"]];
 function setTheme(t){document.documentElement.dataset.theme=t;$("#themeSel").value=t;try{localStorage.setItem("hrms_theme",t)}catch(e){}}
 $("#themeSel").innerHTML=THEMES.map(x=>`<option value="${x[0]}">${x[1].replace("&","&amp;")}</option>`).join("");
 $("#themeSel").onchange=e=>setTheme(e.target.value);
 setTheme(THEMES.some(x=>x[0]===document.documentElement.dataset.theme)?document.documentElement.dataset.theme:"light");
+
+// appearance
+const FONTS=[["","Theme default"],["inter","Inter"],["poppins","Poppins"],["nunito","Nunito"],["roboto","Roboto"],["lora","Lora (serif)"],["mono","JetBrains Mono"],["system","System UI"]];
+const SIZES=[[13,"Small"],[15,"Medium"],[17,"Large"],[19,"Extra large"]];
+const INKS=["#000000","#1e293b","#0b3d91","#14532d","#7c2d12","#581c87","#ffffff"];
+const rs=document.documentElement,gs=k=>{try{return localStorage.getItem(k)}catch(e){return null}},ls=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+function markInk(){const c=gs("hrms_ink")||"";$$("#inkSw button").forEach(b=>b.classList.toggle("on",(b.dataset.c||"")===c))}
+function setFont(f){if(f)rs.dataset.font=f;else delete rs.dataset.font;ls("hrms_font",f||null)}
+function setInk(c){if(c)rs.style.setProperty("--ink",c);else rs.style.removeProperty("--ink");ls("hrms_ink",c||null);markInk()}
+function setSize(z){rs.style.setProperty("--fs",z+"px");ls("hrms_size",z)}
+$("#fontSel").innerHTML=FONTS.map(f=>`<option value="${f[0]}">${f[1]}</option>`).join("");$("#fontSel").value=gs("hrms_font")||"";
+$("#sizeSel").innerHTML=SIZES.map(z=>`<option value="${z[0]}">${z[1]}</option>`).join("");$("#sizeSel").value=gs("hrms_size")||"15";
+$("#fontSel").onchange=e=>setFont(e.target.value);$("#sizeSel").onchange=e=>setSize(e.target.value);
+$("#inkSw").innerHTML='<button type="button" data-c="" title="Automatic" aria-label="Automatic colour" style="background:linear-gradient(135deg,var(--card) 50%,var(--ink) 50%)"></button>'+INKS.map(c=>`<button type="button" data-c="${c}" title="${c}" aria-label="${c}" style="background:${c}"></button>`).join("")+'<input type="color" id="inkPick" title="Custom colour" value="#000000">';
+$$("#inkSw button").forEach(b=>b.onclick=()=>setInk(b.dataset.c));
+$("#inkPick").oninput=e=>setInk(e.target.value);markInk();
+$("#styBtn").onclick=()=>$("#sty").showModal();$("#styX").onclick=()=>$("#sty").close();
 
 // Google Sheet sync
 function parseResp(t){
@@ -404,7 +462,7 @@ async function pull(){
     db.rows=d.rows.filter(x=>!pend.some(p=>p.id===x.id)).concat(pend);
     save();pend.forEach(r=>push({action:"upsertRow",row:r}));if(db._mp)pushMasters();
     if(d.link)db.link=d.link;save();showLink();setSync("Synced with Google Sheet");updBtn();
-    fillSelects();renderM();renderRec();renderToday();renderTpl()}
+    fillSelects();renderM();renderRec();renderToday();renderTpl();if(!editId&&(!$("#f_s").value||$("#f_s").value===autoStart))setAutoStart()}
   catch(e){setSync("Could not load: "+e)}
 }
 const pushMasters=async()=>{db._mp=1;save();const{prod,biz,stat,src,tpl}=db;if(await push({action:"setMasters",masters:{prod,biz,stat,src,tpl}})){delete db._mp;save()}updBtn()};
@@ -442,10 +500,14 @@ function syncAuto(){
   const b=db.biz.find(x=>x.name===$("#f_biz").value);$("#f_code").value=b?b.code:"";
 }
 ["f_s","f_e","f_biz"].forEach(i=>$("#"+i).addEventListener("input",syncAuto));
+let autoStart="";
+const lastEnd=d=>{for(let i=db.rows.length-1;i>=0;i--){const r=db.rows[i];if(r.date===d&&r.e)return r.e}return""};
+function setAutoStart(){const v=lastEnd($("#f_date").value);$("#f_s").value=v;autoStart=v;syncAuto()}
+$("#f_date").addEventListener("input",()=>{if(!editId&&(!$("#f_s").value||$("#f_s").value===autoStart))setAutoStart()});
 let editId=null;
 function clearForm(){
   editId=null;$("#formTitle").textContent="New entry";$("#saveBtn").textContent="Save entry";$("#clearBtn").textContent="Clear";
-  Object.values(F).forEach(i=>$("#"+i).value="");$("#f_date").value=today();syncAuto();
+  Object.values(F).forEach(i=>$("#"+i).value="");$("#f_date").value=today();setAutoStart();
 }
 $("#clearBtn").onclick=clearForm;
 $("#saveBtn").onclick=()=>{
@@ -694,6 +756,7 @@ function getRows(){
   rows.forEach((r,i)=>r.sl=i+1);return rows;
 }
 const H=["SL.no","Month","Date","Code","Source","Product","Transaction Start Time","Transaction End time","Total Duration","CONTACT NO","Business Name","Issue/Request","Ticket No","Status","Remarks"];
+const HL=["SL","Month","Date","Code","Source","Product","Start","End","Duration","Contact","Business","Issue/Request","Ticket","Status","Remarks"];
 const line=r=>[r.sl,mon(r.date),r.date,r.code,r.src,r.prod,r.s,r.e,r.dur,r.contact,r.biz,r.issue,r.ticket,r.stat,r.rem].map(x=>x??"");
 const total=rows=>rows.reduce((a,r)=>a+(r.dur?toM(r.dur):0),0);
 const stc=s=>isDone(s)?"ok":/progress|pending|wip|working|hold|wait/i.test(s)?"pr":/open|new/i.test(s)?"op":"";
@@ -701,8 +764,8 @@ const chip=s=>s?`<span class="st ${stc(s)}">${esc(s)}</span>`:"";
 function renderRec(){
   const rows=getRows();
   $("#r_tot").textContent=`${rows.length} entries · ${fmt(total(rows))}`;
-  $("#r_tbl").innerHTML=rows.length?"<tr class=\"hd\">"+H.map(h=>`<th>${h}</th>`).join("")+"<th></th></tr>"+
-    rows.map(r=>"<tr>"+line(r).map((x,i)=>`<td data-label="${H[i]}">${i===13?chip(x):esc(x)}</td>`).join("")+
+  $("#r_tbl").innerHTML=rows.length?"<tr class=\"hd\">"+HL.map(h=>`<th>${h}</th>`).join("")+"<th></th></tr>"+
+    rows.map(r=>'<tr class="s-'+(stc(r.stat)||"na")+'">'+line(r).map((x,i)=>`<td data-label="${HL[i]}">${i===13?chip(x):esc(x)}</td>`).join("")+
     `<td><button class="btn sm ghost" onclick="editRow('${r.id}')">Edit</button> <button class="btn sm del" onclick="delRow('${r.id}')">Delete</button></td></tr>`).join(""):
     '<tr><td class="muted">No entries for this selection.</td></tr>';
 }
