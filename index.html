@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Timesheet</title>
-<script>try{var d=document.documentElement,t=localStorage.getItem("hrms_theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;var f=localStorage.getItem("hrms_font"),i=localStorage.getItem("hrms_ink"),z=localStorage.getItem("hrms_size");if(f)d.dataset.font=f;if(i)d.style.setProperty("--ink",i);if(z)d.style.setProperty("--fs",z+"px")}catch(e){}</script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&family=Inter:wght@400;500;600;800&family=Poppins:wght@400;500;600;800&family=Nunito:wght@400;600;800&family=Roboto:wght@400;500;700&family=Lora:wght@400;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
+<script>try{var d=document.documentElement,t=localStorage.getItem("hrms_theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;var f=localStorage.getItem("hrms_font"),i=localStorage.getItem("hrms_ink"),z=localStorage.getItem("hrms_size");if(f)d.dataset.font=f;if(i)d.style.setProperty("--ink",i);if(z)d.style.setProperty("--fs",z+"px");var fc=localStorage.getItem("hrms_fontcss");if(fc)d.style.setProperty("--font",fc)}catch(e){}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <style>
@@ -270,6 +270,13 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .ctxt{margin-top:6px;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:99px;font-weight:700;display:inline-block}
 @keyframes celeIn{from{opacity:0;transform:translateX(-50%) scale(.5)}to{opacity:1;transform:translateX(-50%) scale(1)}}
 @keyframes celeOut{from{opacity:1;transform:translateX(-50%)}to{opacity:0;transform:translateX(-50%) translateY(-30px) scale(.9)}}
+:root[data-theme="material"]{--bg:#f5f5f5;--card:#fff;--ink:#212121;--mute:#757575;--line:#e0e0e0;--acc:#6200ee;--acc2:#ede7f6;--accink:#fff;--ok:#2e7d32;--okbg:#e8f5e9;--warn:#b00020;--sb:#bdbdbd;--head:#eeeeee;--r:8px;--ri:4px;--sh:0 2px 1px -1px rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 1px 3px 0 rgba(0,0,0,.12);--sh2:0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);--shb:0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);--c1:#6200ee;--c2:#03dac6;--c3:#ff9800;--c4:#b00020;--c5:#3f51b5;--font:"Roboto",system-ui,sans-serif}
+:root[data-theme="matdark"]{color-scheme:dark;--bg:#121212;--card:#1e1e1e;--ink:#eeeeee;--mute:#a0a0a0;--line:#2e2e2e;--acc:#bb86fc;--acc2:#2b2140;--accink:#000;--ok:#81c995;--okbg:#1c2e22;--warn:#cf6679;--sb:#3a3a3a;--head:#262626;--r:8px;--ri:4px;--sh:0 2px 1px -1px rgba(0,0,0,.5),0 1px 1px 0 rgba(0,0,0,.4),0 1px 3px 0 rgba(0,0,0,.4);--sh2:0 5px 5px -3px rgba(0,0,0,.5),0 8px 10px 1px rgba(0,0,0,.4),0 3px 14px 2px rgba(0,0,0,.4);--shb:0 3px 1px -2px rgba(0,0,0,.5),0 2px 2px 0 rgba(0,0,0,.4),0 1px 5px 0 rgba(0,0,0,.4);--c1:#bb86fc;--c2:#03dac6;--c3:#ffb74d;--c4:#cf6679;--c5:#82b1ff;--sok:#4ade80;--spr:#fbbf24;--sop:#f87171;--font:"Roboto",system-ui,sans-serif}
+:root[data-theme="material"] .btn,:root[data-theme="matdark"] .btn{text-transform:uppercase;letter-spacing:.7px;font-size:13px}
+:root[data-theme="material"] .btn.sm,:root[data-theme="matdark"] .btn.sm{font-size:12px}
+:root[data-theme="material"] .card,:root[data-theme="matdark"] .card{transition:box-shadow .2s}
+:root[data-theme="material"] .card:hover,:root[data-theme="matdark"] .card:hover{box-shadow:var(--sh2)}
+:root[data-theme="material"] .top,:root[data-theme="matdark"] .top{border-bottom:0;box-shadow:0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -443,22 +450,41 @@ $("#sheetLink").onclick=e=>{
 $("#recSheet").onclick=()=>$("#sheetLink").click();
 
 // themes
-const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["paper","Paper"],["ocean","Ocean"],["forest","Forest"],["sunset","Sunset"],["rose","Rose"],["midnight","Midnight"],["violet","Violet"]];
+const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["paper","Paper"],["ocean","Ocean"],["forest","Forest"],["sunset","Sunset"],["rose","Rose"],["midnight","Midnight"],["violet","Violet"],["material","Material"],["matdark","Material dark"]];
 function setTheme(t){document.documentElement.dataset.theme=t;$("#themeSel").value=t;try{localStorage.setItem("hrms_theme",t)}catch(e){}}
-$("#themeSel").innerHTML=THEMES.map(x=>`<option value="${x[0]}">${x[1].replace("&","&amp;")}</option>`).join("");
+$("#themeSel").innerHTML=THEMES.slice().sort((a,b)=>a[1].localeCompare(b[1])).map(x=>`<option value="${x[0]}">${x[1].replace("&","&amp;")}</option>`).join("");
 $("#themeSel").onchange=e=>setTheme(e.target.value);
 setTheme(THEMES.some(x=>x[0]===document.documentElement.dataset.theme)?document.documentElement.dataset.theme:"light");
 
 // appearance
-const FONTS=[["","Theme default"],["inter","Inter"],["poppins","Poppins"],["nunito","Nunito"],["roboto","Roboto"],["lora","Lora (serif)"],["mono","JetBrains Mono"],["system","System UI"]];
+const FONTS=[
+ ["inter","Inter","Inter","sans-serif",1,"Standard"],["lato","Lato","Lato","sans-serif",1,"Standard"],["lora","Lora (serif)","Lora","Georgia,serif",1,"Standard"],
+ ["merri","Merriweather (serif)","Merriweather","Georgia,serif",1,"Standard"],["montserrat","Montserrat","Montserrat","sans-serif",1,"Standard"],["nunito","Nunito","Nunito","sans-serif",1,"Standard"],
+ ["opensans","Open Sans","Open Sans","sans-serif",1,"Standard"],["playfair","Playfair Display (serif)","Playfair Display","Georgia,serif",1,"Standard"],["poppins","Poppins","Poppins","sans-serif",1,"Standard"],
+ ["raleway","Raleway","Raleway","sans-serif",1,"Standard"],["roboto","Roboto","Roboto","sans-serif",1,"Standard"],["system","System UI","","sans-serif",0,"Standard"],
+ ["ubuntu","Ubuntu","Ubuntu","sans-serif",1,"Standard"],["worksans","Work Sans","Work Sans","sans-serif",1,"Standard"],
+ ["caveat","Caveat","Caveat","cursive",1,"Free style"],["dancing","Dancing Script","Dancing Script","cursive",1,"Free style"],["indie","Indie Flower","Indie Flower","cursive",0,"Free style"],
+ ["pacifico","Pacifico","Pacifico","cursive",0,"Free style"],["patrick","Patrick Hand","Patrick Hand","cursive",0,"Free style"],["shadows","Shadows Into Light","Shadows Into Light","cursive",0,"Free style"],
+ ["fira","Fira Code","Fira Code","ui-monospace,Consolas,monospace",1,"Coding"],["plexmono","IBM Plex Mono","IBM Plex Mono","ui-monospace,Consolas,monospace",1,"Coding"],["inconsolata","Inconsolata","Inconsolata","ui-monospace,Consolas,monospace",1,"Coding"],
+ ["jetbrains","JetBrains Mono","JetBrains Mono","ui-monospace,Consolas,monospace",1,"Coding"],["robotomono","Roboto Mono","Roboto Mono","ui-monospace,Consolas,monospace",1,"Coding"],["sourcecode","Source Code Pro","Source Code Pro","ui-monospace,Consolas,monospace",1,"Coding"],["spacemono","Space Mono","Space Mono","ui-monospace,Consolas,monospace",1,"Coding"]
+];
+const fontLoaded={};
+function loadFont(f){if(!f||!f[2]||fontLoaded[f[0]])return;fontLoaded[f[0]]=1;const l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family="+f[2].replace(/ /g,"+")+(f[4]?":wght@400;700":"")+"&display=swap";document.head.appendChild(l)}
+const fontStack=f=>(f[2]?'"'+f[2]+'",':"")+(f[0]==="system"?'system-ui,-apple-system,"Segoe UI",':"")+f[3];
 const SIZES=[[13,"Small"],[15,"Medium"],[17,"Large"],[19,"Extra large"]];
 const INKS=["#000000","#1e293b","#0b3d91","#14532d","#7c2d12","#581c87","#ffffff"];
 const rs=document.documentElement,gs=k=>{try{return localStorage.getItem(k)}catch(e){return null}},ls=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
 function markInk(){const c=gs("hrms_ink")||"";$$("#inkSw button").forEach(b=>b.classList.toggle("on",(b.dataset.c||"")===c))}
-function setFont(f){if(f)rs.dataset.font=f;else delete rs.dataset.font;ls("hrms_font",f||null)}
+function setFont(k){
+  const f=FONTS.find(x=>x[0]===k);
+  if(f){loadFont(f);rs.style.setProperty("--font",fontStack(f));rs.dataset.font=k;ls("hrms_font",k);ls("hrms_fontcss",fontStack(f))}
+  else{rs.style.removeProperty("--font");delete rs.dataset.font;ls("hrms_font",null);ls("hrms_fontcss",null)}
+}
 function setInk(c){if(c)rs.style.setProperty("--ink",c);else rs.style.removeProperty("--ink");ls("hrms_ink",c||null);markInk()}
 function setSize(z){rs.style.setProperty("--fs",z+"px");ls("hrms_size",z)}
-$("#fontSel").innerHTML=FONTS.map(f=>`<option value="${f[0]}">${f[1]}</option>`).join("");$("#fontSel").value=gs("hrms_font")||"";
+$("#fontSel").innerHTML='<option value="">Theme default</option>'+["Standard","Free style","Coding"].map(g=>'<optgroup label="'+g+'">'+FONTS.filter(f=>f[5]===g).sort((a,b)=>a[1].localeCompare(b[1])).map(f=>`<option value="${f[0]}">${f[1]}</option>`).join("")+'</optgroup>').join("");
+{const fk=gs("hrms_font"),fo=FONTS.find(x=>x[0]===fk);$("#fontSel").value=fo?fk:"";if(fo)loadFont(fo);else if(fk)setFont("")}
+const matFont=()=>{const t=rs.dataset.theme;if(t==="material"||t==="matdark")loadFont(FONTS.find(x=>x[0]==="roboto"))};matFont();$("#themeSel").addEventListener("change",matFont);
 $("#sizeSel").innerHTML=SIZES.map(z=>`<option value="${z[0]}">${z[1]}</option>`).join("");$("#sizeSel").value=gs("hrms_size")||"15";
 $("#fontSel").onchange=e=>setFont(e.target.value);$("#sizeSel").onchange=e=>setSize(e.target.value);
 $("#inkSw").innerHTML='<button type="button" data-c="" title="Automatic" aria-label="Automatic colour" style="background:linear-gradient(135deg,var(--card) 50%,var(--ink) 50%)"></button>'+INKS.map(c=>`<button type="button" data-c="${c}" title="${c}" aria-label="${c}" style="background:${c}"></button>`).join("")+'<input type="color" id="inkPick" title="Custom colour" value="#000000">';
@@ -489,7 +515,7 @@ async function pull(){
     db.rows=d.rows.filter(x=>!pend.some(p=>p.id===x.id)).concat(pend);
     save();pend.forEach(r=>push({action:"upsertRow",row:r}));if(db._mp)pushMasters();
     if(!db._dp){db._dp=1;if(!defProd()){db.prod.unshift(DEFAULT_PRODUCT);pushMasters()}save()}
-    if(d.link)db.link=d.link;save();showLink();setSync("Synced with Google Sheet");updBtn();
+    if(d.link)db.link=d.link;save();showLink();setSync("Synced with Google Sheet");updBtn();lastSync=Date.now();
     fillSelects();renderM();renderRec();renderToday();renderTpl();if(!editId&&(!$("#f_s").value||$("#f_s").value===autoStart))setAutoStart()}
   catch(e){setSync("Could not load: "+e)}
 }
@@ -521,7 +547,8 @@ $$("#nav button").forEach(b=>b.onclick=()=>{
 // entry form
 const F={date:"f_date",src:"f_src",prod:"f_prod",s:"f_s",e:"f_e",contact:"f_contact",biz:"f_biz",issue:"f_issue",ticket:"f_ticket",stat:"f_stat",rem:"f_rem"};
 function opts(id,list){const el=$(id),v=el.value;el.innerHTML='<option value=""></option>'+list.map(x=>`<option>${esc(x)}</option>`).join("");if(list.includes(v))el.value=v}
-const sortBiz=()=>db.biz.sort((a,b)=>a.name.localeCompare(b.name,undefined,{sensitivity:"base"}));
+const cmp=(a,b)=>String(a).localeCompare(String(b),undefined,{sensitivity:"base"});
+const sortBiz=()=>{db.biz.sort((a,b)=>cmp(a.name,b.name));["prod","stat","src"].forEach(k=>db[k].sort(cmp))};
 const DEFAULT_PRODUCT="Ezy Bill";
 const defProd=()=>db.prod.find(p=>p.toLowerCase()===DEFAULT_PRODUCT.toLowerCase())||"";
 function applyDefProd(){const el=$("#f_prod");if(!editId&&!el.value)el.value=defProd()}
@@ -567,9 +594,10 @@ function renderToday(){
 // templates
 const TF=["biz","src","prod","issue","stat","contact","rem"];
 function renderTpl(){
-  const el=$("#tplSel"),v=el.value;
+  const el=$("#tplSel"),v=el.value,nm=db.tpl[v]?db.tpl[v].name:"";
+  db.tpl.sort((a,b)=>cmp(a.name,b.name));
   el.innerHTML='<option value="">'+(db.tpl.length?"Choose a template...":"No templates yet")+'</option>'+db.tpl.map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join("");
-  el.value=v&&db.tpl[v]?v:"";
+  const k=db.tpl.findIndex(x=>x.name===nm);el.value=k>=0?String(k):"";
 }
 $("#tplNew").onclick=()=>{$("#tplForm").style.display="";$("#tpl_name").focus()};
 $("#tplSave").onclick=()=>{
@@ -577,7 +605,7 @@ $("#tplSave").onclick=()=>{
   const t={name};TF.forEach(k=>t[k]=$("#"+F[k]).value.trim());
   const i=db.tpl.findIndex(x=>x.name.toLowerCase()===name.toLowerCase());
   if(i<0)db.tpl.push(t);else db.tpl[i]=t;
-  save();pushMasters();renderTpl();$("#tplSel").value=String(i<0?db.tpl.length-1:i);
+  save();pushMasters();renderTpl();$("#tplSel").value=String(db.tpl.findIndex(x=>x.name.toLowerCase()===name.toLowerCase()));
   $("#tplForm").style.display="none";$("#tpl_name").value="";toast("Template saved");
 };
 $("#tplApply").onclick=()=>{
@@ -999,9 +1027,20 @@ function tick(){
   $("#clk_t").textContent=tm;$("#d_time").textContent=tm;
   $("#d_greet").textContent=hr<12?"Good morning":hr<16?"Good afternoon":"Good evening";
   $("#d_date").textContent=n.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-  if(today()!==lastDay){lastDay=today();renderToday()}
+  if(today()!==lastDay)rollDay()
 }
 setInterval(tick,1000);tick();
+let lastSync=Date.now();
+const REFRESH_MS=15*60*1000;
+function rollDay(){
+  const t=today(),old=lastDay;if(t===old)return;lastDay=t;
+  if(!editId&&$("#f_date").value===old){$("#f_date").value=t;if(!$("#f_s").value||$("#f_s").value===autoStart)setAutoStart();toast("New day: entry date set to "+sd(t))}
+  if($("#r_day").value===old)$("#r_day").value=t;
+  if($("#r_month").value===old.slice(0,7))$("#r_month").value=t.slice(0,7);
+  renderToday();renderRec();
+}
+setInterval(()=>{rollDay();pull()},REFRESH_MS);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){rollDay();if(Date.now()-lastSync>REFRESH_MS)pull()}});
 save();clearForm();fillSelects();renderM();renderToday();renderTpl();showLink();updBtn();pull();
 </script>
 </body>
