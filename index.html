@@ -46,7 +46,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box
 .btn.warnb{background:var(--warn);color:var(--accink)}
 .btn.sm{padding:4px 11px;font-size:13px}
 .row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
-.side{position:sticky;top:84px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:16px;min-width:0;max-height:calc(100vh - 104px)}
+.side{position:sticky;top:84px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:16px;min-width:0;max-height:calc(100vh - 156px)}
 .sel{display:grid;gap:10px;margin-top:12px}
 .big{font-size:44px;font-weight:800;letter-spacing:-1.5px;color:var(--acc);line-height:1.1;margin-top:10px}
 .today ul{list-style:none;padding:0;margin:14px 0 0}
@@ -311,22 +311,22 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .rl{grid-area:left}.rr{grid-area:right}
 .rl,.rr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .rr{justify-content:flex-end}
-.rc{grid-area:tot;text-align:center;font-size:16px;font-weight:700}
+.rtot{grid-area:tot;justify-self:center;background:var(--acc2);color:var(--ink);padding:7px 22px;border-radius:99px;font-size:15px;font-weight:700;white-space:nowrap;text-align:center;position:static}
 .rbar .seg{height:42px;padding:4px;box-sizing:border-box;align-items:center}
 .rbar .seg button{height:34px;padding:0 16px}
 .rbar input[type=date],.rbar input[type=month]{height:42px;padding:0 12px;width:auto}
 .rbar .btn{height:42px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
 .rbar .xm{display:inline-flex}
 @media(max-width:900px){.rbar{grid-template-columns:1fr;grid-template-areas:"tot" "left" "right"}.rl,.rr{justify-content:center}}
-body{display:flex;flex-direction:column;min-height:100vh}
+body{display:flex;flex-direction:column;min-height:100vh;padding-bottom:50px}
 main{flex:1 0 auto;width:100%}
-#foot{position:sticky;bottom:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:6px 20px;flex-wrap:wrap;padding:12px 28px;border-top:1px solid var(--line);background:var(--card);font-size:13px;color:var(--mute)}
+#foot{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:6px 20px;flex-wrap:wrap;padding:12px 28px;border-top:1px solid var(--line);background:var(--card);font-size:13px;color:var(--mute)}
 #f_msg{font-style:italic}
 #f_name{background:none;border:0;padding:0;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 #f_name:hover{color:var(--acc)}
-@media(max-width:700px){#foot{justify-content:center;text-align:center;padding:12px 14px}}
-.pet{bottom:44px!important}
-.toast{bottom:64px}
+@media(max-width:700px){#foot{justify-content:center;text-align:center;padding:12px 14px}body{padding-bottom:80px}}
+.pet{bottom:58px!important}
+.toast{bottom:72px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -418,7 +418,7 @@ main{flex:1 0 auto;width:100%}
   <div class="bar rbar">
     <div class="rl"><div class="seg" id="r_seg"><button data-m="day" class="on">Day</button><button data-m="month">Month</button></div>
     <input type="date" id="r_day"><input type="month" id="r_month" style="display:none"></div>
-    <b id="r_tot" class="rc"></b>
+    <b id="r_tot" class="rtot"></b>
     <div class="rr"><button class="btn ghost" id="recSheet">Open Google Sheet</button><div class="xm"><button class="btn" id="expBtn" aria-haspopup="true" aria-expanded="false">Export to Excel &#9662;</button>
       <div class="mnu" id="expMenu" role="menu">
         <button role="menuitem" data-m="fmt"><b>Formatted data</b><span>HR layout, no analytics</span></button>
@@ -610,7 +610,7 @@ $$("#nav button").forEach(b=>b.onclick=()=>{
 
 // entry form
 const F={date:"f_date",src:"f_src",prod:"f_prod",s:"f_s",e:"f_e",contact:"f_contact",biz:"f_biz",issue:"f_issue",ticket:"f_ticket",stat:"f_stat",rem:"f_rem"};
-function opts(id,list){const el=$(id),v=el.value;el.innerHTML=list.map(x=>`<option>${esc(x)}</option>`).join("");if(list.includes(v))el.value=v}
+function opts(id,list){const el=$(id),v=el.value;el.innerHTML=list.map(x=>`<option>${esc(x)}</option>`).join("");if(v&&list.includes(v))el.value=v;else el.selectedIndex=-1}
 const cmp=(a,b)=>String(a).localeCompare(String(b),undefined,{sensitivity:"base"});
 const sortBiz=()=>{db.biz=db.biz.filter(b=>b&&String(b.name).trim());["prod","stat","src"].forEach(k=>{db[k]=db[k].filter(x=>String(x).trim())});db.biz.sort((a,b)=>cmp(a.name,b.name));["prod","stat","src"].forEach(k=>db[k].sort(cmp))};
 const DEFAULT_PRODUCT="Ezy Bill";
@@ -618,17 +618,12 @@ const defProd=()=>db.prod.find(p=>p.toLowerCase()===DEFAULT_PRODUCT.toLowerCase(
 let formTouched=false;
 function applyDefaults(){
   if(editId)return;
-  const last=db.rows.length?db.rows[db.rows.length-1]:{};
-  const pick=(id,pref,list)=>{const v=list.find(x=>x.toLowerCase()===String(pref||"").toLowerCase());if(v!=null)$(id).value=v};
-  pick("#f_prod",DEFAULT_PRODUCT,db.prod);
-  pick("#f_stat","Open",db.stat);
-  pick("#f_src",last.src,db.src);
-  pick("#f_biz",last.biz,db.biz.map(b=>b.name));
-  pick("#f_issue",last.issue||"Issue",["Issue","Request"]);
-  ["#f_src","#f_prod","#f_biz","#f_stat","#f_issue"].forEach(id=>{const el=$(id);if(el.selectedIndex<0&&el.options.length)el.selectedIndex=0});
+  const p=defProd();if(p)$("#f_prod").value=p;else $("#f_prod").selectedIndex=-1;
+  ["#f_src","#f_biz","#f_stat","#f_issue"].forEach(id=>{$(id).selectedIndex=-1});
   syncAuto();
 }
 const applyIfFresh=()=>{if(!formTouched)applyDefaults()};
+["r_day","r_month"].forEach(id=>$("#"+id).addEventListener("change",()=>renderRec()));
 $$(".fcard input,.fcard textarea,.fcard select").forEach(el=>{
   el.addEventListener(el.tagName==="SELECT"?"change":"input",()=>{el.classList.remove("typing");void el.offsetWidth;el.classList.add("typing")});
   ["input","change"].forEach(ev=>el.addEventListener(ev,()=>{formTouched=true}));
