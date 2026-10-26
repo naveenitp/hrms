@@ -307,6 +307,24 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 :root[data-theme="dos"] .hl::after,:root[data-theme="cmd"] .hl::after{content:"\2588";margin-left:4px;animation:cur 1s steps(1) infinite}
 @keyframes dosType{from{max-width:0}to{max-width:100%}}
 @keyframes cur{50%{opacity:0}}
+.rbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.rl,.rr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rr{justify-content:flex-end}
+.rc{text-align:center;font-size:15px;font-weight:700;white-space:nowrap}
+.rbar .seg{height:42px;padding:4px;box-sizing:border-box;align-items:center}
+.rbar .seg button{height:34px;padding:0 16px}
+.rbar input[type=date],.rbar input[type=month]{height:42px;padding:0 12px;width:auto}
+.rbar .btn{height:42px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.rbar .xm{display:inline-flex}
+@media(max-width:900px){.rbar{grid-template-columns:1fr}.rl,.rr{justify-content:center}.rc{order:-1}}
+body{display:flex;flex-direction:column;min-height:100vh}
+main{flex:1 0 auto;width:100%}
+#foot{display:flex;justify-content:space-between;align-items:center;gap:6px 20px;flex-wrap:wrap;padding:12px 28px;border-top:1px solid var(--line);background:var(--card);font-size:13px;color:var(--mute)}
+#f_msg{font-style:italic}
+#f_name{background:none;border:0;padding:0;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+#f_name:hover{color:var(--acc)}
+@media(max-width:700px){#foot{justify-content:center;text-align:center;padding:12px 14px}}
+.pet{bottom:44px!important}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -395,16 +413,16 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 </div></section>
 
 <section class="tab" id="rec"><div class="card">
-  <div class="bar">
-    <div class="seg" id="r_seg"><button data-m="day" class="on">Day</button><button data-m="month">Month</button></div>
-    <input type="date" id="r_day"><input type="month" id="r_month" style="display:none">
-    <span class="grow"></span><b id="r_tot"></b>
-    <button class="btn ghost" id="recSheet">Open Google Sheet</button><div class="xm"><button class="btn" id="expBtn" aria-haspopup="true" aria-expanded="false">Export to Excel &#9662;</button>
+  <div class="bar rbar">
+    <div class="rl"><div class="seg" id="r_seg"><button data-m="day" class="on">Day</button><button data-m="month">Month</button></div>
+    <input type="date" id="r_day"><input type="month" id="r_month" style="display:none"></div>
+    <b id="r_tot" class="rc"></b>
+    <div class="rr"><button class="btn ghost" id="recSheet">Open Google Sheet</button><div class="xm"><button class="btn" id="expBtn" aria-haspopup="true" aria-expanded="false">Export to Excel &#9662;</button>
       <div class="mnu" id="expMenu" role="menu">
         <button role="menuitem" data-m="fmt"><b>Formatted data</b><span>HR layout, no analytics</span></button>
         <button role="menuitem" data-m="plain"><b>Simple data sheet</b><span>Just the table, nothing extra</span></button>
         <button role="menuitem" data-m="full"><b>Full report</b><span>Formatted data plus summary</span></button>
-      </div></div>
+      </div></div></div>
   </div>
   <div class="lgd"><span><i style="background:var(--sok)"></i>Done / resolved</span><span><i style="background:var(--spr)"></i>In progress</span><span><i style="background:var(--sop)"></i>Open / new</span><span><i style="background:var(--line)"></i>Other</span></div>
   <div class="scroll"><table id="r_tbl"></table></div>
@@ -428,6 +446,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 </div></section>
 
 </main>
+<footer id="foot"><span id="f_msg"></span><button type="button" id="f_name" title="Click to change your name"></button></footer>
 <dialog id="sty"><h2 style="font-size:17px;margin-bottom:12px">Appearance</h2>
   <label>Theme<select id="themeSel"></select></label>
   <label style="margin-top:12px">Font<select id="fontSel"></select></label>
@@ -764,7 +783,7 @@ function renderDash(){
 $("#d_new").onclick=()=>$('#nav [data-t="entry"]').click();
 $("#d_rec").onclick=()=>$('#nav [data-t="rec"]').click();
 $$("#d_seg button").forEach(b=>b.onclick=()=>{dp=b.dataset.p;$$("#d_seg button").forEach(x=>x.classList.toggle("on",x===b));renderDash()});
-$("#d_edit").onclick=()=>{const v=prompt("Your name for the welcome message:",uname);if(v!==null){uname=v.trim();try{localStorage.setItem("hrms_name",uname)}catch(e){}renderDash()}};
+$("#d_edit").onclick=()=>{const v=prompt("Your name for the welcome message:",uname);if(v!==null){uname=v.trim();try{localStorage.setItem("hrms_name",uname)}catch(e){}renderDash();renderFooter()}};
 $("#d_target").value=tgt;
 $("#d_target").oninput=e=>{const v=parseFloat(e.target.value);if(v>0){tgt=v;try{localStorage.setItem("hrms_target",v)}catch(x){}renderDash()}};
 
@@ -1096,6 +1115,19 @@ function tick(){
   if(today()!==lastDay)rollDay()
 }
 setInterval(tick,1000);tick();
+const OWNER_NAME="";  // optional: put your name here to show it in the footer without clicking; otherwise click the name in the footer once
+const QUOTES=["Small steps every day add up to big results.","Done is better than perfect. Log it and move on.","Your effort today is tomorrow's advantage.","Consistency beats intensity. Keep showing up.","Every entry you log is proof of work well done.","A good day starts with a clear plan.","Focus on the next task, not the whole mountain.","You are closer to your goal than you were yesterday.","Great work is built one hour at a time.","Be proud of the little wins. They count too.","Calm mind, steady pace, strong finish.","Make today count, and let the numbers speak.","Discipline turns plans into results.","Every problem solved is a customer made happier.","Your work matters more than you think.","Take a short break. Come back sharper.","Do the hard thing first. The rest feels easy.","Quality today builds trust tomorrow.","Keep learning. Every ticket teaches something.","Stay curious, stay kind, stay productive.","Energy flows where focus goes.","One honest hour beats three distracted ones.","Show up, log in, do your best.","Be the reason a customer smiles today.","Challenges are just tasks waiting to be finished.","Progress feels slow until you look back.","Own your day before it owns you.","Respect your time and it will respect you back.","Good habits are quiet superpowers.","Finish strong. The last hour counts as much as the first.","Every call answered is a bridge built.","Learn from yesterday, work for today, plan for tomorrow.","Patience and persistence solve most problems.","Your steady effort is your biggest strength.","Today is a fresh page. Write something good.","Help one more person today, and you've done well.","Work smart, rest well, repeat.","Ambition plus action equals achievement.","Celebrate the finish of every task, however small.","Believe in the work you do, and do it well."];
+function renderFooter(){
+  const t=new Date(today()+"T00:00"),doy=Math.floor((t-new Date(t.getFullYear(),0,0))/864e5);
+  $("#f_msg").textContent="\u201C"+QUOTES[doy%QUOTES.length]+"\u201D";
+  const n=OWNER_NAME||uname;
+  $("#f_name").textContent=n?"\u00A9 "+t.getFullYear()+" "+n:"Click to add your name";
+}
+$("#f_name").onclick=()=>{
+  const v=prompt("Your name (shown in the footer and on exported reports):",OWNER_NAME||uname);
+  if(v!==null){uname=v.trim();try{localStorage.setItem("hrms_name",uname)}catch(e){}renderDash();renderFooter()}
+};
+renderFooter();
 let lastSync=Date.now();
 const REFRESH_MS=15*60*1000;
 function rollDay(){
@@ -1103,7 +1135,7 @@ function rollDay(){
   if(!editId&&$("#f_date").value===old){$("#f_date").value=t;if(!$("#f_s").value||$("#f_s").value===autoStart)setAutoStart();toast("New day: entry date set to "+sd(t))}
   if($("#r_day").value===old)$("#r_day").value=t;
   if($("#r_month").value===old.slice(0,7))$("#r_month").value=t.slice(0,7);
-  renderToday();renderRec();
+  renderToday();renderRec();renderFooter();
 }
 setInterval(()=>{rollDay();pull()},REFRESH_MS);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){rollDay();if(Date.now()-lastSync>REFRESH_MS)pull()}});
