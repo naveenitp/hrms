@@ -277,6 +277,36 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 :root[data-theme="material"] .card,:root[data-theme="matdark"] .card{transition:box-shadow .2s}
 :root[data-theme="material"] .card:hover,:root[data-theme="matdark"] .card:hover{box-shadow:var(--sh2)}
 :root[data-theme="material"] .top,:root[data-theme="matdark"] .top{border-bottom:0;box-shadow:0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12)}
+:root{--fsh:0 2px 6px rgba(0,0,0,.10),0 1px 2px rgba(0,0,0,.08);--fshf:0 8px 18px rgba(0,0,0,.16),0 0 0 3px var(--acc2)}
+:root[data-theme="dark"],:root[data-theme="midnight"],:root[data-theme="violet"],:root[data-theme="matdark"]{--fsh:0 2px 8px rgba(0,0,0,.55);--fshf:0 8px 20px rgba(0,0,0,.6),0 0 0 3px var(--acc2)}
+:root[data-theme="soft"]{--fsh:var(--shin);--fshf:inset 3px 3px 6px #a3b1c6,inset -3px -3px 6px #fff,0 0 0 3px var(--acc2)}
+:root[data-theme="bw"]{--fsh:3px 3px 0 #000;--fshf:5px 5px 0 #000}
+.fcard input,.fcard select,.fcard textarea{box-shadow:var(--fsh);caret-color:var(--acc);transition:box-shadow .2s,transform .2s,border-color .2s,background-color .25s,color .25s}
+.fcard input:focus,.fcard select:focus,.fcard textarea:focus{box-shadow:var(--fshf);transform:translateY(-1px)}
+@keyframes typePulse{0%{box-shadow:var(--fshf),0 0 0 0 var(--acc)}100%{box-shadow:var(--fshf),0 0 0 9px transparent}}
+.fcard .typing{animation:typePulse .38s ease-out}
+.xm{position:relative;display:inline-block}
+.mnu{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:20;min-width:250px;background:var(--card);border:1px solid var(--line);border-radius:var(--ri);box-shadow:0 10px 30px rgba(0,0,0,.22);padding:6px}
+.mnu.on{display:block}
+.mnu button{display:flex;flex-direction:column;align-items:flex-start;width:100%;border:0;background:none;color:var(--ink);padding:9px 12px;border-radius:var(--ri);cursor:pointer;font:inherit;text-align:left}
+.mnu button:hover,.mnu button:focus-visible{background:var(--acc2);outline:none}
+.mnu span{font-size:12px;color:var(--mute)}
+:root[data-theme="dos"]{color-scheme:dark;--bg:#000;--card:#000;--ink:#33ff33;--mute:#1fb81f;--line:#146b14;--acc:#33ff33;--acc2:#0a2a0a;--accink:#000;--ok:#33ff33;--okbg:#0a2a0a;--warn:#ff5555;--sb:#1a8a1a;--head:#062006;--r:0;--ri:0;--bw:1px;--sh:none;--shb:none;--shin:none;--inbg:#000;--fsh:0 0 6px rgba(51,255,51,.25);--fshf:0 0 12px rgba(51,255,51,.55);--c1:#33ff33;--c2:#ffb000;--c3:#00e5ff;--c4:#ff4444;--c5:#d0d0d0;--sok:#33ff33;--spr:#ffb000;--sop:#ff4444;--font:"VT323","Courier New",monospace;--fs:19px}
+:root[data-theme="cmd"]{color-scheme:dark;--bg:#0c0c0c;--card:#0c0c0c;--ink:#cccccc;--mute:#8a8a8a;--line:#3a3a3a;--acc:#ffffff;--acc2:#1f1f1f;--accink:#0c0c0c;--ok:#16c60c;--okbg:#10260f;--warn:#e74856;--sb:#4a4a4a;--head:#1a1a1a;--r:0;--ri:0;--bw:1px;--sh:none;--shb:none;--shin:none;--inbg:#0c0c0c;--fsh:0 0 4px rgba(255,255,255,.12);--fshf:0 0 10px rgba(255,255,255,.35);--c1:#3b78ff;--c2:#16c60c;--c3:#f9f1a5;--c4:#e74856;--c5:#61d6d6;--sok:#16c60c;--spr:#f9f1a5;--sop:#e74856;--font:Consolas,"Lucida Console","Courier New",monospace}
+:root[data-theme="dos"] body{text-shadow:0 0 5px rgba(51,255,51,.4)}
+:root[data-theme="dos"] ::selection{background:#33ff33;color:#000}
+:root[data-theme="cmd"] ::selection{background:#cccccc;color:#000}
+:root[data-theme="dos"] body::after{content:"";position:fixed;left:0;top:0;right:0;bottom:0;pointer-events:none;z-index:90;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px)}
+:root[data-theme="dos"] .btn,:root[data-theme="cmd"] .btn,:root[data-theme="dos"] .btn.ghost,:root[data-theme="cmd"] .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink);text-transform:uppercase;letter-spacing:1px}
+:root[data-theme="dos"] .btn:hover,:root[data-theme="cmd"] .btn:hover{background:var(--ink);color:var(--bg);filter:none}
+:root[data-theme="dos"] .seg button.on,:root[data-theme="cmd"] .seg button.on{background:var(--ink);color:var(--bg)}
+:root[data-theme="dos"] .hero,:root[data-theme="cmd"] .hero{background:#000;color:var(--ink);border:1px solid var(--ink)}
+:root[data-theme="dos"] .hero::after,:root[data-theme="cmd"] .hero::after{display:none}
+:root[data-theme="dos"] .hl::before,:root[data-theme="cmd"] .hl::before{content:"C:\\> "}
+:root[data-theme="dos"] .hl,:root[data-theme="cmd"] .hl{display:inline-block;max-width:100%;overflow:hidden;white-space:nowrap;vertical-align:bottom;animation:dosType 1.8s steps(32,end) both}
+:root[data-theme="dos"] .hl::after,:root[data-theme="cmd"] .hl::after{content:"\2588";margin-left:4px;animation:cur 1s steps(1) infinite}
+@keyframes dosType{from{max-width:0}to{max-width:100%}}
+@keyframes cur{50%{opacity:0}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -333,7 +363,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
     <div class="grp"><h3>Details</h3><div class="g">
       <label>Source<select id="f_src"></select></label>
       <label>Product<select id="f_prod"></select></label>
-      <label>Issue / request<select id="f_issue"><option value=""></option><option>Issue</option><option>Request</option></select></label>
+      <label>Issue / request<select id="f_issue"><option>Issue</option><option>Request</option></select></label>
       <label>Ticket no<input id="f_ticket"></label>
       <label>Status<select id="f_stat"></select></label>
     </div>
@@ -369,7 +399,12 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
     <div class="seg" id="r_seg"><button data-m="day" class="on">Day</button><button data-m="month">Month</button></div>
     <input type="date" id="r_day"><input type="month" id="r_month" style="display:none">
     <span class="grow"></span><b id="r_tot"></b>
-    <button class="btn ghost" id="recSheet">Open Google Sheet</button><button class="btn" id="expBtn">Export to Excel</button>
+    <button class="btn ghost" id="recSheet">Open Google Sheet</button><div class="xm"><button class="btn" id="expBtn" aria-haspopup="true" aria-expanded="false">Export to Excel &#9662;</button>
+      <div class="mnu" id="expMenu" role="menu">
+        <button role="menuitem" data-m="fmt"><b>Formatted data</b><span>HR layout, no analytics</span></button>
+        <button role="menuitem" data-m="plain"><b>Simple data sheet</b><span>Just the table, nothing extra</span></button>
+        <button role="menuitem" data-m="full"><b>Full report</b><span>Formatted data plus summary</span></button>
+      </div></div>
   </div>
   <div class="lgd"><span><i style="background:var(--sok)"></i>Done / resolved</span><span><i style="background:var(--spr)"></i>In progress</span><span><i style="background:var(--sop)"></i>Open / new</span><span><i style="background:var(--line)"></i>Other</span></div>
   <div class="scroll"><table id="r_tbl"></table></div>
@@ -450,7 +485,7 @@ $("#sheetLink").onclick=e=>{
 $("#recSheet").onclick=()=>$("#sheetLink").click();
 
 // themes
-const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["paper","Paper"],["ocean","Ocean"],["forest","Forest"],["sunset","Sunset"],["rose","Rose"],["midnight","Midnight"],["violet","Violet"],["material","Material"],["matdark","Material dark"]];
+const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["paper","Paper"],["ocean","Ocean"],["forest","Forest"],["sunset","Sunset"],["rose","Rose"],["midnight","Midnight"],["violet","Violet"],["material","Material"],["matdark","Material dark"],["dos","DOS (green screen)"],["cmd","Command prompt"]];
 function setTheme(t){document.documentElement.dataset.theme=t;$("#themeSel").value=t;try{localStorage.setItem("hrms_theme",t)}catch(e){}}
 $("#themeSel").innerHTML=THEMES.slice().sort((a,b)=>a[1].localeCompare(b[1])).map(x=>`<option value="${x[0]}">${x[1].replace("&","&amp;")}</option>`).join("");
 $("#themeSel").onchange=e=>setTheme(e.target.value);
@@ -466,7 +501,8 @@ const FONTS=[
  ["caveat","Caveat","Caveat","cursive",1,"Free style"],["dancing","Dancing Script","Dancing Script","cursive",1,"Free style"],["indie","Indie Flower","Indie Flower","cursive",0,"Free style"],
  ["pacifico","Pacifico","Pacifico","cursive",0,"Free style"],["patrick","Patrick Hand","Patrick Hand","cursive",0,"Free style"],["shadows","Shadows Into Light","Shadows Into Light","cursive",0,"Free style"],
  ["fira","Fira Code","Fira Code","ui-monospace,Consolas,monospace",1,"Coding"],["plexmono","IBM Plex Mono","IBM Plex Mono","ui-monospace,Consolas,monospace",1,"Coding"],["inconsolata","Inconsolata","Inconsolata","ui-monospace,Consolas,monospace",1,"Coding"],
- ["jetbrains","JetBrains Mono","JetBrains Mono","ui-monospace,Consolas,monospace",1,"Coding"],["robotomono","Roboto Mono","Roboto Mono","ui-monospace,Consolas,monospace",1,"Coding"],["sourcecode","Source Code Pro","Source Code Pro","ui-monospace,Consolas,monospace",1,"Coding"],["spacemono","Space Mono","Space Mono","ui-monospace,Consolas,monospace",1,"Coding"]
+ ["jetbrains","JetBrains Mono","JetBrains Mono","ui-monospace,Consolas,monospace",1,"Coding"],["robotomono","Roboto Mono","Roboto Mono","ui-monospace,Consolas,monospace",1,"Coding"],["sourcecode","Source Code Pro","Source Code Pro","ui-monospace,Consolas,monospace",1,"Coding"],["spacemono","Space Mono","Space Mono","ui-monospace,Consolas,monospace",1,"Coding"],
+ ["vt323","VT323 (retro terminal)","VT323","ui-monospace,Consolas,monospace",0,"Coding"]
 ];
 const fontLoaded={};
 function loadFont(f){if(!f||!f[2]||fontLoaded[f[0]])return;fontLoaded[f[0]]=1;const l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family="+f[2].replace(/ /g,"+")+(f[4]?":wght@400;700":"")+"&display=swap";document.head.appendChild(l)}
@@ -484,7 +520,7 @@ function setInk(c){if(c)rs.style.setProperty("--ink",c);else rs.style.removeProp
 function setSize(z){rs.style.setProperty("--fs",z+"px");ls("hrms_size",z)}
 $("#fontSel").innerHTML='<option value="">Theme default</option>'+["Standard","Free style","Coding"].map(g=>'<optgroup label="'+g+'">'+FONTS.filter(f=>f[5]===g).sort((a,b)=>a[1].localeCompare(b[1])).map(f=>`<option value="${f[0]}">${f[1]}</option>`).join("")+'</optgroup>').join("");
 {const fk=gs("hrms_font"),fo=FONTS.find(x=>x[0]===fk);$("#fontSel").value=fo?fk:"";if(fo)loadFont(fo);else if(fk)setFont("")}
-const matFont=()=>{const t=rs.dataset.theme;if(t==="material"||t==="matdark")loadFont(FONTS.find(x=>x[0]==="roboto"))};matFont();$("#themeSel").addEventListener("change",matFont);
+const themeFont=()=>{const k={material:"roboto",matdark:"roboto",dos:"vt323"}[rs.dataset.theme];if(k)loadFont(FONTS.find(x=>x[0]===k))};themeFont();$("#themeSel").addEventListener("change",themeFont);
 $("#sizeSel").innerHTML=SIZES.map(z=>`<option value="${z[0]}">${z[1]}</option>`).join("");$("#sizeSel").value=gs("hrms_size")||"15";
 $("#fontSel").onchange=e=>setFont(e.target.value);$("#sizeSel").onchange=e=>setSize(e.target.value);
 $("#inkSw").innerHTML='<button type="button" data-c="" title="Automatic" aria-label="Automatic colour" style="background:linear-gradient(135deg,var(--card) 50%,var(--ink) 50%)"></button>'+INKS.map(c=>`<button type="button" data-c="${c}" title="${c}" aria-label="${c}" style="background:${c}"></button>`).join("")+'<input type="color" id="inkPick" title="Custom colour" value="#000000">';
@@ -546,18 +582,36 @@ $$("#nav button").forEach(b=>b.onclick=()=>{
 
 // entry form
 const F={date:"f_date",src:"f_src",prod:"f_prod",s:"f_s",e:"f_e",contact:"f_contact",biz:"f_biz",issue:"f_issue",ticket:"f_ticket",stat:"f_stat",rem:"f_rem"};
-function opts(id,list){const el=$(id),v=el.value;el.innerHTML='<option value=""></option>'+list.map(x=>`<option>${esc(x)}</option>`).join("");if(list.includes(v))el.value=v}
+function opts(id,list){const el=$(id),v=el.value;el.innerHTML=list.map(x=>`<option>${esc(x)}</option>`).join("");if(list.includes(v))el.value=v}
 const cmp=(a,b)=>String(a).localeCompare(String(b),undefined,{sensitivity:"base"});
-const sortBiz=()=>{db.biz.sort((a,b)=>cmp(a.name,b.name));["prod","stat","src"].forEach(k=>db[k].sort(cmp))};
+const sortBiz=()=>{db.biz=db.biz.filter(b=>b&&String(b.name).trim());["prod","stat","src"].forEach(k=>{db[k]=db[k].filter(x=>String(x).trim())});db.biz.sort((a,b)=>cmp(a.name,b.name));["prod","stat","src"].forEach(k=>db[k].sort(cmp))};
 const DEFAULT_PRODUCT="Ezy Bill";
 const defProd=()=>db.prod.find(p=>p.toLowerCase()===DEFAULT_PRODUCT.toLowerCase())||"";
-function applyDefProd(){const el=$("#f_prod");if(!editId&&!el.value)el.value=defProd()}
-function fillSelects(){sortBiz();opts("#f_src",db.src);opts("#f_prod",db.prod);opts("#f_biz",db.biz.map(b=>b.name));opts("#f_stat",db.stat);applyDefProd();syncAuto()}
+let formTouched=false;
+function applyDefaults(){
+  if(editId)return;
+  const last=db.rows.length?db.rows[db.rows.length-1]:{};
+  const pick=(id,pref,list)=>{const v=list.find(x=>x.toLowerCase()===String(pref||"").toLowerCase());if(v!=null)$(id).value=v};
+  pick("#f_prod",DEFAULT_PRODUCT,db.prod);
+  pick("#f_stat","Open",db.stat);
+  pick("#f_src",last.src,db.src);
+  pick("#f_biz",last.biz,db.biz.map(b=>b.name));
+  pick("#f_issue",last.issue||"Issue",["Issue","Request"]);
+  ["#f_src","#f_prod","#f_biz","#f_stat","#f_issue"].forEach(id=>{const el=$(id);if(el.selectedIndex<0&&el.options.length)el.selectedIndex=0});
+  syncAuto();
+}
+const applyIfFresh=()=>{if(!formTouched)applyDefaults()};
+$$(".fcard input,.fcard textarea,.fcard select").forEach(el=>{
+  el.addEventListener(el.tagName==="SELECT"?"change":"input",()=>{el.classList.remove("typing");void el.offsetWidth;el.classList.add("typing")});
+  ["input","change"].forEach(ev=>el.addEventListener(ev,()=>{formTouched=true}));
+});
+function fillSelects(){sortBiz();opts("#f_src",db.src);opts("#f_prod",db.prod);opts("#f_biz",db.biz.map(b=>b.name));opts("#f_stat",db.stat);applyIfFresh();syncAuto()}
 function syncAuto(){
   $("#f_dur").value=dur($("#f_s").value,$("#f_e").value);
   const b=db.biz.find(x=>x.name===$("#f_biz").value);$("#f_code").value=b?b.code:"";
 }
 ["f_s","f_e","f_biz"].forEach(i=>$("#"+i).addEventListener("input",syncAuto));
+$("#f_biz").addEventListener("change",syncAuto);
 let autoStart="";
 const lastEnd=d=>{for(let i=db.rows.length-1;i>=0;i--){const r=db.rows[i];if(r.date===d&&r.e)return r.e}return""};
 function setAutoStart(){const v=lastEnd($("#f_date").value);$("#f_s").value=v;autoStart=v;syncAuto()}
@@ -565,7 +619,7 @@ $("#f_date").addEventListener("input",()=>{if(!editId&&(!$("#f_s").value||$("#f_
 let editId=null;
 function clearForm(){
   editId=null;$("#formTitle").textContent="New entry";$("#saveBtn").textContent="Save entry";$("#clearBtn").textContent="Clear";
-  Object.values(F).forEach(i=>$("#"+i).value="");$("#f_date").value=today();setAutoStart();applyDefProd();
+  Object.values(F).forEach(i=>$("#"+i).value="");$("#f_date").value=today();setAutoStart();formTouched=false;applyDefaults();
 }
 $("#clearBtn").onclick=clearForm;
 $("#saveBtn").onclick=()=>{
@@ -611,7 +665,7 @@ $("#tplSave").onclick=()=>{
 $("#tplApply").onclick=()=>{
   const t=db.tpl[$("#tplSel").value];if(!t){toast("Choose a template first.");return}
   if(editId)clearForm();
-  TF.forEach(k=>{const el=$("#"+F[k]);el.value=t[k]||"";el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")});
+  TF.forEach(k=>{const el=$("#"+F[k]);if(el.tagName==="SELECT"){if(t[k])el.value=t[k]}else el.value=t[k]||"";el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")});formTouched=true;
   if(!$("#f_date").value)$("#f_date").value=today();
   syncAuto();toast('"'+t.name+'" applied. Set the times and save.');$("#f_s").focus();
 };
@@ -827,7 +881,7 @@ function celebrate(){
   const cols=["--c1","--c2","--c3","--c4","--c5"].map(v=>css.getPropertyValue(v).trim()).filter(Boolean).concat(["#ffd700","#ff6ec7","#4dd0e1"]);
   const ps=Array.from({length:160},(_,i)=>{const left=i%2===0;return{x:innerWidth*(left?.04:.96),y:innerHeight*.85,vx:(left?1:-1)*(5+Math.random()*9),vy:-(10+Math.random()*12),w:6+Math.random()*6,h:8+Math.random()*8,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[Math.floor(Math.random()*cols.length)]}});
   let f=0;
-  (function tick(){
+  if(!g)cv.remove();else(function tick(){
     g.clearRect(0,0,cv.width,cv.height);
     ps.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.globalAlpha=Math.max(0,1-f/160);g.fillRect(-p.w/2,-p.h/2,p.w,p.h);g.restore()});
     if(++f<160)requestAnimationFrame(tick);else cv.remove();
@@ -872,7 +926,8 @@ function exportBasic(rows){
   XLSX.utils.book_append_sheet(wb,ws,"Timesheet");
   const d=rmode==="day";XLSX.writeFile(wb,`Timesheet_${d?"Day":"Month"}_${d?$("#r_day").value:$("#r_month").value}.xlsx`);
 }
-async function exportHR(rows){
+async function exportHR(rows,mode){
+  const full=mode==="full",plain=mode==="plain";
   const d=rmode==="day",val=d?$("#r_day").value:$("#r_month").value;
   const period=d?new Date(val+"T00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}):new Date(val+"-01T00:00").toLocaleDateString("en-GB",{month:"long",year:"numeric"});
   const NAVY="FF1F3864",BLUE="FF2F5597",PALE="FFEAF0FA",ZEBRA="FFF6F8FC",LINE="FFD0D7E2",WHITE="FFFFFFFF";
@@ -884,15 +939,17 @@ async function exportHR(rows){
   const who=uname||"-",stamp=new Date().toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
 
   // ---- sheet 1: detailed timesheet ----
-  const cols=[["SL.no",6,"c"],["Month",10,"c"],["Date",18,"c"],["Code",9,"c"],["Source",11,"c"],["Product",15,"l"],["Start",9,"c"],["End",9,"c"],["Duration",10,"c"],["Contact no",14,"c"],["Business name",24,"l"],["Issue / Request",14,"c"],["Ticket no",12,"c"],["Status",14,"c"],["Remarks",40,"l"]],n=cols.length,HR=5;
+  const cols=[["SL.no",6,"c"],["Month",10,"c"],["Date",18,"c"],["Code",9,"c"],["Source",11,"c"],["Product",15,"l"],["Start",9,"c"],["End",9,"c"],["Duration",10,"c"],["Contact no",14,"c"],["Business name",24,"l"],["Issue / Request",14,"c"],["Ticket no",12,"c"],["Status",14,"c"],["Remarks",40,"l"]],n=cols.length,HR=plain?1:5;
   const ws=wb.addWorksheet("Timesheet",{properties:{tabColor:{argb:NAVY}},views:[{state:"frozen",ySplit:HR,showGridLines:false}],pageSetup:{paperSize:9,orientation:"landscape",fitToPage:true,fitToWidth:1,fitToHeight:0,printTitlesRow:HR+":"+HR,margins:{left:.4,right:.4,top:.6,bottom:.6,header:.3,footer:.3}}});
   ws.headerFooter={oddFooter:"&L&8Timesheet report&C&8Page &P of &N&R&8Printed &D"};
   ws.columns=cols.map(c=>({width:c[1]}));
   const band=(r,text,o)=>{ws.mergeCells(r,1,r,n);const c=ws.getCell(r,1);c.value=text;c.font=font(o.font);c.fill=fill(o.bg);c.alignment={vertical:"middle",horizontal:"left",indent:1};ws.getRow(r).height=o.h};
+  if(!plain){
   band(1,"Employee Timesheet Report",{bg:NAVY,h:34,font:{size:18,bold:true,color:{argb:WHITE}}});
   band(2,"Period: "+period,{bg:PALE,h:22,font:{size:11,bold:true,color:{argb:NAVY}}});
-  band(3,`Employee: ${who}     |     Entries: ${st.n}     |     Working days: ${days}     |     Total hours: ${hm(st.mins)}     |     Generated: ${stamp}`,{bg:PALE,h:20,font:{size:10,color:{argb:"FF44546A"}}});
+  band(3,full?`Employee: ${who}     |     Entries: ${st.n}     |     Working days: ${days}     |     Total hours: ${hm(st.mins)}     |     Generated: ${stamp}`:`Employee: ${who}     |     Generated: ${stamp}`,{bg:PALE,h:20,font:{size:10,color:{argb:"FF44546A"}}});
   ws.getRow(4).height=8;
+  }
   const hr=ws.getRow(HR);hr.height=30;
   cols.forEach((c,i)=>{const cell=hr.getCell(i+1);cell.value=c[0];cell.font=font({bold:true,color:{argb:WHITE}});cell.fill=fill(BLUE);cell.alignment={vertical:"middle",horizontal:"center",wrapText:true};cell.border=box});
   const serial=ds=>{const [y,m,dd]=ds.split("-").map(Number);return Date.UTC(y,m-1,dd)/86400000+25569};
@@ -909,16 +966,18 @@ async function exportHR(rows){
     const k=stc(r.stat);if(SC[k]){const c=row.getCell(14);c.fill=fill(SC[k][0]);c.font=font({bold:true,color:{argb:SC[k][1]}})}
   });
   const last=HR+rows.length,tr=ws.getRow(last+1);
+  if(!plain){
   ws.mergeCells(last+1,1,last+1,8);
   tr.getCell(1).value="Total";tr.getCell(1).alignment={horizontal:"right",vertical:"middle"};
   tr.getCell(9).value={formula:`SUM(I${HR+1}:I${last})`,result:st.mins/1440};tr.getCell(9).numFmt="[h]:mm";
   tr.getCell(10).value=st.n+" entries";
   for(let j=1;j<=n;j++){const c=tr.getCell(j);c.font=font({bold:true,color:{argb:NAVY}});c.fill=fill(PALE);c.border={top:{style:"medium",color:{argb:NAVY}},bottom:thin,left:thin,right:thin};if(j>1&&j!==10)c.alignment={horizontal:"center",vertical:"middle"}}
-  tr.height=22;
+  tr.height=22;}
   ws.autoFilter={from:{row:HR,column:1},to:{row:last,column:n}};
-  const sg=last+4;
-  [[1,5,"Employee signature: ____________________"],[7,11,"Manager approval: ____________________"],[13,15,"Date: ______________"]].forEach(x=>{ws.mergeCells(sg,x[0],sg,x[1]);const c=ws.getCell(sg,x[0]);c.value=x[2];c.font=font({color:{argb:"FF44546A"}})});
+  if(!plain){const sg=last+4;
+  [[1,5,"Employee signature: ____________________"],[7,11,"Manager approval: ____________________"],[13,15,"Date: ______________"]].forEach(x=>{ws.mergeCells(sg,x[0],sg,x[1]);const c=ws.getCell(sg,x[0]);c.value=x[2];c.font=font({color:{argb:"FF44546A"}})});}
 
+  if(full){
   // ---- sheet 2: summary ----
   const ss=wb.addWorksheet("Summary",{properties:{tabColor:{argb:BLUE}},views:[{showGridLines:false}],pageSetup:{paperSize:9,orientation:"portrait",fitToPage:true,fitToWidth:1,fitToHeight:0}});
   ss.columns=[{width:34},{width:14},{width:14},{width:14}];
@@ -945,17 +1004,24 @@ async function exportHR(rows){
     const by={};rows.forEach(x=>{const o=by[x.date]=by[x.date]||[0,0];o[0]++;o[1]+=durOf(x)});
     table("Daily summary",["Date","Entries","Hours"],Object.keys(by).sort().map(k=>[serial(k),by[k][0],by[k][1]/1440]),["ddd, dd-mmm-yyyy",null,"[h]:mm"]);
   }
+  }
   const buf=await wb.xlsx.writeBuffer(),a=document.createElement("a");
   a.href=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
-  a.download=`Timesheet_${d?"Day":"Month"}_${val}.xlsx`;document.body.appendChild(a);a.click();a.remove();
+  a.download=`Timesheet_${d?"Day":"Month"}_${val}${full?"_Report":plain?"_Data":"_Formatted"}.xlsx`;document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
 }
-$("#expBtn").onclick=async()=>{
+async function runExport(mode){
   const rows=getRows();if(!rows.length){toast("No entries to export.");return}
-  if(typeof ExcelJS==="undefined"){exportBasic(rows);toast("The styled report needs an internet connection. A basic file was saved instead.");return}
-  try{await exportHR(rows);toast("Report downloaded")}
-  catch(e){console.error(e);exportBasic(rows);toast("Could not build the styled report. A basic file was saved instead.")}
-};
+  if(typeof ExcelJS==="undefined"){exportBasic(rows);toast("The styled export needs an internet connection. A basic file was saved instead.");return}
+  try{await exportHR(rows,mode);toast("Excel file downloaded")}
+  catch(e){console.error(e);exportBasic(rows);toast("Could not build the styled file. A basic file was saved instead.")}
+}
+const expMenu=$("#expMenu");
+function toggleMenu(open){expMenu.classList.toggle("on",open);$("#expBtn").setAttribute("aria-expanded",open)}
+$("#expBtn").onclick=e=>{e.stopPropagation();toggleMenu(!expMenu.classList.contains("on"))};
+$$("#expMenu button").forEach(b=>b.onclick=()=>{toggleMenu(false);runExport(b.dataset.m)});
+document.addEventListener("click",()=>toggleMenu(false));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")toggleMenu(false)});
 
 // masters
 const NAMES={biz:"Business names",prod:"Products",stat:"Status",src:"Source"};
