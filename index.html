@@ -488,6 +488,12 @@ body.wx-on #entry .card{background:color-mix(in srgb,var(--card) 80%,transparent
   <label style="margin-top:12px">Text size<select id="sizeSel"></select></label>
   <label style="flex-direction:row;align-items:center;gap:8px;margin-top:12px;color:var(--ink);font-weight:500"><input type="checkbox" id="wxToggle" style="width:auto"> Weather animation on the New entry page</label>
   <div id="petPickWrap" style="margin-top:12px"><div class="muted" style="font-size:13px;font-weight:600;margin-bottom:6px">Pets (up to 4)</div><div class="pk" id="petPick"></div></div>
+  <div id="mineWrap" style="margin-top:12px"><div class="muted" style="font-size:13px;font-weight:600;margin-bottom:6px">Your own pet images</div>
+    <input type="file" id="mineFile" accept="image/*" multiple style="display:none">
+    <button type="button" class="btn sm ghost" id="mineAdd">Add images or GIFs</button>
+    <div class="tpl-list" id="mineList" style="margin-top:8px"></div>
+    <label style="flex-direction:row;align-items:center;gap:8px;margin-top:10px;color:var(--ink);font-weight:500"><input type="checkbox" id="builtinToggle" style="width:auto"> Also show the built-in characters and animals</label>
+    <p class="muted" style="font-size:11px;margin:6px 0 0">Pick image or GIF files from your computer. They stay in this browser only.</p></div>
   <div style="margin-top:12px"><div class="muted" style="font-size:13px;font-weight:600;margin-bottom:6px">Text colour</div><div class="sw" id="inkSw"></div></div>
   <p class="muted" style="font-size:11px;margin:12px 0 0">Animal pets and celebration stickers: Noto animated emoji by Google, CC BY 4.0. Anime-style pets are original drawings. Weather data: Open-Meteo.com (CC BY 4.0).</p>
   <div class="row" style="margin-top:10px"><button class="btn" id="styX">Done</button></div>
@@ -856,11 +862,14 @@ const ART={
 };
 const CUSTOM_PETS=[];  // your own licensed images, e.g. [{key:"mine",name:"Buddy",img:"https://example.com/buddy.png"}]
 const PETS={kenji:["Kenji","art:kenji","\u{1F977}"],sora:["Sora","art:sora","\u{1F94B}"],hana:["Hana","art:hana","\u{1F338}"],cat:["Mochi","1f431","\u{1F431}"],dog:["Bruno","1f436","\u{1F436}"],rabbit:["Coco","1f430","\u{1F430}"],fox:["Ginger","1f98a","\u{1F98A}"],panda:["Bamboo","1f43c","\u{1F43C}"],penguin:["Waddles","1f427","\u{1F427}"],duck:["Quackers","1f986","\u{1F986}"],turtle:["Shelly","1f422","\u{1F422}"]};
+const BUILTIN_KEYS=Object.keys(PETS);
 CUSTOM_PETS.forEach((c,i)=>{PETS[c.key||"mine"+i]=[c.name||"Friend",c.img,"\u2B50"]});
 const PET_DESC={kenji:"ninja kid",sora:"martial artist",hana:"mage girl"};
 const calm=!!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
-let pets=[],petsOn=true,petsAllowed=true;
-const petSrc=code=>code.indexOf("art:")===0?ART[code.slice(4)]:/^(https?:|data:)/.test(code)?code:NOTO(code);
+let pets=[],petsOn=true,petsAllowed=true,showBuiltin=false;
+try{showBuiltin=localStorage.getItem("hrms_builtin")==="1"}catch(e){}
+const availKeys=()=>Object.keys(PETS).filter(k=>showBuiltin||BUILTIN_KEYS.indexOf(k)<0);
+const petSrc=code=>code.indexOf("art:")===0?ART[code.slice(4)]:/^(https?:|data:|blob:)/.test(code)||/\.(png|gif|webp|jpe?g|svg|apng|avif)(\?.*)?$/i.test(code)||code.indexOf("./")===0?code:NOTO(code);
 const petImg=(code,emo)=>'<img alt="" src="'+petSrc(code)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span class="fb">'+emo+'</span>';
 function tip(){
   const tr=db.rows.filter(r=>r.date===today()),m=tr.reduce((a,r)=>a+durOf(r),0),h=new Date().getHours();
@@ -922,7 +931,12 @@ function makePet(key){
   f.ondblclick=()=>setPets(false);
   return P;
 }
-function petKeys(){let k=[];try{k=JSON.parse(localStorage.getItem("hrms_pets"))}catch(e){}if(!Array.isArray(k)||!k.length)k=["kenji","sora"];return k.filter(x=>PETS[x]).slice(0,4)}
+function petKeys(){
+  let k=[];try{k=JSON.parse(localStorage.getItem("hrms_pets"))}catch(e){}
+  const av=availKeys();k=(Array.isArray(k)?k:[]).filter(x=>av.indexOf(x)>=0);
+  const cu=av.filter(x=>BUILTIN_KEYS.indexOf(x)<0);
+  return(k.length?k:(cu.length?cu:av.slice(0,2))).slice(0,4);
+}
 function rebuildPets(){pets.forEach(p=>p.destroy());pets=petKeys().map(makePet);if(petsOn)pets.forEach((p,i)=>p.show(i))}
 function petSay(t,hop){
   if(!petsAllowed)return;
@@ -935,13 +949,10 @@ function setPets(on){
   $("#petBtn").textContent=on?"Hide pets":"Show pets";
   if(on)rebuildPets();else pets.forEach(p=>p.hide());
 }
-(function(){
-  let framed=false;try{framed=window.top!==window}catch(e){framed=true}
-  if(!PET_ENABLED||framed||(PET_HOSTS.length&&!PET_HOSTS.includes(location.hostname))){petsAllowed=false;$("#petBtn").style.display="none";$("#petPickWrap").style.display="none";return}
-  const pk=$("#petPick");
-  pk.innerHTML=Object.keys(PETS).map(k=>`<label><input type="checkbox" value="${k}"> ${PETS[k][0]} the ${PET_DESC[k]||k}</label>`).join("");
-  const sel=petKeys(),boxes=[...pk.querySelectorAll("input")];
-  boxes.forEach(i=>i.checked=sel.includes(i.value));
+function buildPicker(){
+  const pk=$("#petPick"),av=availKeys(),sel=petKeys();
+  pk.innerHTML=av.length?av.map(k=>`<label><input type="checkbox" value="${esc(k)}"> ${esc(PETS[k][0])}${PET_DESC[k]?" the "+PET_DESC[k]:""}</label>`).join(""):'<span class="muted" style="font-size:12px">No pets yet. Add your own images below.</span>';
+  const boxes=[...pk.querySelectorAll("input")];boxes.forEach(i=>i.checked=sel.indexOf(i.value)>=0);
   const lim=()=>{const c=boxes.filter(i=>i.checked).length;boxes.forEach(i=>i.disabled=!i.checked&&c>=4)};lim();
   pk.onchange=()=>{
     const k=boxes.filter(i=>i.checked).map(i=>i.value);lim();
@@ -949,11 +960,50 @@ function setPets(on){
     try{localStorage.setItem("hrms_pets",JSON.stringify(k))}catch(e){}
     rebuildPets();
   };
+  $("#petBtn").style.display=av.length?"":"none";
+}
+const IDB={
+  open(){return new Promise((res,rej)=>{const r=indexedDB.open("hrms_pets",1);r.onupgradeneeded=()=>r.result.createObjectStore("imgs",{keyPath:"id",autoIncrement:true});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+  async all(){const d=await this.open();return new Promise(res=>{const q=d.transaction("imgs").objectStore("imgs").getAll();q.onsuccess=()=>res(q.result);q.onerror=()=>res([])})},
+  async add(rec){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction("imgs","readwrite"),q=t.objectStore("imgs").add(rec);t.oncomplete=()=>res(q.result);t.onerror=()=>rej(t.error)})},
+  async del(id){const d=await this.open();return new Promise(res=>{const t=d.transaction("imgs","readwrite");t.objectStore("imgs").delete(id);t.oncomplete=res})}
+};
+function renderMine(){
+  const ks=Object.keys(PETS).filter(k=>k.indexOf("u_")===0);
+  $("#mineList").innerHTML=ks.length?ks.map(k=>`<span class="tpb"><span class="tpa" style="cursor:default">${esc(PETS[k][0])}</span><button type="button" class="tpx" data-id="${k.slice(2)}" aria-label="Remove ${esc(PETS[k][0])}">&times;</button></span>`).join(""):'<span class="muted" style="font-size:12px">Nothing added yet.</span>';
+}
+async function loadUserPets(){
+  if(!window.indexedDB)return;
+  let recs=[];try{recs=await IDB.all()}catch(e){}
+  Object.keys(PETS).filter(k=>k.indexOf("u_")===0).forEach(k=>{try{URL.revokeObjectURL(PETS[k][1])}catch(e){}delete PETS[k]});
+  recs.forEach(r=>{PETS["u_"+r.id]=[r.name,URL.createObjectURL(r.blob),"\u2B50"]});
+  renderMine();buildPicker();rebuildPets();
+}
+$("#mineAdd").onclick=()=>$("#mineFile").click();
+$("#mineFile").onchange=async e=>{
+  const files=[...e.target.files];e.target.value="";const ids=[];
+  if(!window.indexedDB){toast("This browser cannot store pet images.");return}
+  for(const f of files){
+    if(!/^image\//.test(f.type)){toast(f.name+" is not an image.");continue}
+    if(f.size>8*1024*1024){toast(f.name+" is larger than 8 MB.");continue}
+    try{ids.push("u_"+await IDB.add({name:f.name.replace(/\.[^.]+$/,"").slice(0,24),blob:f}))}catch(x){toast("Could not save "+f.name)}
+  }
+  if(!ids.length)return;
+  try{localStorage.setItem("hrms_pets",JSON.stringify(petKeys().filter(k=>k.indexOf("u_")===0).concat(ids).slice(-4)))}catch(x){}
+  await loadUserPets();toast(ids.length+" pet image"+(ids.length>1?"s":"")+" added");
+};
+$("#mineList").addEventListener("click",async e=>{const x=e.target.closest&&e.target.closest(".tpx");if(!x)return;await IDB.del(+x.dataset.id);toast("Removed");await loadUserPets()});
+$("#builtinToggle").checked=showBuiltin;
+$("#builtinToggle").onchange=e=>{showBuiltin=e.target.checked;try{localStorage.setItem("hrms_builtin",showBuiltin?"1":"0")}catch(x){}buildPicker();rebuildPets()};
+(function(){
+  let framed=false;try{framed=window.top!==window}catch(e){framed=true}
+  if(!PET_ENABLED||framed||(PET_HOSTS.length&&!PET_HOSTS.includes(location.hostname))){petsAllowed=false;$("#petBtn").style.display="none";$("#petPickWrap").style.display="none";$("#mineWrap").style.display="none";return}
+  buildPicker();
   $("#petBtn").onclick=()=>setPets(!petsOn);
   addEventListener("resize",()=>pets.forEach(p=>{const m=innerWidth-p.W();if(!p.walking&&p.x>m&&m>0)p.setX(m,0)}));
   try{petsOn=localStorage.getItem("hrms_pet")!=="0"}catch(e){}
   $("#petBtn").textContent=petsOn?"Hide pets":"Show pets";
-  rebuildPets();
+  rebuildPets();loadUserPets();
 })();
 
 // logo / favicon with your name
