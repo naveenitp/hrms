@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Timesheet</title>
+<link rel="icon" id="fav" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22lg1%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233a55d6%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238b5cf6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23lg1%29%22%2F%3E%3Ccircle%20cx%3D%2229%22%20cy%3D%2229%22%20r%3D%2217%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M29%2019v10l7%204%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2248%22%20cy%3D%2248%22%20r%3D%2211%22%20fill%3D%22%2322c55e%22%20stroke%3D%22%23fff%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M43%2048l4%204%207-8%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <script>try{var d=document.documentElement,t=localStorage.getItem("hrms_theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;var f=localStorage.getItem("hrms_font"),i=localStorage.getItem("hrms_ink"),z=localStorage.getItem("hrms_size");if(f)d.dataset.font=f;if(i)d.style.setProperty("--ink",i);if(z)d.style.setProperty("--fs",z+"px");var fc=localStorage.getItem("hrms_fontcss");if(fc)d.style.setProperty("--font",fc)}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -339,12 +340,32 @@ main{flex:1 0 auto;width:100%}
 #r_tbl .si{margin-left:5px;font-size:10px;opacity:.35}
 #r_tbl th.asc .si,#r_tbl th.desc .si{opacity:1;color:var(--acc)}
 mark{background:var(--acc2);color:var(--ink);border-radius:3px;padding:0 2px;box-shadow:inset 0 -2px 0 var(--acc)}
+.tpl-list{display:flex;flex-wrap:wrap;gap:8px}
+.tpb{display:inline-flex;border:1px solid var(--line);border-radius:99px;overflow:hidden;background:var(--bg);box-shadow:var(--shb)}
+.tpa{border:0;background:none;color:var(--ink);padding:7px 13px;font:inherit;font-weight:600;font-size:13px;cursor:pointer}
+.tpa:hover,.tpa:focus-visible{background:var(--acc2);color:var(--acc);outline:none}
+.tpx{border:0;border-left:1px solid var(--line);background:none;color:var(--mute);padding:0 10px;cursor:pointer;font-size:16px;line-height:1}
+.tpx:hover,.tpx:focus-visible{color:var(--warn);background:var(--acc2);outline:none}
+.brand .logo{width:36px;height:36px;flex:none}
+.bt{display:flex;flex-direction:column;line-height:1.1}
+.bt small{font-size:11px;font-weight:600;color:var(--mute);letter-spacing:.3px}
+.bt small:empty{display:none}
+.hside{text-align:right}
+.wxw{display:flex;align-items:center;gap:12px;justify-content:flex-end;margin-top:12px;min-height:50px}
+.wxi{font-size:46px;line-height:1;animation:wxf 4s ease-in-out infinite}
+.wxt{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.05;text-align:left}
+.wxd{font-size:13px;opacity:.92;text-align:left}
+.wxs{font-size:11.5px;opacity:.78;margin-top:2px;text-align:left}
+@keyframes wxf{50%{transform:translateY(-4px)}}
+#wxc{position:fixed;left:0;top:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+body.wx-on #entry .card{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(2px)}
+@media(max-width:700px){.hside{text-align:left}.wxw{justify-content:flex-start}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="lf"><div class="brand"><i></i>Timesheet</div>
+  <div class="lf"><div class="brand"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a55d6"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg1)"/><circle cx="29" cy="29" r="17" fill="none" stroke="#fff" stroke-width="4"/><path d="M29 19v10l7 4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="48" r="11" fill="#22c55e" stroke="#fff" stroke-width="3"/><path d="M43 48l4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bt"><b>Timesheet</b><small id="brandName"></small></span></div>
   <nav class="seg" id="nav">
     <button data-t="dash" class="on">Dashboard</button><button data-t="entry">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
   </nav></div>
@@ -361,7 +382,7 @@ mark{background:var(--acc2);color:var(--ink);border-radius:3px;padding:0 2px;box
       <div class="hq"><button id="d_new">+ New entry</button><button id="d_rec">View records</button></div>
       <button class="lnk" id="d_edit">Edit name</button>
     </div>
-    <div class="hclock" id="d_time"></div>
+    <div class="hside"><div class="hclock" id="d_time"></div><div class="wxw" id="d_wx"></div><button class="lnk" id="d_loc">Use my location</button></div>
   </div>
   <div class="card sp4">
     <div class="dh"><h3>Today's utilisation</h3><label class="tg">Target <input id="d_target" type="number" min="1" max="24" step="0.5"> h</label></div>
@@ -407,8 +428,7 @@ mark{background:var(--acc2);color:var(--ink);border-radius:3px;padding:0 2px;box
     <div class="head" style="margin:0"><h2 style="font-size:17px">Quick templates</h2><button class="btn sm ghost" id="tplToggle" aria-expanded="true">Hide</button></div>
     <div id="tplBody">
     <div class="sel">
-      <select id="tplSel"></select>
-      <div class="row" style="margin:0"><button class="btn" id="tplApply">Apply to form</button><button class="btn del" id="tplDel">Delete</button></div>
+      <div class="tpl-list" id="tplList"></div>
       <button class="btn ghost" id="tplNew">Save current form as template</button>
       <div id="tplForm" style="display:none" class="sel">
         <label>Template name<input id="tpl_name"></label>
@@ -466,9 +486,10 @@ mark{background:var(--acc2);color:var(--ink);border-radius:3px;padding:0 2px;box
   <label>Theme<select id="themeSel"></select></label>
   <label style="margin-top:12px">Font<select id="fontSel"></select></label>
   <label style="margin-top:12px">Text size<select id="sizeSel"></select></label>
+  <label style="flex-direction:row;align-items:center;gap:8px;margin-top:12px;color:var(--ink);font-weight:500"><input type="checkbox" id="wxToggle" style="width:auto"> Weather animation on the New entry page</label>
   <div id="petPickWrap" style="margin-top:12px"><div class="muted" style="font-size:13px;font-weight:600;margin-bottom:6px">Pets (up to 4)</div><div class="pk" id="petPick"></div></div>
   <div style="margin-top:12px"><div class="muted" style="font-size:13px;font-weight:600;margin-bottom:6px">Text colour</div><div class="sw" id="inkSw"></div></div>
-  <p class="muted" style="font-size:11px;margin:12px 0 0">Pets and celebration stickers: Noto animated emoji by Google, CC BY 4.0.</p>
+  <p class="muted" style="font-size:11px;margin:12px 0 0">Animal pets and celebration stickers: Noto animated emoji by Google, CC BY 4.0. Anime-style pets are original drawings. Weather data: Open-Meteo.com (CC BY 4.0).</p>
   <div class="row" style="margin-top:10px"><button class="btn" id="styX">Done</button></div>
 </dialog>
 <div class="toast" id="toast"></div>
@@ -684,30 +705,29 @@ function renderToday(){
 // templates
 const TF=["biz","src","prod","issue","stat","contact","rem"];
 function renderTpl(){
-  const el=$("#tplSel"),v=el.value,nm=db.tpl[v]?db.tpl[v].name:"";
   db.tpl.sort((a,b)=>cmp(a.name,b.name));
-  el.innerHTML='<option value="">'+(db.tpl.length?"Choose a template...":"No templates yet")+'</option>'+db.tpl.map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join("");
-  const k=db.tpl.findIndex(x=>x.name===nm);el.value=k>=0?String(k):"";
+  $("#tplList").innerHTML=db.tpl.length?db.tpl.map((t,i)=>`<span class="tpb"><button type="button" class="tpa" data-i="${i}" title="Fill the form with this template">${esc(t.name)}</button><button type="button" class="tpx" data-i="${i}" title="Delete this template" aria-label="Delete ${esc(t.name)}">&times;</button></span>`).join(""):'<span class="muted" style="font-size:13px">No templates yet. Fill the form, then save it as a template.</span>';
 }
+$("#tplList").addEventListener("click",e=>{
+  const a=e.target.closest&&e.target.closest(".tpa"),x=e.target.closest&&e.target.closest(".tpx");
+  if(a)applyTemplate(+a.dataset.i);else if(x)delTemplate(+x.dataset.i);
+});
+function applyTemplate(i){
+  const t=db.tpl[i];if(!t)return;
+  if(editId)clearForm();
+  TF.forEach(k=>{const el=$("#"+F[k]);if(el.tagName==="SELECT"){if(t[k])el.value=t[k]}else el.value=t[k]||"";el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")});formTouched=true;
+  if(!$("#f_date").value)$("#f_date").value=today();
+  syncAuto();toast('"'+t.name+'" applied. Set the times and save.');$("#f_s").focus();
+}
+function delTemplate(i){const t=db.tpl[i];if(t&&confirm('Delete template "'+t.name+'"?')){db.tpl.splice(i,1);save();pushMasters();renderTpl()}}
 $("#tplNew").onclick=()=>{$("#tplForm").style.display="";$("#tpl_name").focus()};
 $("#tplSave").onclick=()=>{
   const name=$("#tpl_name").value.trim();if(!name){toast("Give the template a name.");return}
   const t={name};TF.forEach(k=>t[k]=$("#"+F[k]).value.trim());
   const i=db.tpl.findIndex(x=>x.name.toLowerCase()===name.toLowerCase());
   if(i<0)db.tpl.push(t);else db.tpl[i]=t;
-  save();pushMasters();renderTpl();$("#tplSel").value=String(db.tpl.findIndex(x=>x.name.toLowerCase()===name.toLowerCase()));
+  save();pushMasters();renderTpl();
   $("#tplForm").style.display="none";$("#tpl_name").value="";toast("Template saved");
-};
-$("#tplApply").onclick=()=>{
-  const t=db.tpl[$("#tplSel").value];if(!t){toast("Choose a template first.");return}
-  if(editId)clearForm();
-  TF.forEach(k=>{const el=$("#"+F[k]);if(el.tagName==="SELECT"){if(t[k])el.value=t[k]}else el.value=t[k]||"";el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")});formTouched=true;
-  if(!$("#f_date").value)$("#f_date").value=today();
-  syncAuto();toast('"'+t.name+'" applied. Set the times and save.');$("#f_s").focus();
-};
-$("#tplDel").onclick=()=>{
-  const i=$("#tplSel").value;if(i===""||!db.tpl[i]){toast("Choose a template first.");return}
-  if(confirm('Delete template "'+db.tpl[i].name+'"?')){db.tpl.splice(i,1);save();pushMasters();renderTpl()}
 };
 
 function setTpl(open){const b=$("#tplToggle");$("#tplBody").style.display=open?"":"none";b.textContent=open?"Hide":"Show";b.setAttribute("aria-expanded",open);try{localStorage.setItem("hrms_tpl_open",open?"1":"0")}catch(e){}}
@@ -809,10 +829,39 @@ const PET_ENABLED=true;  // set to false to remove the pets completely
 const PET_HOSTS=[];      // e.g. ["yourname.github.io"]; empty = wherever this file is hosted
 const CELEBRATE_IMG="";  // optional: URL of your own licensed image or GIF to show instead of the thumbs-up / salute sticker
 const NOTO=c=>"https://fonts.gstatic.com/s/e/notoemoji/latest/"+c+"/512.gif";
-const PETS={cat:["Mochi","1f431","\u{1F431}"],dog:["Bruno","1f436","\u{1F436}"],rabbit:["Coco","1f430","\u{1F430}"],fox:["Ginger","1f98a","\u{1F98A}"],panda:["Bamboo","1f43c","\u{1F43C}"],penguin:["Waddles","1f427","\u{1F427}"],duck:["Quackers","1f986","\u{1F986}"],turtle:["Shelly","1f422","\u{1F422}"]};
+const svgURI=s=>"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s);
+const chibi=o=>'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 84"><ellipse cx="32" cy="80" rx="18" ry="3" fill="rgba(0,0,0,.18)"/>'+(o.back||"")+
+'<rect x="22" y="66" width="8" height="12" rx="4" fill="'+o.pants+'"/><rect x="34" y="66" width="8" height="12" rx="4" fill="'+o.pants+'"/>'+
+'<rect x="20" y="75" width="12" height="5" rx="2.5" fill="'+o.shoe+'"/><rect x="32" y="75" width="12" height="5" rx="2.5" fill="'+o.shoe+'"/>'+
+'<rect x="19" y="46" width="26" height="24" rx="9" fill="'+o.top+'"/>'+(o.belt?'<rect x="19" y="59" width="26" height="4" fill="'+o.belt+'"/>':"")+
+'<rect x="12" y="48" width="8" height="16" rx="4" fill="'+o.top+'"/><rect x="44" y="48" width="8" height="16" rx="4" fill="'+o.top+'"/>'+
+'<circle cx="16" cy="65" r="4" fill="'+o.skin+'"/><circle cx="48" cy="65" r="4" fill="'+o.skin+'"/>'+(o.mid||"")+
+'<circle cx="32" cy="28" r="19" fill="'+o.skin+'"/>'+o.hair+
+'<ellipse cx="25" cy="30" rx="4.4" ry="5.6" fill="#fff"/><ellipse cx="39" cy="30" rx="4.4" ry="5.6" fill="#fff"/>'+
+'<ellipse cx="25.4" cy="31" rx="3.2" ry="4.4" fill="'+o.eye+'"/><ellipse cx="39.4" cy="31" rx="3.2" ry="4.4" fill="'+o.eye+'"/>'+
+'<circle cx="25.4" cy="31.4" r="1.9" fill="#1b1b2a"/><circle cx="39.4" cy="31.4" r="1.9" fill="#1b1b2a"/>'+
+'<circle cx="24.2" cy="29.2" r="1.3" fill="#fff"/><circle cx="38.2" cy="29.2" r="1.3" fill="#fff"/>'+
+'<ellipse cx="19.5" cy="37" rx="3" ry="1.8" fill="#ff9fb0" opacity=".6"/><ellipse cx="44.5" cy="37" rx="3" ry="1.8" fill="#ff9fb0" opacity=".6"/>'+
+'<path d="M28 39q4 3.5 8 0" fill="none" stroke="#7a3b3b" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const ART={
+ kenji:svgURI(chibi({skin:"#f3cfa8",top:"#1f8a8a",pants:"#2b3a55",shoe:"#1c2333",belt:"#c9d3df",eye:"#2a6f97",
+  mid:'<rect x="20" y="44" width="24" height="6" rx="3" fill="#2fb3b3"/><path d="M42 47q10 2 12 12l-8-3z" fill="#2fb3b3"/>',
+  hair:'<path d="M13 27Q13 7 32 7Q51 7 51 27L46 20L43 26L38 17L32 25L26 17L21 26L18 20Z" fill="#aab4c4"/><rect x="13" y="19" width="38" height="7" rx="3" fill="#2f4a7a"/><path d="M32 20.3l1.1 2.2 2.4.3-1.8 1.6.5 2.4-2.2-1.2-2.2 1.2.5-2.4-1.8-1.6 2.4-.3z" fill="#e8eef7"/>'})),
+ sora:svgURI(chibi({skin:"#f0c8a0",top:"#6d3fc4",pants:"#5632a1",shoe:"#2a2a3a",belt:"#f4f4f4",eye:"#1a7f4b",
+  mid:'<rect x="12" y="60" width="8" height="4" fill="#e04b4b"/><rect x="44" y="60" width="8" height="4" fill="#e04b4b"/>',
+  hair:'<path d="M12 27Q10 10 20 8L21 2L27 8L32 1L37 8L43 2L44 8Q54 10 52 27L46 19L40 24L34 15L28 24L22 15L17 23Z" fill="#2fbf71"/>'})),
+ hana:svgURI(chibi({skin:"#f6d5c0",top:"#e8508a",pants:"#fbe3d0",shoe:"#7a2e57",belt:"#ffd23f",eye:"#8e44ad",
+  back:'<path d="M13 24Q1 30 5 56Q11 48 17 38Z" fill="#ff7eb6"/><path d="M51 24Q63 30 59 56Q53 48 47 38Z" fill="#ff7eb6"/>',
+  hair:'<path d="M13 28Q12 8 32 8Q52 8 51 28Q46 18 32 18Q18 18 13 28Z" fill="#ff7eb6"/><circle cx="14" cy="23" r="3.6" fill="#ffd23f"/><circle cx="50" cy="23" r="3.6" fill="#ffd23f"/>'}))
+};
+const CUSTOM_PETS=[];  // your own licensed images, e.g. [{key:"mine",name:"Buddy",img:"https://example.com/buddy.png"}]
+const PETS={kenji:["Kenji","art:kenji","\u{1F977}"],sora:["Sora","art:sora","\u{1F94B}"],hana:["Hana","art:hana","\u{1F338}"],cat:["Mochi","1f431","\u{1F431}"],dog:["Bruno","1f436","\u{1F436}"],rabbit:["Coco","1f430","\u{1F430}"],fox:["Ginger","1f98a","\u{1F98A}"],panda:["Bamboo","1f43c","\u{1F43C}"],penguin:["Waddles","1f427","\u{1F427}"],duck:["Quackers","1f986","\u{1F986}"],turtle:["Shelly","1f422","\u{1F422}"]};
+CUSTOM_PETS.forEach((c,i)=>{PETS[c.key||"mine"+i]=[c.name||"Friend",c.img,"\u2B50"]});
+const PET_DESC={kenji:"ninja kid",sora:"martial artist",hana:"mage girl"};
 const calm=!!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
 let pets=[],petsOn=true,petsAllowed=true;
-const petImg=(code,emo)=>'<img alt="" src="'+NOTO(code)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span class="fb">'+emo+'</span>';
+const petSrc=code=>code.indexOf("art:")===0?ART[code.slice(4)]:/^(https?:|data:)/.test(code)?code:NOTO(code);
+const petImg=(code,emo)=>'<img alt="" src="'+petSrc(code)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span class="fb">'+emo+'</span>';
 function tip(){
   const tr=db.rows.filter(r=>r.date===today()),m=tr.reduce((a,r)=>a+durOf(r),0),h=new Date().getHours();
   const L=[tr.length?`You have ${tr.length} ${tr.length===1?"entry":"entries"} today (${hm(m)}).`:"No entries yet today. Shall we log one?","Remember to log your end times.",h>=16?"Wrapping up? Check today's total on the dashboard.":"Good pace! Keep going.","Tip: save a template for repeat tasks."];
@@ -873,7 +922,7 @@ function makePet(key){
   f.ondblclick=()=>setPets(false);
   return P;
 }
-function petKeys(){let k=[];try{k=JSON.parse(localStorage.getItem("hrms_pets"))}catch(e){}if(!Array.isArray(k)||!k.length)k=["cat","dog"];return k.filter(x=>PETS[x]).slice(0,4)}
+function petKeys(){let k=[];try{k=JSON.parse(localStorage.getItem("hrms_pets"))}catch(e){}if(!Array.isArray(k)||!k.length)k=["kenji","sora"];return k.filter(x=>PETS[x]).slice(0,4)}
 function rebuildPets(){pets.forEach(p=>p.destroy());pets=petKeys().map(makePet);if(petsOn)pets.forEach((p,i)=>p.show(i))}
 function petSay(t,hop){
   if(!petsAllowed)return;
@@ -890,7 +939,7 @@ function setPets(on){
   let framed=false;try{framed=window.top!==window}catch(e){framed=true}
   if(!PET_ENABLED||framed||(PET_HOSTS.length&&!PET_HOSTS.includes(location.hostname))){petsAllowed=false;$("#petBtn").style.display="none";$("#petPickWrap").style.display="none";return}
   const pk=$("#petPick");
-  pk.innerHTML=Object.keys(PETS).map(k=>`<label><input type="checkbox" value="${k}"> ${PETS[k][0]} the ${k}</label>`).join("");
+  pk.innerHTML=Object.keys(PETS).map(k=>`<label><input type="checkbox" value="${k}"> ${PETS[k][0]} the ${PET_DESC[k]||k}</label>`).join("");
   const sel=petKeys(),boxes=[...pk.querySelectorAll("input")];
   boxes.forEach(i=>i.checked=sel.includes(i.value));
   const lim=()=>{const c=boxes.filter(i=>i.checked).length;boxes.forEach(i=>i.disabled=!i.checked&&c>=4)};lim();
@@ -906,6 +955,106 @@ function setPets(on){
   $("#petBtn").textContent=petsOn?"Hide pets":"Show pets";
   rebuildPets();
 })();
+
+// logo / favicon with your name
+const DEFAULT_FAV='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a55d6"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg1)"/><circle cx="29" cy="29" r="17" fill="none" stroke="#fff" stroke-width="4"/><path d="M29 19v10l7 4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="48" r="11" fill="#22c55e" stroke="#fff" stroke-width="3"/><path d="M43 48l4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function renderBrand(){
+  const n=(OWNER_NAME||uname||"").trim(),f=$("#fav");
+  $("#brandName").textContent=n;document.title=n?n+" | Timesheet":"Timesheet";
+  const L=n?n.charAt(0).toUpperCase():"";
+  const svg=L?'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a55d6"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#g)"/><text x="30" y="45" font-family="Arial,Helvetica,sans-serif" font-size="40" font-weight="700" fill="#fff" text-anchor="middle">'+esc(L)+'</text><circle cx="49" cy="49" r="11" fill="#22c55e" stroke="#fff" stroke-width="3"/><path d="M44 49l4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':DEFAULT_FAV;
+  f.href="data:image/svg+xml,"+encodeURIComponent(svg);
+}
+
+// weather (Open-Meteo, no key needed)
+const WX_DEFAULT={lat:17.385,lon:78.4867,name:"Hyderabad"};
+let wx=null;try{wx=JSON.parse(localStorage.getItem("hrms_wx"))}catch(e){}
+const WX_TXT={clear:"Clear sky",partly:"Partly cloudy",cloud:"Cloudy",fog:"Foggy",drizzle:"Drizzle",rain:"Rain",snow:"Snow",storm:"Thunderstorm"};
+function wxKind(c){return c===0?"clear":c<=2?"partly":c===3?"cloud":(c===45||c===48)?"fog":(c>=51&&c<=57)?"drizzle":((c>=61&&c<=67)||(c>=80&&c<=82))?"rain":((c>=71&&c<=77)||c===85||c===86)?"snow":c>=95?"storm":"cloud"}
+const wxIcon=(k,day)=>({clear:day?"\u2600\uFE0F":"\u{1F319}",partly:day?"\u26C5":"\u2601\uFE0F",cloud:"\u2601\uFE0F",fog:"\u{1F32B}\uFE0F",drizzle:"\u{1F326}\uFE0F",rain:"\u{1F327}\uFE0F",snow:"\u2744\uFE0F",storm:"\u26C8\uFE0F"})[k];
+function wxLoc(){try{const l=JSON.parse(localStorage.getItem("hrms_wxloc"));if(l&&isFinite(l.lat)&&isFinite(l.lon))return l}catch(e){}return WX_DEFAULT}
+async function loadWeather(){
+  const l=wxLoc();
+  try{
+    const u="https://api.open-meteo.com/v1/forecast?latitude="+(+l.lat).toFixed(3)+"&longitude="+(+l.lon).toFixed(3)+"&current=temperature_2m,apparent_temperature,relative_humidity_2m,is_day,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1";
+    const d=await(await fetch(u)).json(),c=d.current;
+    wx={t:Math.round(c.temperature_2m),feels:Math.round(c.apparent_temperature),hum:c.relative_humidity_2m,wind:Math.round(c.wind_speed_10m),code:c.weather_code,day:!!c.is_day,hi:Math.round(d.daily.temperature_2m_max[0]),lo:Math.round(d.daily.temperature_2m_min[0]),place:l.name,at:Date.now()};
+    try{localStorage.setItem("hrms_wx",JSON.stringify(wx))}catch(e){}
+  }catch(e){}
+  renderWeather();wxSync();
+}
+function renderWeather(){
+  const el=$("#d_wx");if(!el)return;
+  if(!wx){el.innerHTML='<span class="wxd">Weather unavailable</span>';return}
+  const k=wxKind(wx.code);
+  el.innerHTML='<div class="wxi" title="'+WX_TXT[k]+'">'+wxIcon(k,wx.day)+'</div><div><div class="wxt">'+wx.t+'\u00B0C</div><div class="wxd">'+WX_TXT[k]+' \u00B7 '+esc(wx.place)+'</div><div class="wxs">Feels '+wx.feels+'\u00B0 \u00B7 H '+wx.hi+'\u00B0 L '+wx.lo+'\u00B0 \u00B7 '+wx.hum+'% \u00B7 '+wx.wind+' km/h</div></div>';
+}
+$("#d_loc").onclick=()=>{
+  if(!navigator.geolocation){toast("Location is not available in this browser.");return}
+  navigator.geolocation.getCurrentPosition(p=>{try{localStorage.setItem("hrms_wxloc",JSON.stringify({lat:p.coords.latitude,lon:p.coords.longitude,name:"Your location"}))}catch(e){}loadWeather()},()=>toast("Location permission was not given. Showing "+WX_DEFAULT.name+"."),{timeout:8000});
+};
+
+// animated weather behind the New entry page
+const wxc=document.createElement("canvas");wxc.id="wxc";wxc.style.display="none";document.body.appendChild(wxc);
+let wxRaf=0,wxPart=[],wxStars=[],wxClouds=[],wxFlash=0,wxS={k:"clear",day:true},wxT=0;
+const wxEnabled=()=>{try{return localStorage.getItem("hrms_wxbg")!=="0"}catch(e){return true}};
+function wxScene(){if(wx&&Date.now()-wx.at<108e5)return{k:wxKind(wx.code),day:wx.day};const h=new Date().getHours();return{k:"clear",day:h>=6&&h<18}}
+function wxDark(){const v=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim(),m=/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(v);if(!m)return false;let h=m[1];if(h.length===3)h=h.split("").map(c=>c+c).join("");const n=parseInt(h,16);return(((n>>16)&255)*.299+((n>>8)&255)*.587+(n&255)*.114)<110}
+function wxInit(){
+  wxS=wxScene();const W=wxc.width,H=wxc.height,k=wxS.k;
+  const n={rain:170,storm:230,drizzle:90,snow:120}[k]||0;
+  wxPart=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,v:k==="snow"?.7+Math.random()*1.3:(k==="drizzle"?9:15)+Math.random()*9,l:k==="snow"?1.5+Math.random()*2.5:(k==="drizzle"?7:13)+Math.random()*10,p:Math.random()*6.28}));
+  wxStars=(!wxS.day&&(k==="clear"||k==="partly"))?Array.from({length:70},()=>({x:Math.random()*W,y:Math.random()*H*.6,r:.6+Math.random()*1.4,p:Math.random()*6.28})):[];
+  const nc={partly:3,cloud:6,drizzle:6,rain:7,storm:8,snow:6}[k]||0;
+  wxClouds=Array.from({length:nc},()=>({x:Math.random()*W,y:30+Math.random()*H*.3,s:.7+Math.random()*1.1,v:.12+Math.random()*.25}));
+}
+function wxDraw(){
+  const g=wxc.getContext&&wxc.getContext("2d");if(!g)return;
+  const W=wxc.width,H=wxc.height,k=wxS.k,dk=wxDark(),t=wxT,cx=W-140,cy=120;
+  g.clearRect(0,0,W,H);
+  if(k==="clear"||k==="partly"){
+    if(wxS.day){
+      const gr=g.createRadialGradient(cx,cy,5,cx,cy,95);gr.addColorStop(0,"rgba(255,205,70,.95)");gr.addColorStop(.35,"rgba(255,190,60,.45)");gr.addColorStop(1,"rgba(255,190,60,0)");
+      g.fillStyle=gr;g.beginPath();g.arc(cx,cy,95,0,6.3);g.fill();
+      g.strokeStyle="rgba(255,190,60,.4)";g.lineWidth=3;g.lineCap="round";
+      for(let i=0;i<12;i++){const a=i*.5236+t*.0004;g.beginPath();g.moveTo(cx+Math.cos(a)*52,cy+Math.sin(a)*52);g.lineTo(cx+Math.cos(a)*78,cy+Math.sin(a)*78);g.stroke()}
+      g.fillStyle="#ffd24a";g.beginPath();g.arc(cx,cy,38,0,6.3);g.fill();
+    }else{
+      const gr=g.createRadialGradient(cx,cy,10,cx,cy,90);gr.addColorStop(0,"rgba(255,250,215,.55)");gr.addColorStop(1,"rgba(255,250,215,0)");
+      g.fillStyle=gr;g.beginPath();g.arc(cx,cy,90,0,6.3);g.fill();
+      g.fillStyle="#fff6cf";g.beginPath();g.arc(cx,cy,30,0,6.3);g.fill();
+      g.fillStyle="rgba(190,180,140,.35)";[[-9,-6,6],[8,5,5],[-4,11,3.5]].forEach(c=>{g.beginPath();g.arc(cx+c[0],cy+c[1],c[2],0,6.3);g.fill()});
+    }
+  }
+  wxStars.forEach(s=>{g.fillStyle="rgba(255,255,255,"+(.35+.45*Math.sin(t*.002+s.p))+")";g.beginPath();g.arc(s.x,s.y,s.r,0,6.3);g.fill()});
+  const wet=k==="rain"||k==="storm"||k==="drizzle";
+  const cc=dk?(wet?"rgba(190,200,220,.16)":"rgba(255,255,255,.12)"):(wet?"rgba(90,105,130,.28)":"rgba(255,255,255,.95)");
+  wxClouds.forEach(c=>{c.x+=c.v;if(c.x>W+160)c.x=-160;g.fillStyle=cc;const r=26*c.s;[[0,0,1],[-r*.9,r*.2,.8],[r*.9,r*.25,.85],[-r*.35,-r*.45,.9],[r*.4,-r*.3,.75]].forEach(p=>{g.beginPath();g.arc(c.x+p[0],c.y+p[1],r*p[2],0,6.3);g.fill()})});
+  if(k==="fog"){g.fillStyle=dk?"rgba(200,210,225,.08)":"rgba(150,165,185,.16)";for(let i=0;i<4;i++){g.beginPath();g.ellipse(((t*.02*(i%2?1:-1)+i*330)%(W+400)+W+400)%(W+400)-200,H*(.2+i*.2),W*.4,48,0,0,6.3);g.fill()}}
+  if(wet){g.strokeStyle=dk?"rgba(150,185,255,.5)":"rgba(70,110,190,.45)";g.lineWidth=k==="drizzle"?1:1.4;g.beginPath();wxPart.forEach(p=>{g.moveTo(p.x,p.y);g.lineTo(p.x-p.l*.22,p.y+p.l)});g.stroke()}
+  if(k==="snow"){g.fillStyle=dk?"rgba(255,255,255,.8)":"rgba(120,150,200,.75)";wxPart.forEach(p=>{g.beginPath();g.arc(p.x,p.y,p.l,0,6.3);g.fill()})}
+  if(k==="storm"&&wxFlash>.02){g.fillStyle="rgba(255,255,255,"+wxFlash+")";g.fillRect(0,0,W,H);wxFlash*=.86}
+}
+function wxStep(){
+  const W=wxc.width,H=wxc.height,k=wxS.k;
+  wxPart.forEach(p=>{p.y+=p.v;if(k==="snow")p.x+=Math.sin(wxT*.001+p.p)*.6;else p.x-=p.v*.22;if(p.y>H+20){p.y=-20;p.x=Math.random()*W}if(p.x<-20)p.x=W+20});
+  if(k==="storm"&&Math.random()<.004)wxFlash=.55;
+}
+function wxLoop(ts){wxT=ts||0;wxStep();wxDraw();wxRaf=requestAnimationFrame(wxLoop)}
+function wxSync(){
+  const on=$("#entry").classList.contains("on")&&wxEnabled()&&!document.hidden;
+  if(!on){cancelAnimationFrame(wxRaf);wxRaf=0;wxc.style.display="none";document.body.classList.remove("wx-on");return}
+  wxc.width=innerWidth;wxc.height=innerHeight;wxc.style.display="block";document.body.classList.add("wx-on");
+  wxInit();
+  if(calm){wxDraw();return}
+  if(!wxRaf)wxRaf=requestAnimationFrame(wxLoop);
+}
+$$("#nav button").forEach(b=>b.addEventListener("click",()=>setTimeout(wxSync,0)));
+document.addEventListener("visibilitychange",wxSync);
+addEventListener("resize",()=>{if(wxRaf||wxc.style.display==="block")wxSync()});
+$("#wxToggle").checked=wxEnabled();
+$("#wxToggle").onchange=e=>{try{localStorage.setItem("hrms_wxbg",e.target.checked?"1":"0")}catch(x){}wxSync()};
+renderWeather();loadWeather();
 
 // celebration after a successful new entry
 function celebrate(){
@@ -947,6 +1096,7 @@ const hl=(t,qs)=>{t=String(t==null?"":t);if(!qs.length)return esc(t);const re=ne
 function viewRows(){
   const all=getRows(),qs=qText.toLowerCase().split(/\s+/).filter(Boolean);
   const rows=qs.length?all.filter(r=>{const h=line(r).join(" ").toLowerCase();return qs.every(q=>h.includes(q))}):all.slice();
+  if(sortK<0)rows.reverse();
   if(sortK>=0){const f=SORTV[sortK];rows.sort((a,b)=>{const x=f(a),y=f(b),bx=x===""||x==null,by=y===""||y==null;if(bx||by)return bx&&by?0:bx?1:-1;const c=typeof x==="number"&&typeof y==="number"?x-y:String(x).localeCompare(String(y),undefined,{numeric:true,sensitivity:"base"});return c*sortD})}
   return{all,rows,qs};
 }
@@ -1160,6 +1310,7 @@ function renderFooter(){
   $("#f_msg").textContent="\u201C"+QUOTES[doy%QUOTES.length]+"\u201D";
   const n=OWNER_NAME||uname;
   $("#f_name").textContent=n?"\u00A9 "+t.getFullYear()+" "+n:"Click to add your name";
+  renderBrand();
 }
 $("#f_name").onclick=()=>{
   const v=prompt("Your name (shown in the footer and on exported reports):",OWNER_NAME||uname);
@@ -1175,7 +1326,7 @@ function rollDay(){
   if($("#r_month").value===old.slice(0,7))$("#r_month").value=t.slice(0,7);
   renderToday();renderRec();renderFooter();
 }
-setInterval(()=>{rollDay();pull()},REFRESH_MS);
+setInterval(()=>{rollDay();pull();loadWeather()},REFRESH_MS);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){rollDay();if(Date.now()-lastSync>REFRESH_MS)pull()}});
 save();clearForm();fillSelects();renderM();renderToday();renderTpl();showLink();updBtn();pull();
 </script>
