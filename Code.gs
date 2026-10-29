@@ -1,12 +1,15 @@
-// Timesheet backend: one styled tab per month ("Oct 2026") plus a "Masters" tab.
+// Timesheet backend.
+//   "Timesheet"  = ALL your entries (the master list, nothing is ever removed from it)
+//   "Oct 2026"... = a styled tab per month, kept in step with the Timesheet tab automatically
+//   "Masters"    = your business names, products, status, source and templates
 // Paste into Extensions > Apps Script, then Deploy > Manage deployments > Edit > New version.
-// Your old single "Timesheet" tab is moved into month tabs automatically (and kept as "Timesheet (backup)").
 
 const HEAD = ['ID','SL.no','Month','Date','Code','Source','Product','Transaction Start Time','Transaction End time','Total Duration','CONTACT NO','Business Name','Issue/Request','Ticket No','Status','Remarks'];
 const KEYS = ['id','sl','month','date','code','src','prod','s','e','dur','contact','biz','issue','ticket','stat','rem'];
 const WIDTHS = [40,48,78,125,64,84,110,70,70,76,110,190,100,86,100,330];
 const ALIGN  = ['c','c','c','c','c','c','l','c','c','c','c','l','c','c','c','l'];
-const HDR = 4, FIRST = 5, N = HEAD.length;          // title rows 1-2, header row 4, data from row 5
+const HDR = 4, FIRST = 5, N = HEAD.length;          // month tabs: title rows 1-2, header row 4, data from row 5
+const MFIRST = 2;                                    // Timesheet tab: header row 1, data from row 2
 const MHEAD = ['Type','Name','Code'];
 const MON  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -85,7 +88,7 @@ function monthSheet_(name) {
   sh = ss.insertSheet(name);
   try {
     const earlier = monthSheets_().filter(s => s.getName() !== name && monthKey_(s.getName()) < monthKey_(name)).length;
-    ss.setActiveSheet(sh); ss.moveActiveSheet(earlier + 1);
+    ss.setActiveSheet(sh); ss.moveActiveSheet(earlier + 1 + (ss.getSheetByName('Timesheet') ? 1 : 0));
   } catch (e) {}
   style_(sh, name);
   return sh;
@@ -122,29 +125,102 @@ function border_(sh, row, rows) {
   try { sh.getRange(row, 2, rows, N - 1).setBorder(true, true, true, true, true, true, LINE, SpreadsheetApp.BorderStyle.SOLID); } catch (e) {}
 }
 
-// ---------- data ----------
+// ---------- Timesheet tab (all data) ----------
+function styleMaster_(sh) {
+  const step = f => { try { f(); } catch (e) { Logger.log('style: ' + e); } };
+  const rows = Math.max(sh.getMaxRows() - 1, 1);
+  step(() => sh.getRange(1, 1, 1, N).setBackground(BLUE).setFontColor('#ffffff').setFontWeight('bold').setHorizontalAlignment('center').setVerticalAlignment('middle').setWrap(true)
+    .setBorder(true, true, true, true, true, false, LINE, SpreadsheetApp.BorderStyle.SOLID));
+  step(() => sh.setRowHeight(1, 34));
+  step(() => sh.getRange(1, 1, sh.getMaxRows(), N).setFontFamily('Calibri').setFontSize(10).setVerticalAlignment('top'));
+  step(() => { WIDTHS.forEach((w, i) => sh.setColumnWidth(i + 1, i === 0 ? 70 : w)); sh.setFrozenRows(1); });
+  step(() => sh.getRange(MFIRST, 1, rows, 1).setFontColor('#9aa3b5').setFontSize(8));
+  step(() => ALIGN.forEach((a, i) => { if (i) sh.getRange(MFIRST, i + 1, rows, 1).setHorizontalAlignment(a === 'c' ? 'center' : 'left'); }));
+  step(() => { sh.getRange(MFIRST, 12, rows, 1).setWrap(true); sh.getRange(MFIRST, 16, rows, 1).setWrap(true); });
+  step(() => {
+    const st = sh.getRange(MFIRST, 15, rows, 1), band = sh.getRange(MFIRST, 2, rows, N - 1), R = SpreadsheetApp.newConditionalFormatRule;
+    sh.setConditionalFormatRules([
+      R().whenFormulaSatisfied('=REGEXMATCH(LOWER($O2),"resolv|clos|done|complet")').setBackground('#c6efce').setFontColor('#006100').setBold(true).setRanges([st]).build(),
+      R().whenFormulaSatisfied('=REGEXMATCH(LOWER($O2),"progress|pending|hold|wait|wip|working")').setBackground('#ffeb9c').setFontColor('#7f6000').setBold(true).setRanges([st]).build(),
+      R().whenFormulaSatisfied('=REGEXMATCH(LOWER($O2),"open|new")').setBackground('#ffc7ce').setFontColor('#9c0006').setBold(true).setRanges([st]).build(),
+      R().whenFormulaSatisfied('=AND($D2<>"",ISEVEN(ROW()))').setBackground('#f6f8fc').setRanges([band]).build()
+    ]);
+  });
+  step(() => sh.setTabColor('#16a34a'));
+}
+function tsSheet_() {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName('Timesheet');
+  if (!sh) {
+    sh = ss.insertSheet('Timesheet', 0);
+    sh.getRange(1, 1, 1, N).setValues([HEAD]);
+    sh.getRange(MFIRST, 1, sh.getMaxRows() - 1, N).setNumberFormat('@');
+    styleMaster_(sh);
+  }
+  return sh;
+}
+function tsFind_(ts, id) {
+  const n = ts.getLastRow() - 1;
+  if (n < 1) return 0;
+  const ids = ts.getRange(MFIRST, 1, n, 1).getValues();
+  for (let i = 0; i < n; i++) if (String(ids[i][0]) === id) return MFIRST + i;
+  return 0;
+}
+function tsRows_(ts) {
+  const n = ts.getLastRow() - 1;
+  if (n < 1) return [];
+  const head = ts.getRange(1, 1, 1, Math.max(ts.getLastColumn(), 1)).getValues()[0].map(String);
+  const idx = HEAD.map((h, i) => head.indexOf(h) >= 0 ? head.indexOf(h) : i);
+  return ts.getRange(MFIRST, 1, n, Math.max(ts.getLastColumn(), N)).getValues()
+    .filter(r => String(r[idx[0]]))
+    .map(r => { const o = {}; KEYS.forEach((k, i) => o[k] = v_(r[idx[i]], k)); return o; });
+}
+function tsRenumber_(ts) {
+  const n = ts.getLastRow() - 1;
+  if (n > 0) ts.getRange(MFIRST, 2, n, 1).setValues(Array.from({ length: n }, (_, i) => [i + 1]));
+}
+
+// ---------- entries ----------
 function upsert_(r) {
   if (!r || !r.id || !/^\d{4}-\d{2}-\d{2}$/.test(String(r.date || ''))) throw 'Invalid entry.';
-  const id = str_(r.id, 40), target = monthName_(r.date), found = find_(id);
+  const id = str_(r.id, 40), row = {};
+  KEYS.forEach(k => row[k] = str_(r[k]));
+  row.id = id;
+  row.month = Utilities.formatDate(new Date(r.date + 'T00:00:00'), tz_(), 'MMM yyyy');
+  // 1) the Timesheet tab holds every entry
+  const ts = tsSheet_();
+  let at = tsFind_(ts, id);
+  if (!at) at = Math.max(ts.getLastRow() + 1, MFIRST);
+  row.sl = at - 1;
+  ensureRows_(ts, at);
+  ts.getRange(at, 1, 1, N).setNumberFormat('@').setValues([KEYS.map(k => row[k])]);
+  try { ts.getRange(at, 1, 1, N).setBorder(true, true, true, true, true, true, LINE, SpreadsheetApp.BorderStyle.SOLID); } catch (e) {}
+  // 2) and the month tab shows it too
+  mirror_(row);
+}
+function mirror_(row) {
+  const target = monthName_(row.date), found = find_(row.id);
   let sh, rowNo;
   if (found && found.sh.getName() === target) { sh = found.sh; rowNo = found.row; }
   else {
     if (found) { found.sh.deleteRow(found.row); renumber_(found.sh); }   // the date moved to another month
     sh = monthSheet_(target); rowNo = Math.max(sh.getLastRow() + 1, FIRST);
   }
-  const row = {};
-  KEYS.forEach(k => row[k] = str_(r[k]));
-  row.id = id; row.sl = '';
-  row.month = Utilities.formatDate(new Date(r.date + 'T00:00:00'), tz_(), 'MMM yyyy');
+  const out = {}; KEYS.forEach(k => out[k] = row[k]);
+  out.sl = rowNo - HDR;
   ensureRows_(sh, rowNo);
-  sh.getRange(rowNo, 1, 1, N).setNumberFormat('@').setValues([KEYS.map(k => row[k])]);
+  sh.getRange(rowNo, 1, 1, N).setNumberFormat('@').setValues([KEYS.map(k => out[k])]);
   border_(sh, rowNo, 1);
-  renumber_(sh);
 }
 function del_(id) {
-  const f = find_(String(id));
+  id = String(id);
+  const ts = tsSheet_(), at = tsFind_(ts, id);
+  if (at) { ts.deleteRow(at); tsRenumber_(ts); }
+  const f = find_(id);
   if (f) { f.sh.deleteRow(f.row); renumber_(f.sh); }
 }
+
+// ---------- masters (business names, products, ...) ----------
 function masters_() {
   const ms = mastersSheet_();
   if (ms.getLastRow() < 2) {
@@ -173,62 +249,80 @@ function setMasters_(masters) {
   if (rows.length) ms.getRange(2, 1, rows.length, 3).setValues(rows);
 }
 
-// Moves the old single "Timesheet" tab into month tabs (runs once, keeps the old tab as a backup).
-function migrate_() {
-  const ss = SpreadsheetApp.getActive(), old = ss.getSheetByName('Timesheet');
-  if (!old) return;
-  const lock = LockService.getScriptLock();
-  lock.waitLock(20000);
-  try {
-    const n = old.getLastRow() - 1;
-    if (n > 0) {
-      const head = old.getRange(1, 1, 1, old.getLastColumn()).getValues()[0].map(String);
-      const idx = HEAD.map(h => head.indexOf(h));
-      const groups = {};
-      old.getRange(2, 1, n, old.getLastColumn()).getValues().forEach(r => {
-        const o = {};
-        KEYS.forEach((k, i) => o[k] = idx[i] >= 0 ? v_(r[idx[i]], k) : '');
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(o.date)) return;
-        o.month = MON[+o.date.slice(5, 7) - 1] + ' ' + o.date.slice(0, 4);
-        (groups[monthName_(o.date)] = groups[monthName_(o.date)] || []).push(o);
-      });
-      Object.keys(groups).forEach(name => {
-        const sh = monthSheet_(name), have = new Set(sh.getLastRow() >= FIRST ? sh.getRange(FIRST, 1, sh.getLastRow() - HDR, 1).getValues().map(x => String(x[0])) : []);
-        const add = groups[name].filter(o => o.id && !have.has(o.id));
-        if (!add.length) return;
-        const start = Math.max(sh.getLastRow() + 1, FIRST);
-        ensureRows_(sh, start + add.length - 1);
-        sh.getRange(start, 1, add.length, N).setNumberFormat('@').setValues(add.map(o => KEYS.map(k => o[k])));
-        border_(sh, start, add.length);
-        renumber_(sh);
-      });
-    }
-    old.setName('Timesheet (backup)');
-    try { old.setTabColor('#9aa3b5'); } catch (e) {}
-  } finally { lock.releaseLock(); }
+// ---------- keeping month tabs in step with the Timesheet tab ----------
+function clearMonth_(sh) {
+  const n = sh.getLastRow() - HDR;
+  if (n < 1) return;
+  sh.getRange(FIRST, 1, n, N).clearContent();
+  try { sh.getRange(FIRST, 2, n, N - 1).setBorder(false, false, false, false, false, false); } catch (e) {}
 }
-
-// Run this from the editor if you ever want to re-apply the styling to all month tabs.
-function restyleAll() {
-  monthSheets_().forEach(sh => style_(sh, sh.getName()));
-  styleMasters_(mastersSheet_());
+function rebuildMonths_(rows) {
+  const groups = {};
+  rows.forEach(o => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(o.date)) return;
+    o.month = MON[+o.date.slice(5, 7) - 1] + ' ' + o.date.slice(0, 4);
+    (groups[monthName_(o.date)] = groups[monthName_(o.date)] || []).push(o);
+  });
+  monthSheets_().forEach(sh => { if (!groups[sh.getName()]) clearMonth_(sh); });
+  Object.keys(groups).forEach(name => {
+    const sh = monthSheet_(name), list = groups[name];
+    list.sort((a, b) => (a.date + ' ' + a.s).localeCompare(b.date + ' ' + b.s));
+    clearMonth_(sh);
+    ensureRows_(sh, FIRST + list.length - 1);
+    sh.getRange(FIRST, 1, list.length, N).setNumberFormat('@').setValues(list.map((o, i) => { o.sl = i + 1; return KEYS.map(k => o[k]); }));
+    border_(sh, FIRST, list.length);
+  });
 }
-function migrateToMonthly() { migrate_(); }
-
-// ---------- web app ----------
-function load_() {
-  if (SpreadsheetApp.getActive().getSheetByName('Timesheet')) migrate_();
-  const m = masters_(), rows = [];
+// One-time tidy-up (runs on the first load after updating, and is safe to repeat):
+//  - keeps / restores the "Timesheet" tab with all entries
+//  - copies in any entry that only exists in a month tab
+//  - rebuilds the month tabs from the Timesheet tab
+function reconcile_() {
+  const ss = SpreadsheetApp.getActive();
+  if (!ss.getSheetByName('Timesheet')) {
+    const bk = ss.getSheetByName('Timesheet (backup)');
+    if (bk) bk.setName('Timesheet');
+  }
+  const ts = tsSheet_(), have = new Set(tsRows_(ts).map(o => o.id)), extra = [];
   monthSheets_().forEach(sh => {
     const n = sh.getLastRow() - HDR;
     if (n < 1) return;
     sh.getRange(FIRST, 1, n, N).getValues().forEach(r => {
-      if (!String(r[0])) return;
-      const o = {}; KEYS.forEach((k, i) => o[k] = v_(r[i], k)); rows.push(o);
+      const id = String(r[0]);
+      if (!id || have.has(id)) return;
+      const o = {}; KEYS.forEach((k, i) => o[k] = v_(r[i], k));
+      have.add(id); extra.push(o);
     });
   });
-  const cur = monthSheet_(monthName_(Utilities.formatDate(new Date(), tz_(), 'yyyy-MM-dd')));
-  return { masters: m, rows: rows, link: SpreadsheetApp.getActive().getUrl() + '#gid=' + cur.getSheetId() };
+  if (extra.length) {
+    extra.sort((a, b) => (a.date + ' ' + a.s).localeCompare(b.date + ' ' + b.s));
+    const start = Math.max(ts.getLastRow() + 1, MFIRST);
+    ensureRows_(ts, start + extra.length - 1);
+    ts.getRange(start, 1, extra.length, N).setNumberFormat('@').setValues(extra.map((o, i) => { o.sl = start - 1 + i; return KEYS.map(k => o[k]); }));
+    try { ts.getRange(start, 1, extra.length, N).setBorder(true, true, true, true, true, true, LINE, SpreadsheetApp.BorderStyle.SOLID); } catch (e) {}
+  }
+  tsRenumber_(ts);
+  rebuildMonths_(tsRows_(ts));
+}
+
+// Run from the editor if you want to re-apply the styling everywhere, or to re-sync the month tabs.
+function restyleAll() {
+  styleMaster_(tsSheet_());
+  monthSheets_().forEach(sh => style_(sh, sh.getName()));
+  styleMasters_(mastersSheet_());
+}
+function resyncMonths() { reconcile_(); }
+
+// ---------- web app ----------
+function load_() {
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('layout') !== 'v3') {
+    const lock = LockService.getScriptLock();
+    lock.waitLock(20000);
+    try { reconcile_(); props.setProperty('layout', 'v3'); } finally { lock.releaseLock(); }
+  }
+  const ts = tsSheet_();
+  return { masters: masters_(), rows: tsRows_(ts), link: SpreadsheetApp.getActive().getUrl() + '#gid=' + ts.getSheetId() };
 }
 function doGet() {
   try { return out_(load_()); } catch (err) { return out_({ error: String(err) }); }
