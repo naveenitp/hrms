@@ -1145,7 +1145,7 @@ const SORTV=[r=>r.sl,r=>(r.date||"").slice(0,7),r=>(r.date||"")+" "+(r.s||""),r=
 const hl=(t,qs)=>{t=String(t==null?"":t);if(!qs.length)return esc(t);const re=new RegExp("("+qs.map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")","ig");return t.split(re).map((p,i)=>i%2?"<mark>"+esc(p)+"</mark>":esc(p)).join("")};
 function viewRows(){
   const all=getRows(),qs=qText.toLowerCase().split(/\s+/).filter(Boolean);
-  const rows=qs.length?all.filter(r=>{const h=line(r).join(" ").toLowerCase();return qs.every(q=>h.includes(q))}):all.slice();
+  const rows=qs.length?all.filter(r=>{const h=line(r).slice(1).join(" ").toLowerCase();return qs.every(q=>h.includes(q))}):all.slice();
   if(sortK<0)rows.reverse();
   if(sortK>=0){const f=SORTV[sortK];rows.sort((a,b)=>{const x=f(a),y=f(b),bx=x===""||x==null,by=y===""||y==null;if(bx||by)return bx&&by?0:bx?1:-1;const c=typeof x==="number"&&typeof y==="number"?x-y:String(x).localeCompare(String(y),undefined,{numeric:true,sensitivity:"base"});return c*sortD})}
   return{all,rows,qs};
@@ -1166,7 +1166,7 @@ function renderRec(){
   pager();
   const arrow=i=>sortK===i?(sortD>0?"\u25B2":"\u25BC"):"\u2195";
   $("#r_tbl").innerHTML=rows.length?'<tr class="hd">'+HL.map((h,i)=>`<th class="sortable${sortK===i?(sortD>0?" asc":" desc"):""}" data-k="${i}" tabindex="0" aria-sort="${sortK===i?(sortD>0?"ascending":"descending"):"none"}">${h}<span class="si">${arrow(i)}</span></th>`).join("")+"<th></th></tr>"+
-    rows.map(r=>'<tr class="s-'+(stc(r.stat)||"na")+'">'+line(r).map((x,i)=>`<td data-label="${HL[i]}">${i===13?chip(x):hl(x,qs)}</td>`).join("")+
+    rows.map((r,ri)=>'<tr class="s-'+(stc(r.stat)||"na")+'">'+Object.assign(line(r),{0:ri+1}).map((x,i)=>`<td data-label="${HL[i]}">${i===13?chip(x):hl(x,qs)}</td>`).join("")+
     `<td><button class="btn sm ghost" onclick="editRow('${r.id}')">Edit</button> <button class="btn sm del" onclick="delRow('${r.id}')">Delete</button></td></tr>`).join(""):
     '<tr><td class="muted">'+(qs.length?"No entries match your search.":"No entries for this selection.")+'</td></tr>';
 }
