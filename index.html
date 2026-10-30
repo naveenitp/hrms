@@ -14,7 +14,6 @@
 :root[data-theme="dark"]{color-scheme:dark;--bg:#000;--card:#111;--ink:#fff;--mute:#a6a6a6;--line:#2c2c2c;--acc:#fff;--acc2:#262626;--accink:#000;--ok:#000;--okbg:#fff;--warn:#ff7b72;--sh:none;--shb:none;--inbg:#0a0a0a;--head:#1b1b1b;--bw:1px;--sb:#3b3b3b}
 :root[data-theme="soft"]{--bg:#e0e5ec;--card:#e0e5ec;--ink:#3b4357;--mute:#6d7790;--line:#cfd6e2;--acc:#4a63d8;--acc2:#d3daea;--accink:#fff;--ok:#1f8f66;--okbg:#d3e8e0;--warn:#c9463d;--sh:9px 9px 18px #a3b1c6,-9px -9px 18px #fff;--shb:5px 5px 10px #a3b1c6,-5px -5px 10px #fff;--shin:inset 3px 3px 6px #a3b1c6,inset -3px -3px 6px #fff;--inbg:#e0e5ec;--head:#d6dce6;--r:22px;--ri:14px;--sb:#b4bdd0}
 :root[data-theme="bw"]{--bg:#fff;--card:#fff;--ink:#000;--mute:#444;--line:#000;--acc:#000;--acc2:#eee;--accink:#fff;--ok:#fff;--okbg:#000;--warn:#000;--sh:none;--shb:none;--head:#eee;--r:4px;--ri:3px;--bw:2px;--sb:#000}
-:root[data-theme="paper"]{--bg:#ece3cf;--card:#fbf6e9;--ink:#2d2a24;--mute:#6e6552;--line:#d6c9a8;--acc:#2f5d62;--acc2:#e5ddc4;--accink:#fbf6e9;--ok:#3b6b3b;--okbg:#e1ead3;--warn:#a8412f;--sh:0 1px 0 rgba(0,0,0,.06),0 3px 10px rgba(90,70,20,.14);--shb:0 1px 0 rgba(0,0,0,.2);--head:#efe6cf;--r:6px;--ri:4px;--bw:1px;--sb:#c9b98f;--font:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:var(--fs,15px)/1.5 var(--font)}
 .top{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--line)}
@@ -83,7 +82,6 @@ th{color:var(--mute);font-weight:600;background:var(--head)}
 :root[data-theme="bw"] .seg button.on{background:#000;color:#fff}
 :root[data-theme="bw"] .chip{border:1px solid #000}
 :root[data-theme="bw"] .top{border-bottom:2px solid #000}
-:root[data-theme="paper"] body{background-image:linear-gradient(var(--line) 1px,transparent 1px);background-size:100% 30px}
 *{scrollbar-width:thin;scrollbar-color:var(--sb) transparent}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent}
@@ -150,7 +148,6 @@ th{color:var(--mute);font-weight:600;background:var(--head)}
 :root[data-theme="dark"]{--c1:#fff;--c2:#c4c4c4;--c3:#919191;--c4:#666;--c5:#444}
 :root[data-theme="soft"]{--c1:#4a63d8;--c2:#1f8f66;--c3:#d79a1e;--c4:#c9463d;--c5:#8a63d2}
 :root[data-theme="bw"]{--c1:#000;--c2:#444;--c3:#777;--c4:#aaa;--c5:#ccc}
-:root[data-theme="paper"]{--c1:#2f5d62;--c2:#3b6b3b;--c3:#b07d2b;--c4:#a8412f;--c5:#6b5b95}
 .hero{position:relative;overflow:hidden;border-radius:var(--r);padding:28px 30px;background:var(--acc);color:var(--accink);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;box-shadow:var(--sh);border:var(--bw) solid var(--line)}
 .hero::after{content:"";position:absolute;right:-70px;top:-90px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.14)}
 .hero>*{position:relative;z-index:1}
@@ -210,14 +207,10 @@ label.tg input{width:64px;padding:4px 8px;font-size:13px}
 #r_tbl tr.s-ok td:first-child,#r_tbl tr.s-pr td:first-child,#r_tbl tr.s-op td:first-child{box-shadow:inset 4px 0 0 var(--rc)}
 .lgd{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-top:14px}
 .lgd i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
-:root[data-theme="dark"],:root[data-theme="midnight"],:root[data-theme="violet"]{--sok:#4ade80;--spr:#fbbf24;--sop:#f87171}
+:root[data-theme="dark"],:root[data-theme="midnight"]{--sok:#4ade80;--spr:#fbbf24;--sop:#f87171}
 :root[data-theme="bw"]{--sok:#000;--spr:#555;--sop:#999}
-:root[data-theme="ocean"]{--bg:#e9f5fa;--card:#fff;--ink:#0b2a3a;--mute:#4d6b7b;--line:#cfe5ee;--acc:#0a7ea4;--acc2:#d6eef7;--accink:#fff;--ok:#0e8a5f;--okbg:#def5ec;--warn:#d1433a;--sb:#b6d6e3;--c1:#0a7ea4;--c2:#12a594;--c3:#f2a93b;--c4:#e4572e;--c5:#6c63ff}
 :root[data-theme="forest"]{--bg:#edf3ea;--card:#fbfdfa;--ink:#1d2b1f;--mute:#5b6d5d;--line:#d3e0d0;--acc:#2e7d32;--acc2:#dcebd8;--accink:#fff;--ok:#2e7d32;--okbg:#dcebd8;--warn:#b23b2e;--sb:#bcd0b8;--c1:#2e7d32;--c2:#8a6d3b;--c3:#d99a2b;--c4:#b23b2e;--c5:#4a7c8a}
-:root[data-theme="sunset"]{--bg:#fff1e6;--card:#fffdfb;--ink:#3a1f1a;--mute:#8a6258;--line:#f3d6c4;--acc:#e4572e;--acc2:#ffe0d1;--accink:#fff;--ok:#2a9d8f;--okbg:#d8f1ee;--warn:#c0392b;--sb:#ecc3ad;--c1:#e4572e;--c2:#f2a93b;--c3:#8e44ad;--c4:#2a9d8f;--c5:#c0392b}
-:root[data-theme="rose"]{--bg:#fdeff4;--card:#fff;--ink:#3b1d2a;--mute:#8a5a6e;--line:#f3d3df;--acc:#d6336c;--acc2:#fddde8;--accink:#fff;--ok:#12886a;--okbg:#d9f3ec;--warn:#c92a2a;--sb:#eebbcc;--c1:#d6336c;--c2:#7048e8;--c3:#f59f00;--c4:#12b886;--c5:#e8590c}
 :root[data-theme="midnight"]{color-scheme:dark;--bg:#0b1020;--card:#141b34;--ink:#e6ebff;--mute:#8f9bc7;--line:#252f55;--acc:#6d8bff;--acc2:#1f2a52;--accink:#0b1020;--ok:#4fd6a1;--okbg:#12352c;--warn:#ff8a80;--sh:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.35);--shb:0 1px 2px rgba(0,0,0,.5);--sb:#2c3866;--c1:#6d8bff;--c2:#4fd6a1;--c3:#f5c451;--c4:#ff7b72;--c5:#b48cff}
-:root[data-theme="violet"]{color-scheme:dark;--bg:#16101f;--card:#211833;--ink:#f1e9ff;--mute:#a897c9;--line:#35274f;--acc:#b794f6;--acc2:#32244d;--accink:#16101f;--ok:#5eead4;--okbg:#123a36;--warn:#ff8fa3;--sh:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.35);--shb:0 1px 2px rgba(0,0,0,.5);--sb:#40305f;--c1:#b794f6;--c2:#5eead4;--c3:#fcd34d;--c4:#ff8fa3;--c5:#7dd3fc}
 :root[data-font="inter"]{--font:"Inter",system-ui,sans-serif}
 :root[data-font="poppins"]{--font:"Poppins",system-ui,sans-serif}
 :root[data-font="nunito"]{--font:"Nunito",system-ui,sans-serif}
@@ -279,7 +272,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 :root[data-theme="material"] .card:hover,:root[data-theme="matdark"] .card:hover{box-shadow:var(--sh2)}
 :root[data-theme="material"] .top,:root[data-theme="matdark"] .top{border-bottom:0;box-shadow:0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12)}
 :root{--fsh:0 2px 6px rgba(0,0,0,.10),0 1px 2px rgba(0,0,0,.08);--fshf:0 8px 18px rgba(0,0,0,.16),0 0 0 3px var(--acc2)}
-:root[data-theme="dark"],:root[data-theme="midnight"],:root[data-theme="violet"],:root[data-theme="matdark"]{--fsh:0 2px 8px rgba(0,0,0,.55);--fshf:0 8px 20px rgba(0,0,0,.6),0 0 0 3px var(--acc2)}
+:root[data-theme="dark"],:root[data-theme="midnight"],:root[data-theme="matdark"]{--fsh:0 2px 8px rgba(0,0,0,.55);--fshf:0 8px 20px rgba(0,0,0,.6),0 0 0 3px var(--acc2)}
 :root[data-theme="soft"]{--fsh:var(--shin);--fshf:inset 3px 3px 6px #a3b1c6,inset -3px -3px 6px #fff,0 0 0 3px var(--acc2)}
 :root[data-theme="bw"]{--fsh:3px 3px 0 #000;--fshf:5px 5px 0 #000}
 .fcard input,.fcard select,.fcard textarea{box-shadow:var(--fsh);caret-color:var(--acc);transition:box-shadow .2s,transform .2s,border-color .2s,background-color .25s,color .25s}
@@ -553,7 +546,7 @@ $("#sheetLink").onclick=e=>{
 $("#recSheet").onclick=()=>$("#sheetLink").click();
 
 // themes
-const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["paper","Paper"],["ocean","Ocean"],["forest","Forest"],["sunset","Sunset"],["rose","Rose"],["midnight","Midnight"],["violet","Violet"],["material","Material"],["matdark","Material dark"],["dos","DOS (green screen)"],["cmd","Command prompt"]];
+const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["forest","Forest"],["midnight","Midnight"],["material","Material"],["matdark","Material dark"],["dos","DOS (green screen)"],["cmd","Command prompt"]];
 function setTheme(t){document.documentElement.dataset.theme=t;$("#themeSel").value=t;try{localStorage.setItem("hrms_theme",t)}catch(e){}}
 $("#themeSel").innerHTML=THEMES.slice().sort((a,b)=>a[1].localeCompare(b[1])).map(x=>`<option value="${x[0]}">${x[1].replace("&","&amp;")}</option>`).join("");
 $("#themeSel").onchange=e=>setTheme(e.target.value);
@@ -675,14 +668,15 @@ function syncAuto(){
 }
 ["f_s","f_e","f_biz"].forEach(i=>$("#"+i).addEventListener("input",syncAuto));
 $("#f_biz").addEventListener("change",syncAuto);
-let autoStart="";
+let autoStart="",dateTouched=false;
 const lastEnd=d=>{for(let i=db.rows.length-1;i>=0;i--){const r=db.rows[i];if(r.date===d&&r.e)return r.e}return""};
 function setAutoStart(){const v=lastEnd($("#f_date").value);$("#f_s").value=v;autoStart=v;syncAuto()}
-$("#f_date").addEventListener("input",()=>{if(!editId&&(!$("#f_s").value||$("#f_s").value===autoStart))setAutoStart()});
+$("#f_date").addEventListener("change",()=>{dateTouched=true});
+$("#f_date").addEventListener("input",()=>{dateTouched=true;if(!editId&&(!$("#f_s").value||$("#f_s").value===autoStart))setAutoStart()});
 let editId=null;
 function clearForm(){
   editId=null;$("#formTitle").textContent="New entry";$("#saveBtn").textContent="Save entry";$("#clearBtn").textContent="Clear";
-  Object.values(F).forEach(i=>$("#"+i).value="");$("#f_date").value=today();setAutoStart();formTouched=false;applyDefaults();
+  Object.values(F).forEach(i=>$("#"+i).value="");$("#f_date").value=today();dateTouched=false;setAutoStart();formTouched=false;applyDefaults();
 }
 $("#clearBtn").onclick=clearForm;
 $("#saveBtn").onclick=()=>{
@@ -1350,7 +1344,7 @@ function tick(){
   $("#clk_t").textContent=tm;$("#d_time").textContent=tm;
   $("#d_greet").textContent=hr<12?"Good morning":hr<16?"Good afternoon":"Good evening";
   $("#d_date").textContent=n.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-  if(today()!==lastDay)rollDay()
+  if(today()!==lastDay)rollDay();else ensureToday()
 }
 setInterval(tick,1000);tick();
 const OWNER_NAME="";  // optional: put your name here to show it in the footer without clicking; otherwise click the name in the footer once
@@ -1369,9 +1363,19 @@ $("#f_name").onclick=()=>{
 renderFooter();
 let lastSync=Date.now();
 const REFRESH_MS=15*60*1000;
+function ensureToday(){
+  if(editId||dateTouched)return false;
+  const el=$("#f_date"),t=today();if(el.value===t)return false;
+  el.value=t;if(!$("#f_s").value||$("#f_s").value===autoStart)setAutoStart();else syncAuto();
+  return true;
+}
+$$(".fcard input,.fcard textarea,.fcard select").forEach(el=>el.setAttribute("autocomplete","off"));
+$$("#nav button").forEach(b=>b.addEventListener("click",()=>ensureToday()));
+addEventListener("focus",()=>{rollDay();ensureToday()});
+addEventListener("pageshow",()=>{rollDay();ensureToday()});
 function rollDay(){
   const t=today(),old=lastDay;if(t===old)return;lastDay=t;
-  if(!editId&&$("#f_date").value===old){$("#f_date").value=t;if(!$("#f_s").value||$("#f_s").value===autoStart)setAutoStart();toast("New day: entry date set to "+sd(t))}
+  if(ensureToday())toast("New day: entry date set to "+sd(t));
   if($("#r_day").value===old)$("#r_day").value=t;
   if($("#r_month").value===old.slice(0,7))$("#r_month").value=t.slice(0,7);
   renderToday();renderRec();renderFooter();
