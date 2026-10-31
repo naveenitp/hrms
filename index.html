@@ -353,6 +353,50 @@ mark{background:var(--acc2);color:var(--ink);border-radius:3px;padding:0 2px;box
 #wxc{position:fixed;left:0;top:0;width:100%;height:100%;z-index:-1;pointer-events:none}
 body.wx-on #entry .card{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(2px)}
 @media(max-width:700px){.hside{text-align:left}.wxw{justify-content:flex-start}}
+.msgerr{color:var(--warn);font-size:13px;min-height:18px;margin-top:8px}
+.ovl{margin-top:10px;padding:8px 12px;border-radius:var(--ri);background:color-mix(in srgb,var(--warn) 14%,transparent);border:1px solid var(--warn);color:var(--ink);font-size:13px}
+.ow{color:var(--warn);font-weight:700}
+.dup{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.tsug{border:1px dashed var(--acc);background:none;color:var(--acc);border-radius:99px;padding:5px 12px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.tsug:hover{background:var(--acc2)}
+dialog.wide{max-width:760px}
+dialog{max-height:92vh;overflow:auto}
+.btn.ghost.on{background:var(--acc);color:var(--accink)}
+.sbar{align-items:center}
+#q_s{flex:1 1 300px;min-width:200px;height:42px}
+.sbar select{width:auto;height:42px;min-width:170px}
+.sbar .btn{height:42px}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(430px,1fr));gap:16px;margin-top:18px}
+.qc{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--bg);box-shadow:var(--shb);min-width:0}
+.qh{display:flex;align-items:center;gap:10px}
+.qt{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.qt b{font-size:16px}
+.star{background:none;border:0;font-size:22px;line-height:1;cursor:pointer;color:var(--mute);padding:0}
+.star.on{color:#f5b301}
+.qd{margin:8px 0 0;color:var(--mute);white-space:pre-wrap}
+.qsql{background:var(--head);border:1px solid var(--line);border-radius:var(--ri);padding:10px 12px;margin:10px 0 0;max-height:190px;overflow:auto;font:12.5px/1.5 ui-monospace,Consolas,"Courier New",monospace;white-space:pre-wrap;word-break:break-word}
+.qtb{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;margin-top:10px}
+.tchip{border:1px solid var(--line);background:var(--acc2);color:var(--acc);border-radius:99px;padding:2px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.qpt{margin-top:10px;font-size:12.5px}
+.qpt th,.qpt td{padding:5px 8px}
+.qx{margin-top:10px;font-size:13px}
+.qx summary{cursor:pointer;font-weight:600}
+.qx p{white-space:pre-wrap;margin:4px 0 8px;color:var(--mute)}
+.qx h4{margin:8px 0 0;font-size:12px}
+.qb{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pr{display:grid;grid-template-columns:1fr 1.2fr 1fr auto;gap:6px;margin-top:6px;align-items:center}
+.sqlta{font:13px/1.5 ui-monospace,Consolas,monospace}
+@media(max-width:700px){.qgrid{grid-template-columns:minmax(0,1fr)}.pr{grid-template-columns:1fr}}
+:root[data-theme="glass"]{color-scheme:dark;--bg:rgba(255,255,255,.10);--card:rgba(255,255,255,.16);--ink:#fff;--mute:rgba(255,255,255,.74);--line:rgba(255,255,255,.34);--acc:#fff;--acc2:rgba(255,255,255,.22);--accink:#1d2457;--ok:#6ee7b7;--okbg:rgba(110,231,183,.18);--warn:#fda4af;--sb:rgba(255,255,255,.4);--head:rgba(255,255,255,.14);--inbg:rgba(255,255,255,.12);--r:20px;--ri:12px;--bw:1px;--sh:0 8px 32px rgba(20,24,90,.28);--shb:0 4px 14px rgba(20,24,90,.22);--shin:none;--fsh:0 4px 14px rgba(20,24,90,.18);--fshf:0 8px 22px rgba(20,24,90,.28),0 0 0 3px rgba(255,255,255,.28);--c1:#fff;--c2:#67e8f9;--c3:#fde68a;--c4:#fda4af;--c5:#c4b5fd;--sok:#6ee7b7;--spr:#fde68a;--sop:#fda4af}
+:root[data-theme="glass"] body{background:linear-gradient(135deg,#4338ca 0%,#0ea5e9 48%,#ec4899 100%) fixed}
+:root[data-theme="glass"] .card,:root[data-theme="glass"] .top,:root[data-theme="glass"] #foot,:root[data-theme="glass"] .mnu,:root[data-theme="glass"] dialog{-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%)}
+:root[data-theme="glass"] select option{color:#1d2457;background:#fff}
+:root[data-theme="glass"] ::placeholder{color:rgba(255,255,255,.6)}
+:root[data-theme="glass"] .btn{background:rgba(255,255,255,.28);color:#fff;border:1px solid rgba(255,255,255,.5)}
+:root[data-theme="glass"] .btn.ghost{background:rgba(255,255,255,.12)}
+:root[data-theme="glass"] .hero{background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.1));color:#fff;border:1px solid rgba(255,255,255,.4)}
+:root[data-theme="glass"] .hero::after{display:none}
+:root[data-theme="softdark"]{color-scheme:dark;--bg:#2b2f36;--card:#2b2f36;--ink:#e6e9ef;--mute:#9aa3b2;--line:#363b45;--acc:#7aa7ff;--acc2:#343a46;--accink:#101521;--ok:#4fd6a1;--okbg:#22352f;--warn:#ff7b72;--sb:#3d4350;--head:#262a30;--inbg:#2b2f36;--r:22px;--ri:14px;--bw:0px;--sh:9px 9px 18px #1d2025,-9px -9px 18px #363b44;--shb:5px 5px 10px #1d2025,-5px -5px 10px #363b44;--shin:inset 3px 3px 6px #1d2025,inset -3px -3px 6px #363b44;--fsh:inset 3px 3px 6px #1d2025,inset -3px -3px 6px #363b44;--fshf:inset 3px 3px 6px #1d2025,inset -3px -3px 6px #363b44,0 0 0 3px #343a46;--c1:#7aa7ff;--c2:#4fd6a1;--c3:#f5c451;--c4:#ff7b72;--c5:#b48cff;--sok:#4fd6a1;--spr:#f5c451;--sop:#ff7b72}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -360,7 +404,7 @@ body.wx-on #entry .card{background:color-mix(in srgb,var(--card) 80%,transparent
 <header class="top">
   <div class="lf"><div class="brand"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a55d6"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg1)"/><circle cx="29" cy="29" r="17" fill="none" stroke="#fff" stroke-width="4"/><path d="M29 19v10l7 4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="48" r="11" fill="#22c55e" stroke="#fff" stroke-width="3"/><path d="M43 48l4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bt"><b>Timesheet</b><small id="brandName"></small></span></div>
   <nav class="seg" id="nav">
-    <button data-t="dash" class="on">Dashboard</button><button data-t="entry">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button>
+    <button data-t="dash" class="on">Dashboard</button><button data-t="entry">New entry</button><button data-t="rec">Records</button><button data-t="mas">Masters</button><button data-t="sql">SQL Library</button>
   </nav></div>
   <div class="clock"><div id="clk_d"></div><b id="clk_t"></b></div>
   <div class="tools"><button class="btn sm ghost" id="srvBtn">Server</button><button class="btn sm ghost" id="petBtn">Hide pets</button><button class="btn sm ghost" id="styBtn">Appearance</button><button class="btn sm ghost" id="syncBtn">Sync now</button><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open Google Sheet</a><span class="dot" id="syncDot" title="Sync status"></span><span class="sync" id="sync"></span></div>
@@ -400,7 +444,7 @@ body.wx-on #entry .card{background:color-mix(in srgb,var(--card) 80%,transparent
       <label>Start time<input type="time" id="f_s"></label>
       <label>End time<input type="time" id="f_e"></label>
       <label>Total duration<input id="f_dur" class="auto dur" readonly placeholder="--:--"></label>
-    </div></div>
+    </div><div class="ovl" id="ovlWarn" role="alert" style="display:none"></div></div>
     <div class="grp"><h3>Customer</h3><div class="g">
       <label>Business name<select id="f_biz"></select></label>
       <label>Code<input id="f_code" class="auto" readonly placeholder="Fills from business"></label>
@@ -414,7 +458,7 @@ body.wx-on #entry .card{background:color-mix(in srgb,var(--card) 80%,transparent
       <label>Status<select id="f_stat"></select></label>
     </div>
     <label style="margin-top:14px">Remarks<textarea id="f_rem" rows="2"></textarea></label></div>
-    <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button></div>
+    <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button><button class="btn ghost" type="button" id="dupBtn">Duplicate yesterday</button></div>
   </div>
   <div class="side">
   <div class="card">
@@ -422,6 +466,7 @@ body.wx-on #entry .card{background:color-mix(in srgb,var(--card) 80%,transparent
     <div id="tplBody">
     <div class="sel">
       <div class="tpl-list" id="tplList"></div>
+      <div class="tpl-list" id="tplSug" style="margin-top:8px"></div>
       <button class="btn ghost" id="tplNew">Save current form as template</button>
       <div id="tplForm" style="display:none" class="sel">
         <label>Template name<input id="tpl_name"></label>
@@ -473,7 +518,32 @@ body.wx-on #entry .card{background:color-mix(in srgb,var(--card) 80%,transparent
   <div class="scroll" style="margin-top:0"><table id="m_tbl"></table></div>
 </div></section>
 
+<section class="tab" id="sql"><div class="card">
+  <div class="bar sbar">
+    <input type="search" id="q_s" placeholder="Search by table, column or keyword..." aria-label="Search queries" autocomplete="off">
+    <select id="q_cat" aria-label="Category"></select>
+    <button class="btn ghost" id="q_fav" type="button" aria-pressed="false">&#9733; Favourites</button>
+    <span class="grow"></span>
+    <b id="q_n" class="muted"></b>
+    <button class="btn" id="q_new" type="button">+ New query</button>
+  </div>
+  <div class="qgrid" id="q_list"></div>
+</div></section>
 </main>
+<dialog id="dupDlg" class="wide"><h2 style="font-size:17px;margin-bottom:6px">Duplicate yesterday</h2><p class="muted" id="dupSub" style="margin:0 0 10px"></p><div id="dupList"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="dupAll" type="button">Add all to today</button><button class="btn ghost" id="dupX" type="button">Close</button></div></dialog>
+<dialog id="sqlDlg" class="wide"><h2 id="sd_title" style="font-size:18px;margin-bottom:10px">New query</h2>
+  <label>Title<input id="s_title" maxlength="200" placeholder="e.g. Unpaid invoices for a customer"></label>
+  <label style="margin-top:10px">Table or module (category)<input id="s_cat" list="s_cats" placeholder="e.g. invoice, customer, Reports" autocomplete="off"></label><datalist id="s_cats"></datalist>
+  <label style="margin-top:10px">Description<textarea id="s_desc" rows="2"></textarea></label>
+  <label style="margin-top:10px">SQL query<textarea id="s_sql" class="sqlta" rows="9" spellcheck="false" placeholder="SELECT ... FROM invoice WHERE invoice_no = :invoice_no"></textarea></label>
+  <div style="margin-top:12px"><div class="row" style="margin:0;align-items:center;justify-content:space-between"><b style="font-size:14px">Parameters and sample values</b><span><button type="button" class="btn sm ghost" id="s_detect">Detect from SQL</button> <button type="button" class="btn sm ghost" id="s_addp">Add parameter</button></span></div>
+    <p class="muted" style="font-size:12px;margin:4px 0 0">Use :name, @name or {{name}} in the query. Type samples as they should appear in SQL, for example 'INV-1001' or 25.</p><div id="s_pars"></div></div>
+  <label style="margin-top:10px">Expected output<textarea id="s_exp" rows="2" placeholder="What the result should look like"></textarea></label>
+  <label style="margin-top:10px">Precautions<textarea id="s_pre" rows="2" placeholder="Take a backup first, run on a replica, add LIMIT, ..."></textarea></label>
+  <label style="flex-direction:row;align-items:center;gap:8px;margin-top:12px;color:var(--ink);font-weight:500"><input type="checkbox" id="s_fav" style="width:auto"> Favourite</label>
+  <div class="msgerr" id="s_err" role="alert"></div>
+  <div class="row" style="margin-top:6px"><button class="btn" id="s_save" type="button">Save query</button><button class="btn ghost" id="s_x" type="button">Cancel</button></div></dialog>
 <footer id="foot"><span id="f_msg"></span><button type="button" id="f_name" title="Click to change your name"></button></footer>
 <dialog id="sty"><h2 style="font-size:17px;margin-bottom:12px">Appearance</h2>
   <label>Theme<select id="themeSel"></select></label>
@@ -503,7 +573,7 @@ document.addEventListener("click",e=>{
 });
 let API=(()=>{try{return localStorage.getItem("hrms_api")}catch(e){return null}})()||"https://script.google.com/macros/s/AKfycbxCWxQX9YnTTBCEVLOmAKuY5l07F1zectqndWLmRrHPGk3yoYdXXM8uCTOPe7uqy6Yv/exec"; // default web app URL; change it with the Server button at the top
 let db=null;try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
-db=Object.assign({tpl:[],prod:["Ezy Bill"],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
+db=Object.assign({sql:[],tpl:[],prod:["Ezy Bill"],biz:[],stat:["Open","In Progress","Resolved","Closed"],src:["Call","Email","WhatsApp","Chat"],rows:[]},db||{});
 let storeOK=true;
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){if(!API&&storeOK){storeOK=false;alert("This page cannot save in this browser and no Google Sheet URL is set, so entries will be lost on refresh. Set the API URL in index.html, or open the page from GitHub Pages or your computer.")}}};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -546,7 +616,7 @@ $("#sheetLink").onclick=e=>{
 $("#recSheet").onclick=()=>$("#sheetLink").click();
 
 // themes
-const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["forest","Forest"],["midnight","Midnight"],["material","Material"],["matdark","Material dark"],["dos","DOS (green screen)"],["cmd","Command prompt"]];
+const THEMES=[["light","Light"],["dark","Dark"],["soft","Neumorphic"],["bw","Black & white"],["forest","Forest"],["midnight","Midnight"],["material","Material"],["matdark","Material dark"],["dos","DOS (green screen)"],["cmd","Command prompt"],["glass","Glass"],["softdark","Neumorphic black"]];
 function setTheme(t){document.documentElement.dataset.theme=t;$("#themeSel").value=t;try{localStorage.setItem("hrms_theme",t)}catch(e){}}
 $("#themeSel").innerHTML=THEMES.slice().sort((a,b)=>a[1].localeCompare(b[1])).map(x=>`<option value="${x[0]}">${x[1].replace("&","&amp;")}</option>`).join("");
 $("#themeSel").onchange=e=>setTheme(e.target.value);
@@ -600,7 +670,8 @@ async function net(url,opt){let t;try{t=await(await fetch(url,opt)).text()}catch
 async function push(body){
   if(!API)return true;setSync("Saving...");
   try{const r=await net(API,{method:"POST",body:JSON.stringify(body)});if(r.error)throw r.error;setSync("Saved to Google Sheet");
-    if(body.row){const x=db.rows.find(z=>z.id===body.row.id);if(x){delete x._u;save()}}updBtn();return true}
+    if(body.row){const x=db.rows.find(z=>z.id===body.row.id);if(x){delete x._u;save()}}
+    if(body.q){const x=db.sql.find(z=>z.id===body.q.id);if(x){delete x._u;save()}}updBtn();return true}
   catch(e){setSync("Not saved - will retry");updBtn();petSay("That did not save. Try Retry save.");alert("Could not save to Google Sheet: "+e+"\nYour entry is kept in this browser and will be retried on the next load.");return false}
 }
 async function pull(){
@@ -611,17 +682,19 @@ async function pull(){
     if(!db._mp)Object.assign(db,d.masters);
     db.rows=d.rows.filter(x=>!pend.some(p=>p.id===x.id)).concat(pend);
     save();pend.forEach(r=>push({action:"upsertRow",row:r}));if(db._mp)pushMasters();
+    if(Array.isArray(d.sql)){const pq=db.sql.filter(q=>q._u);db.sql=d.sql.filter(x=>!pq.some(p=>p.id===x.id)).concat(pq);pq.forEach(q=>push({action:"saveSql",q}));save()}
     if(!db._dp){db._dp=1;if(!defProd()){db.prod.unshift(DEFAULT_PRODUCT);pushMasters()}save()}
     if(d.link)db.link=d.link;save();showLink();setSync("Synced with Google Sheet");updBtn();lastSync=Date.now();
-    fillSelects();renderM();renderRec();renderToday();renderTpl();if(!editId&&(!$("#f_s").value||$("#f_s").value===autoStart))setAutoStart()}
+    fillSelects();renderM();renderRec();renderToday();renderTpl();renderSql();if(!editId&&(!$("#f_s").value||$("#f_s").value===autoStart))setAutoStart()}
   catch(e){setSync("Could not load: "+e)}
 }
 const pushMasters=async()=>{db._mp=1;save();const{prod,biz,stat,src,tpl}=db;if(await push({action:"setMasters",masters:{prod,biz,stat,src,tpl}})){delete db._mp;save()}updBtn()};
-const unsaved=()=>db.rows.filter(r=>r._u).length+(db._mp?1:0);
+const unsaved=()=>db.rows.filter(r=>r._u).length+db.sql.filter(q=>q._u).length+(db._mp?1:0);
 function updBtn(){const n=unsaved(),b=$("#syncBtn");b.textContent=n?"Retry save ("+n+" unsaved)":"Sync now";b.classList.toggle("warnb",n>0)}
 async function syncNow(){
   if(!API){toast("No Google Sheet URL is set.");return}
   for(const r of db.rows.filter(x=>x._u))await push({action:"upsertRow",row:r});
+  for(const q of db.sql.filter(x=>x._u))await push({action:"saveSql",q});
   if(db._mp)await pushMasters();
   await pull();updBtn();
   toast(unsaved()?"Some items are still unsaved. Check your connection and retry.":"Everything is saved to Google Sheet");
@@ -665,6 +738,7 @@ function fillSelects(){sortBiz();opts("#f_src",db.src);opts("#f_prod",db.prod);o
 function syncAuto(){
   $("#f_dur").value=dur($("#f_s").value,$("#f_e").value);
   const b=db.biz.find(x=>x.name===$("#f_biz").value);$("#f_code").value=b?b.code:"";
+  checkOverlap();
 }
 ["f_s","f_e","f_biz"].forEach(i=>$("#"+i).addEventListener("input",syncAuto));
 $("#f_biz").addEventListener("change",syncAuto);
@@ -683,6 +757,7 @@ $("#saveBtn").onclick=()=>{
   const r={};for(const k in F)r[k]=$("#"+F[k]).value.trim();
   if(!r.date){toast("Pick a date to save the entry.");return}
   r.code=$("#f_code").value;r.dur=$("#f_dur").value;
+  const clash=overlapsOf(r,editId);if(clash.length&&!confirm("This entry overlaps with "+clash.slice(0,3).map(ovText).join(", ")+".\nSave it anyway?"))return;
   const was=!!editId,row={...r,id:editId||uid(),...(API?{_u:1}:{})};
   if(was)db.rows[db.rows.findIndex(x=>x.id===editId)]=row;
   else db.rows.push(row);
@@ -1120,6 +1195,168 @@ function celebrate(){
   document.body.appendChild(s);setTimeout(()=>s.classList.add("out"),2300);setTimeout(()=>s.remove(),2800);
 }
 
+// overlap warning
+const span=r=>{if(!r.s||!r.e)return null;const a=toM(r.s);let b=toM(r.e);if(b===a)return null;if(b<a)b+=1440;return[a,b]};
+function overlapsOf(row,ignore){
+  const sp=span(row);if(!sp||!row.date)return[];
+  return db.rows.filter(o=>o.id!==ignore&&o.date===row.date).filter(o=>{const t=span(o);return t&&sp[0]<t[1]&&t[0]<sp[1]});
+}
+const ovText=o=>o.s+"-"+o.e+" "+(o.biz||o.rem||"entry");
+function checkOverlap(){
+  const el=$("#ovlWarn");if(!el)return[];
+  const list=overlapsOf({date:$("#f_date").value,s:$("#f_s").value,e:$("#f_e").value},editId);
+  if(!list.length){el.style.display="none";return list}
+  el.style.display="";el.textContent="\u26A0 This overlaps with "+list.slice(0,3).map(ovText).join(", ")+(list.length>3?" and "+(list.length-3)+" more":"")+". You can still save it.";
+  return list;
+}
+["f_date","f_s","f_e"].forEach(id=>{$("#"+id).addEventListener("input",checkOverlap);$("#"+id).addEventListener("change",checkOverlap)});
+
+// duplicate an entry / yesterday's entries
+function fillFromEntry(r){
+  if(editId)clearForm();
+  const set=(k,v)=>{const el=$("#"+F[k]);if(el.tagName==="SELECT"){if(v)el.value=v}else el.value=v||""};
+  ["biz","src","prod","issue","stat","contact","rem"].forEach(k=>set(k,r[k]));set("ticket","");
+  $("#f_date").value=today();dateTouched=false;setAutoStart();
+  if(!$("#f_s").value&&r.s)$("#f_s").value=r.s;
+  const len=r.dur?toM(r.dur):0;$("#f_e").value=$("#f_s").value&&len?fmt((toM($("#f_s").value)+len)%1440):"";
+  formTouched=true;syncAuto();
+  $('#nav [data-t="entry"]').click();toast("Copied to today. Check the times and save.");$("#f_s").focus();
+}
+function dupRow(id){const r=db.rows.find(x=>x.id===id);if(r)fillFromEntry(r)}
+function copyRow(r){
+  const t=today(),s=lastEnd(t)||r.s||"",len=r.dur?toM(r.dur):0,e=s&&len?fmt((toM(s)+len)%1440):"";
+  return Object.assign({id:uid(),date:t,s,e,dur:dur(s,e),code:r.code||"",src:r.src||"",prod:r.prod||"",contact:r.contact||"",biz:r.biz||"",issue:r.issue||"",ticket:"",stat:r.stat||"",rem:r.rem||""},API?{_u:1}:{});
+}
+function addCopies(list){
+  list.forEach(r=>{const row=copyRow(r);db.rows.push(row);push({action:"upsertRow",row})});
+  save();renderToday();renderRec();syncAuto();
+  toast(list.length+(list.length===1?" entry":" entries")+" added to today. Adjust the times if needed.");
+}
+let dupList=[];
+function openDup(){
+  const pick=day=>db.rows.filter(r=>r.date===day).sort((a,b)=>(a.s||"").localeCompare(b.s||"")),y=dstr(addD(new Date(),-1));
+  let day=y,list=pick(y),sub="Yesterday's entries";
+  if(!list.length){
+    const ds=[...new Set(db.rows.map(r=>r.date).filter(x=>x&&x<today()))].sort();day=ds[ds.length-1];
+    if(day){list=pick(day);sub="No entries yesterday. Latest day with entries: "+new Date(day+"T00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})}
+  }
+  dupList=list;$("#dupSub").textContent=list.length?sub+" ("+list.length+")":"There are no earlier entries to copy yet.";
+  $("#dupList").innerHTML=list.map((r,i)=>`<div class="dup"><div><b>${esc(r.biz||"No business")}</b> <span class="muted">${esc(r.s||"--:--")} - ${esc(r.e||"--:--")} \u00B7 ${esc(r.dur||"")}</span><div class="muted" style="font-size:12px">${esc(r.rem||"")}</div></div><span><button type="button" class="btn sm ghost" data-i="${i}" data-a="use">Use in form</button> <button type="button" class="btn sm" data-i="${i}" data-a="add">Add now</button></span></div>`).join("");
+  $("#dupAll").style.display=list.length?"":"none";$("#dupDlg").showModal();
+}
+$("#dupBtn").onclick=openDup;$("#dupX").onclick=()=>$("#dupDlg").close();
+$("#dupAll").onclick=()=>{addCopies(dupList);$("#dupDlg").close()};
+$("#dupList").addEventListener("click",e=>{
+  const b=e.target.closest&&e.target.closest("button[data-a]");if(!b)return;const r=dupList[+b.dataset.i];if(!r)return;
+  $("#dupDlg").close();if(b.dataset.a==="use")fillFromEntry(r);else addCopies([r]);
+});
+
+// templates from entries, and suggestions for tasks you repeat
+function saveTemplateFrom(r,name){
+  const t={name};TF.forEach(k=>t[k]=r[k]||"");
+  const i=db.tpl.findIndex(x=>x.name.toLowerCase()===name.toLowerCase());
+  if(i<0)db.tpl.push(t);else db.tpl[i]=t;
+  save();pushMasters();renderTpl();toast('Template "'+name+'" saved');
+}
+function rowTpl(id){
+  const r=db.rows.find(x=>x.id===id);if(!r)return;
+  const name=prompt("Template name:",(r.rem||r.biz||"Task").slice(0,28));if(name&&name.trim())saveTemplateFrom(r,name.trim());
+}
+let sugMap={};
+const sugKey=r=>[r.biz,r.src,r.prod,r.issue,r.rem].map(x=>(x||"").trim().toLowerCase()).join("|");
+function renderTplSug(){
+  const m={};db.rows.forEach(r=>{if(!(r.rem||"").trim()&&!r.biz)return;const k=sugKey(r);(m[k]=m[k]||{n:0,r}).n++});
+  const have=new Set(db.tpl.map(sugKey));
+  const top=Object.entries(m).filter(e=>e[1].n>=3&&!have.has(e[0])).sort((a,b)=>b[1].n-a[1].n).slice(0,3);
+  sugMap={};top.forEach(e=>sugMap[e[0]]=e[1].r);
+  $("#tplSug").innerHTML=top.length?'<span class="muted" style="font-size:12px;width:100%">Done often. Save as a template:</span>'+top.map(e=>`<button type="button" class="tsug" data-k="${esc(e[0])}">+ ${esc((e[1].r.rem||e[1].r.biz||"Task").slice(0,26))} \u00D7${e[1].n}</button>`).join(""):"";
+}
+$("#tplSug").addEventListener("click",e=>{
+  const b=e.target.closest&&e.target.closest(".tsug"),r=b&&sugMap[b.dataset.k];if(!r)return;
+  saveTemplateFrom(r,(r.rem||r.biz||"Task").trim().slice(0,28));
+});
+{const base=renderTpl;renderTpl=function(){base();renderTplSug()}}
+
+// SQL library
+let sqlQ="",sqlCat="",sqlFav=false,sqlEdit=null;
+const tablesOf=q=>{const s=new Set(),re=/\b(?:from|join|update|into|table|truncate)\s+`?([A-Za-z_][\w$]*(?:\.[A-Za-z_][\w$]*)?)`?/gi;let m;while((m=re.exec(q||"")))s.add(m[1]);return[...s]};
+const parsOf=q=>Array.isArray(q.pars)?q.pars:[];
+const sqlHay=q=>[q.title,q.cat,q.desc,q.sql,q.exp,q.pre,tablesOf(q.sql).join(" "),parsOf(q).map(p=>p.n+" "+p.v+" "+p.d).join(" ")].join(" ").toLowerCase();
+const rxEsc=x=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+function sqlWithSamples(q){
+  let t=q.sql||"";
+  parsOf(q).forEach(p=>{if(!p.n)return;const n=rxEsc(p.n);
+    t=t.replace(new RegExp("(^|[^:\\w@])[:@]"+n+"(?![\\w])","g"),(m,a)=>a+p.v).replace(new RegExp("\\{\\{\\s*"+n+"\\s*\\}\\}","g"),()=>p.v)});
+  return t;
+}
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true}
+  catch(e){try{const a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;left:-9999px";document.body.appendChild(a);a.select();const ok=document.execCommand("copy");a.remove();return ok}catch(x){return false}}
+}
+const sqlCard=(q,qs)=>{
+  const tb=tablesOf(q.sql),ps=parsOf(q);
+  return `<article class="qc" data-id="${esc(q.id)}"><div class="qh"><button type="button" class="star${q.fav?" on":""}" data-a="fav" aria-pressed="${!!q.fav}" title="${q.fav?"Remove from favourites":"Add to favourites"}">&#9733;</button><div class="qt"><b>${hl(q.title,qs)}</b>${q.cat?`<span class="chip">${hl(q.cat,qs)}</span>`:""}</div></div>`+
+  (q.desc?`<p class="qd">${hl(q.desc,qs)}</p>`:"")+`<pre class="qsql">${hl(q.sql,qs)}</pre>`+
+  (tb.length?`<div class="qtb"><span class="muted">Tables:</span> ${tb.map(t=>`<button type="button" class="tchip" data-a="tbl" data-t="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:"")+
+  (ps.length?`<table class="qpt"><tr><th>Parameter</th><th>Sample value</th><th>Notes</th></tr>${ps.map(p=>`<tr><td><code>${esc(p.n)}</code></td><td><code>${esc(p.v)}</code></td><td>${esc(p.d)}</td></tr>`).join("")}</table>`:"")+
+  ((q.exp||q.pre)?`<details class="qx"><summary>Expected output &amp; precautions</summary>${q.exp?`<h4>Expected output</h4><p>${esc(q.exp)}</p>`:""}${q.pre?`<h4>Precautions</h4><p>${esc(q.pre)}</p>`:""}</details>`:"")+
+  `<div class="qb"><button type="button" class="btn sm" data-a="copy">Copy</button>${ps.length?'<button type="button" class="btn sm ghost" data-a="copyS">Copy with samples</button>':""}<button type="button" class="btn sm ghost" data-a="edit">Edit</button><button type="button" class="btn sm del" data-a="del">Delete</button></div></article>`;
+};
+function renderSql(){
+  const cats=[...new Set(db.sql.map(q=>(q.cat||"").trim()).filter(Boolean))].sort(cmp),sel=$("#q_cat");
+  sel.innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join("");
+  sel.value=cats.includes(sqlCat)?sqlCat:"";sqlCat=sel.value;
+  $("#s_cats").innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join("");
+  const qs=sqlQ.toLowerCase().split(/\s+/).filter(Boolean);
+  const list=db.sql.filter(q=>(!sqlCat||(q.cat||"").trim()===sqlCat)&&(!sqlFav||q.fav)&&qs.every(t=>sqlHay(q).includes(t))).sort((a,b)=>(b.fav?1:0)-(a.fav?1:0)||cmp(a.title,b.title));
+  $("#q_n").textContent=list.length+(list.length===1?" query":" queries")+(list.length!==db.sql.length?" of "+db.sql.length:"");
+  $("#q_list").innerHTML=list.length?list.map(q=>sqlCard(q,qs)).join(""):'<p class="muted">'+(db.sql.length?"No queries match your search.":"No queries yet. Click New query to add your first one.")+'</p>';
+}
+function sqlSave(q){if(API)q._u=1;save();push({action:"saveSql",q})}
+$("#q_s").addEventListener("input",e=>{sqlQ=e.target.value;renderSql()});
+$("#q_cat").onchange=e=>{sqlCat=e.target.value;renderSql()};
+$("#q_fav").onclick=()=>{sqlFav=!sqlFav;$("#q_fav").classList.toggle("on",sqlFav);$("#q_fav").setAttribute("aria-pressed",sqlFav);renderSql()};
+$("#q_new").onclick=()=>openSqlDlg();
+$("#q_list").addEventListener("click",async e=>{
+  const b=e.target.closest&&e.target.closest("[data-a]");if(!b)return;
+  const a=b.dataset.a;
+  if(a==="tbl"){sqlQ=b.dataset.t;$("#q_s").value=sqlQ;renderSql();return}
+  const q=db.sql.find(x=>x.id===b.closest(".qc").dataset.id);if(!q)return;
+  if(a==="fav"){q.fav=!q.fav;q.upd=Date.now();sqlSave(q);renderSql()}
+  else if(a==="copy"||a==="copyS"){
+    if(await copyText(a==="copyS"?sqlWithSamples(q):q.sql)){toast("Query copied");const t=b.textContent;b.textContent="Copied \u2713";setTimeout(()=>{b.textContent=t},1500)}
+    else toast("Could not copy. Select the text and press Ctrl+C.");
+  }
+  else if(a==="edit")openSqlDlg(q);
+  else if(a==="del"&&confirm('Delete "'+q.title+'"?')){db.sql=db.sql.filter(x=>x.id!==q.id);save();push({action:"deleteSql",id:q.id});renderSql();toast("Query deleted")}
+});
+const parRow=p=>`<div class="pr"><input class="pn" placeholder="name" value="${esc(p.n||"")}" aria-label="Parameter name"><input class="pv" placeholder="Sample, e.g. 'INV-1001'" value="${esc(p.v||"")}" aria-label="Sample value"><input class="pd" placeholder="Note (optional)" value="${esc(p.d||"")}" aria-label="Note"><button type="button" class="tpx pdx" aria-label="Remove parameter" style="border:1px solid var(--line);border-radius:8px;height:36px">&times;</button></div>`;
+function openSqlDlg(q){
+  sqlEdit=q||null;$("#sd_title").textContent=q?"Edit query":"New query";
+  $("#s_title").value=q?q.title:"";$("#s_cat").value=q?q.cat||"":sqlCat;$("#s_desc").value=q?q.desc||"":"";$("#s_sql").value=q?q.sql:"";
+  $("#s_pars").innerHTML=(q?parsOf(q):[]).map(parRow).join("");$("#s_exp").value=q?q.exp||"":"";$("#s_pre").value=q?q.pre||"":"";
+  $("#s_fav").checked=!!(q&&q.fav);$("#s_err").textContent="";$("#sqlDlg").showModal();$("#s_title").focus();
+}
+$("#s_addp").onclick=()=>$("#s_pars").insertAdjacentHTML("beforeend",parRow({}));
+$("#s_pars").addEventListener("click",e=>{const x=e.target.closest&&e.target.closest(".pdx");if(x)x.closest(".pr").remove()});
+const cleanName=n=>n.trim().replace(/^[:@]/,"").replace(/^\{\{\s*|\s*\}\}$/g,"");
+$("#s_detect").onclick=()=>{
+  const have=new Set([...$$("#s_pars .pn")].map(i=>cleanName(i.value))),found=[];
+  $("#s_sql").value.replace(/(^|[^:\w]):([A-Za-z_]\w*)|(^|[^@\w])@([A-Za-z_]\w*)|\{\{\s*([\w.]+)\s*\}\}/g,(m,a,n1,b,n2,n3)=>{const n=n1||n2||n3;if(n&&!found.includes(n)&&!have.has(n))found.push(n);return m});
+  found.forEach(n=>$("#s_pars").insertAdjacentHTML("beforeend",parRow({n})));
+  toast(found.length?found.length+" parameter"+(found.length>1?"s":"")+" found. Add sample values.":"No new parameters found.");
+};
+$("#s_x").onclick=()=>$("#sqlDlg").close();
+$("#s_save").onclick=()=>{
+  const title=$("#s_title").value.trim(),sql=$("#s_sql").value.trim(),er=$("#s_err");
+  if(!title){er.textContent="Give the query a title.";return}
+  if(!sql){er.textContent="Paste the SQL query.";return}
+  const pars=[...$$("#s_pars .pr")].map(r=>({n:cleanName(r.querySelector(".pn").value),v:r.querySelector(".pv").value,d:r.querySelector(".pd").value.trim()})).filter(p=>p.n);
+  const q=Object.assign(sqlEdit||{id:uid()},{title,cat:$("#s_cat").value.trim(),desc:$("#s_desc").value.trim(),sql,pars,exp:$("#s_exp").value.trim(),pre:$("#s_pre").value.trim(),fav:$("#s_fav").checked,upd:Date.now()});
+  if(!sqlEdit)db.sql.push(q);
+  sqlSave(q);$("#sqlDlg").close();renderSql();toast("Query saved");
+};
+
 // records
 $("#r_day").value=today();$("#r_month").value=today().slice(0,7);
 $("#r_day").oninput=$("#r_month").oninput=()=>renderRec();
@@ -1160,8 +1397,8 @@ function renderRec(){
   pager();
   const arrow=i=>sortK===i?(sortD>0?"\u25B2":"\u25BC"):"\u2195";
   $("#r_tbl").innerHTML=rows.length?'<tr class="hd">'+HL.map((h,i)=>`<th class="sortable${sortK===i?(sortD>0?" asc":" desc"):""}" data-k="${i}" tabindex="0" aria-sort="${sortK===i?(sortD>0?"ascending":"descending"):"none"}">${h}<span class="si">${arrow(i)}</span></th>`).join("")+"<th></th></tr>"+
-    rows.map((r,ri)=>'<tr class="s-'+(stc(r.stat)||"na")+'">'+Object.assign(line(r),{0:ri+1}).map((x,i)=>`<td data-label="${HL[i]}">${i===13?chip(x):hl(x,qs)}</td>`).join("")+
-    `<td><button class="btn sm ghost" onclick="editRow('${r.id}')">Edit</button> <button class="btn sm del" onclick="delRow('${r.id}')">Delete</button></td></tr>`).join(""):
+    rows.map((r,ri)=>'<tr class="s-'+(stc(r.stat)||"na")+'">'+Object.assign(line(r),{0:ri+1}).map((x,i)=>`<td data-label="${HL[i]}">${i===13?chip(x):(i===6&&overlapsOf(r,r.id).length?'<span class="ow" title="Overlaps with another entry">\u26A0</span> ':"")+hl(x,qs)}</td>`).join("")+
+    `<td><button class="btn sm ghost" onclick="editRow('${r.id}')">Edit</button> <button class="btn sm ghost" onclick="dupRow('${r.id}')">Duplicate</button> <button class="btn sm ghost" onclick="rowTpl('${r.id}')">Template</button> <button class="btn sm del" onclick="delRow('${r.id}')">Delete</button></td></tr>`).join(""):
     '<tr><td class="muted">'+(qs.length?"No entries match your search.":"No entries for this selection.")+'</td></tr>';
 }
 $("#r_tbl").addEventListener("click",e=>{const th=e.target.closest&&e.target.closest("th[data-k]");if(th)sortBy(+th.dataset.k)});
@@ -1382,7 +1619,7 @@ function rollDay(){
 }
 setInterval(()=>{rollDay();pull();loadWeather()},REFRESH_MS);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){rollDay();if(Date.now()-lastSync>REFRESH_MS)pull()}});
-save();clearForm();fillSelects();renderM();renderToday();renderTpl();showLink();updBtn();pull();
+save();clearForm();fillSelects();renderM();renderToday();renderTpl();renderSql();showLink();updBtn();pull();
 </script>
 </body>
 </html>
