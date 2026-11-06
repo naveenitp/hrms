@@ -471,7 +471,8 @@ dialog{max-height:92vh;overflow:auto}
       <label>Status<select id="f_stat"></select></label>
     </div>
     <label style="margin-top:14px">Remarks<textarea id="f_rem" rows="2"></textarea></label></div>
-    <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button><button class="btn ghost" type="button" id="dupBtn">Duplicate yesterday</button></div>
+    <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button><button class="btn ghost" type="button" id="dupBtn">Duplicate yesterday</button>
+<button class="btn ghost" type="button" id="fillBtn" title="Adds random activities from your earlier records to fill 7 hours of the chosen date, around entries you already have">Fill 7 hrs (random)</button></div>
   </div>
   <div class="side">
   <div class="card">
@@ -1492,6 +1493,51 @@ async function loadCricket(){
 }
 setInterval(loadNews,15*60e3);setInterval(loadCricket,5*60e3);setInterval(festRender,60e3);
 loadNews();loadCricket();festRender();
+
+
+// ---------- fill a day with 7 hours of random activities from earlier records ----------
+const FILL_MIN=420, FILL_START=540, FILL_STEP=5;
+function fillRand(){ return FILL_STEP*(3+Math.floor(Math.random()*15)); }   // 15..90 minutes in 5-minute steps
+function fillPlan(day){
+  const busy=db.rows.filter(r=>r.date===day&&r.s&&r.e).map(r=>{const a=toM(r.s);let b=toM(r.e);if(b<=a)b+=1440;return[a,b]}).sort((x,y)=>x[0]-y[0]);
+  const gaps=[];let cur=FILL_START;
+  busy.forEach(b=>{if(b[0]>cur)gaps.push([cur,b[0]]);cur=Math.max(cur,b[1])});
+  if(cur<1439)gaps.push([cur,1439]);
+  let rem=FILL_MIN;const out=[];
+  for(const g of gaps){
+    let t=g[0];
+    while(rem>0&&g[1]-t>=10){
+      const avail=g[1]-t;
+      let d=rem<=90&&rem<=avail?rem:Math.min(avail,fillRand());
+      if(d>rem)d=rem;
+      if(rem-d>0&&rem-d<10)d=Math.max(10,Math.min(avail,rem-15));
+      if(d<10)break;
+      out.push([t,t+d]);t+=d;rem-=d;
+    }
+    if(rem<=0)break;
+  }
+  return{out,filled:FILL_MIN-rem};
+}
+function fillDay(){
+  if(editId){toast("Save or cancel the entry you are editing first.");return}
+  const day=$("#f_date").value||today();
+  const pool=db.rows.filter(r=>r.date&&(String(r.biz||"").trim()||String(r.rem||"").trim()));
+  const pick=pool.length?pool:[{biz:"",code:"",src:"",prod:defProd(),issue:"",stat:"",contact:"",rem:"Routine activity"}];
+  const plan=fillPlan(day);
+  if(!plan.out.length){toast("No free time left on "+sd(day)+".");return}
+  const total=plan.out.reduce((a,p)=>a+(p[1]-p[0]),0);
+  const short=plan.filled<FILL_MIN?" Only "+fmt(plan.filled)+" fits around your existing entries.":"";
+  const src=pool.length?"your earlier records":"a routine activity (you have no earlier records yet)";
+  if(!confirm("Add "+plan.out.length+" random activities totalling "+fmt(total)+" on "+sd(day)+"?\nThey are copied from "+src+".\nEdit or delete any of them afterwards."+short))return;
+  plan.out.forEach(p=>{
+    const s=pick[Math.floor(Math.random()*pick.length)];
+    const row=Object.assign({id:uid(),date:day,s:fmt(p[0]),e:fmt(p[1]),dur:fmt(p[1]-p[0]),code:s.code||"",src:s.src||"",prod:s.prod||"",contact:s.contact||"",biz:s.biz||"",issue:s.issue||"",ticket:"",stat:s.stat||"",rem:s.rem||""},API?{_u:1}:{});
+    db.rows.push(row);push({action:"upsertRow",row});
+  });
+  save();renderToday();renderRec();checkOverlap();
+  toast(plan.out.length+" activities added to "+sd(day)+"."+short);
+}
+$("#fillBtn").onclick=fillDay;
 
 // records
 $("#r_day").value=today();$("#r_month").value=today().slice(0,7);
