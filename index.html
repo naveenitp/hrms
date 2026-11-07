@@ -414,6 +414,9 @@ dialog{max-height:92vh;overflow:auto}
 .fbn .fi{font-size:13px;gap:6px}
 .fbn .fi b{font-size:13px}
 .fbn .fi .chip{font-size:12px;padding:2px 9px}
+#r_tbl th.ck,#r_tbl td.ck{width:38px;text-align:center;padding:6px;vertical-align:middle}
+#r_tbl td.ck input,#r_tbl th.ck input{width:17px;height:17px;margin:0;cursor:pointer;accent-color:var(--acc)}
+@media(max-width:700px){#r_tbl td.ck{justify-content:flex-start}#r_tbl td.ck::before{content:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -476,7 +479,7 @@ dialog{max-height:92vh;overflow:auto}
     </div>
     <label style="margin-top:14px">Remarks<textarea id="f_rem" rows="2"></textarea></label></div>
     <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button><button class="btn ghost" type="button" id="dupBtn">Duplicate yesterday</button>
-<button class="btn ghost" type="button" id="fillBtn" title="Adds random activities from your earlier records to fill 7 hours of the chosen date, around entries you already have">Fill 7 hrs (random)</button></div>
+<button class="btn ghost" type="button" id="fillBtn" title="Adds random activities from your earlier records to fill 7 hours of the chosen date, around entries you already have">Fill 7 hrs (10 AM to 8 PM)</button></div>
   </div>
   <div class="side">
   <div class="card">
@@ -514,7 +517,7 @@ dialog{max-height:92vh;overflow:auto}
         <button role="menuitem" data-m="full"><b>Full report</b><span>Formatted data plus summary</span></button>
       </div></div></div>
   </div>
-  <div class="srow"><input type="search" id="r_q" placeholder="Search in table..." aria-label="Search entries" autocomplete="off">
+  <div class="srow"><button type="button" class="btn del" id="delSel" disabled>Delete selected (0)</button><input type="search" id="r_q" placeholder="Search in table..." aria-label="Search entries" autocomplete="off">
   <div class="lgd"><span><i style="background:var(--sok)"></i>Done / resolved</span><span><i style="background:var(--spr)"></i>In progress</span><span><i style="background:var(--sop)"></i>Open / new</span><span><i style="background:var(--line)"></i>Other</span></div></div>
   <div class="scroll"><table id="r_tbl"></table></div>
 </div></section>
@@ -581,6 +584,7 @@ dialog{max-height:92vh;overflow:auto}
 </dialog>
 <div class="toast" id="toast"></div>
 <script>
+var selIds=new Set(),visIds=[];
 const $=s=>$$(s)[0],$$=s=>document.querySelectorAll(s),K="hrms_timesheet_v2";
 var rmode="day";
 addEventListener("error",e=>{try{toast("Script error: "+e.message)}catch(x){}});
@@ -1500,13 +1504,13 @@ loadNews();loadCricket();festRender();
 
 
 // ---------- fill a day with 7 hours of random activities from earlier records ----------
-const FILL_MIN=420, FILL_START=540, FILL_STEP=5;
+const FILL_MIN=420, FILL_START=600, FILL_END=1200, FILL_STEP=5;   // 10:00 AM to 8:00 PM
 function fillRand(){ return FILL_STEP*(3+Math.floor(Math.random()*15)); }   // 15..90 minutes in 5-minute steps
 function fillPlan(day){
   const busy=db.rows.filter(r=>r.date===day&&r.s&&r.e).map(r=>{const a=toM(r.s);let b=toM(r.e);if(b<=a)b+=1440;return[a,b]}).sort((x,y)=>x[0]-y[0]);
   const gaps=[];let cur=FILL_START;
-  busy.forEach(b=>{if(b[0]>cur)gaps.push([cur,b[0]]);cur=Math.max(cur,b[1])});
-  if(cur<1439)gaps.push([cur,1439]);
+  busy.forEach(b=>{if(b[0]>cur)gaps.push([cur,Math.min(b[0],FILL_END)]);cur=Math.max(cur,b[1])});
+  if(cur<FILL_END)gaps.push([cur,FILL_END]);
   let rem=FILL_MIN;const out=[];
   for(const g of gaps){
     let t=g[0];
@@ -1532,7 +1536,7 @@ function fillDay(){
   const total=plan.out.reduce((a,p)=>a+(p[1]-p[0]),0);
   const short=plan.filled<FILL_MIN?" Only "+fmt(plan.filled)+" fits around your existing entries.":"";
   const src=pool.length?"your earlier records":"a routine activity (you have no earlier records yet)";
-  if(!confirm("Add "+plan.out.length+" random activities totalling "+fmt(total)+" on "+sd(day)+"?\nThey are copied from "+src+".\nEdit or delete any of them afterwards."+short))return;
+  if(!confirm("Add "+plan.out.length+" random activities totalling "+fmt(total)+" between 10:00 AM and 8:00 PM on "+sd(day)+"?\nThey are copied from "+src+".\nEdit or delete any of them afterwards."+short))return;
   plan.out.forEach(p=>{
     const s=pick[Math.floor(Math.random()*pick.length)];
     const row=Object.assign({id:uid(),date:day,s:fmt(p[0]),e:fmt(p[1]),dur:fmt(p[1]-p[0]),code:s.code||"",src:s.src||"",prod:s.prod||"",contact:s.contact||"",biz:s.biz||"",issue:s.issue||"",ticket:"",stat:s.stat||"",rem:s.rem||""},API?{_u:1}:{});
@@ -1542,6 +1546,33 @@ function fillDay(){
   toast(plan.out.length+" activities added to "+sd(day)+"."+short);
 }
 $("#fillBtn").onclick=fillDay;
+
+
+// ---------- multi-select and bulk delete in Records ----------
+function syncSel(){
+  const all=new Set(db.rows.map(r=>r.id));
+  [...selIds].forEach(id=>{if(!all.has(id))selIds.delete(id)});
+  document.querySelectorAll("#r_tbl .rsel").forEach(c=>c.checked=selIds.has(c.value));
+  const sa=document.getElementById("selAll");
+  if(sa){const n=visIds.filter(id=>selIds.has(id)).length;sa.checked=visIds.length>0&&n===visIds.length;sa.indeterminate=n>0&&n<visIds.length}
+  const b=document.getElementById("delSel");
+  if(b){b.textContent="Delete selected ("+selIds.size+")";b.disabled=selIds.size===0}
+}
+$("#r_tbl").addEventListener("change",e=>{
+  const t=e.target;
+  if(t.id==="selAll"){visIds.forEach(id=>t.checked?selIds.add(id):selIds.delete(id))}
+  else if(t.classList.contains("rsel")){t.checked?selIds.add(t.value):selIds.delete(t.value)}
+  else return;
+  syncSel();
+});
+$("#delSel").onclick=()=>{
+  const ids=[...selIds];if(!ids.length)return;
+  if(!confirm("Delete "+ids.length+" selected "+(ids.length===1?"entry":"entries")+"? This also removes "+(ids.length===1?"it":"them")+" from your Google Sheet."))return;
+  db.rows=db.rows.filter(r=>!selIds.has(r.id));
+  ids.forEach(id=>push({action:"deleteRow",id}));
+  selIds.clear();save();renderRec();renderToday();checkOverlap();
+  toast(ids.length+(ids.length===1?" entry":" entries")+" deleted");
+};
 
 // records
 $("#r_day").value=today();$("#r_month").value=today().slice(0,7);
@@ -1581,9 +1612,10 @@ function renderRec(){
   const v=viewRows(),rows=v.rows,qs=v.qs,mins=rows.reduce((a,r)=>a+durOf(r),0),cnt=qs.length?v.all.length:rows.length;
   $("#r_tot").textContent=(qs.length?rows.length+" of "+v.all.length:rows.length)+(cnt===1?" entry":" entries")+"  \u00B7  "+fmt(mins);
   pager();
+  visIds=rows.map(r=>r.id);syncSel();
   const arrow=i=>sortK===i?(sortD>0?"\u25B2":"\u25BC"):"\u2195";
-  $("#r_tbl").innerHTML=rows.length?'<tr class="hd">'+HL.map((h,i)=>`<th class="sortable${sortK===i?(sortD>0?" asc":" desc"):""}" data-k="${i}" tabindex="0" aria-sort="${sortK===i?(sortD>0?"ascending":"descending"):"none"}">${h}<span class="si">${arrow(i)}</span></th>`).join("")+"<th></th></tr>"+
-    rows.map((r,ri)=>'<tr class="s-'+(stc(r.stat)||"na")+'">'+Object.assign(line(r),{0:ri+1}).map((x,i)=>`<td data-label="${HL[i]}">${i===13?chip(x):(i===6&&overlapsOf(r,r.id).length?'<span class="ow" title="Overlaps with another entry">\u26A0</span> ':"")+hl(x,qs)}</td>`).join("")+
+  $("#r_tbl").innerHTML=rows.length?'<tr class="hd"><th class="ck"><input type="checkbox" id="selAll" aria-label="Select all shown entries"></th>'+HL.map((h,i)=>`<th class="sortable${sortK===i?(sortD>0?" asc":" desc"):""}" data-k="${i}" tabindex="0" aria-sort="${sortK===i?(sortD>0?"ascending":"descending"):"none"}">${h}<span class="si">${arrow(i)}</span></th>`).join("")+"<th></th></tr>"+
+    rows.map((r,ri)=>'<tr class="s-'+(stc(r.stat)||"na")+'"><td class="ck"><input type="checkbox" class="rsel" value="'+esc(r.id)+'" aria-label="Select this entry"></td>'+Object.assign(line(r),{0:ri+1}).map((x,i)=>`<td data-label="${HL[i]}">${i===13?chip(x):(i===6&&overlapsOf(r,r.id).length?'<span class="ow" title="Overlaps with another entry">\u26A0</span> ':"")+hl(x,qs)}</td>`).join("")+
     `<td><button class="btn sm ghost" onclick="editRow('${r.id}')">Edit</button> <button class="btn sm ghost" onclick="dupRow('${r.id}')">Duplicate</button> <button class="btn sm ghost" onclick="rowTpl('${r.id}')">Template</button> <button class="btn sm del" onclick="delRow('${r.id}')">Delete</button></td></tr>`).join(""):
     '<tr><td class="muted">'+(qs.length?"No entries match your search.":"No entries for this selection.")+'</td></tr>';
 }
