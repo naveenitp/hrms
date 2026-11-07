@@ -417,6 +417,10 @@ dialog{max-height:92vh;overflow:auto}
 #r_tbl th.ck,#r_tbl td.ck{width:38px;text-align:center;padding:6px;vertical-align:middle}
 #r_tbl td.ck input,#r_tbl th.ck input{width:17px;height:17px;margin:0;cursor:pointer;accent-color:var(--acc)}
 @media(max-width:700px){#r_tbl td.ck{justify-content:flex-start}#r_tbl td.ck::before{content:none}}
+#newsBody,#cricBody{max-height:220px;overflow-y:auto;padding-right:6px;overscroll-behavior:contain}
+#newsCard,#cricCard{padding:16px 18px}
+#newsBody .nwl li{padding:7px 0}
+#newsBody .nwl a{font-size:13px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -478,8 +482,7 @@ dialog{max-height:92vh;overflow:auto}
       <label>Status<select id="f_stat"></select></label>
     </div>
     <label style="margin-top:14px">Remarks<textarea id="f_rem" rows="2"></textarea></label></div>
-    <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button><button class="btn ghost" type="button" id="dupBtn">Duplicate yesterday</button>
-<button class="btn ghost" type="button" id="fillBtn" title="Adds random activities from your earlier records to fill 7 hours of the chosen date, around entries you already have">Fill 7 hrs (10 AM to 8 PM)</button></div>
+    <div class="row"><button class="btn" id="saveBtn">Save entry</button><button class="btn ghost" id="clearBtn">Clear</button><button class="btn ghost" type="button" id="dupBtn">Duplicate yesterday</button></div>
   </div>
   <div class="side">
   <div class="card">
@@ -517,7 +520,7 @@ dialog{max-height:92vh;overflow:auto}
         <button role="menuitem" data-m="full"><b>Full report</b><span>Formatted data plus summary</span></button>
       </div></div></div>
   </div>
-  <div class="srow"><button type="button" class="btn del" id="delSel" disabled>Delete selected (0)</button><input type="search" id="r_q" placeholder="Search in table..." aria-label="Search entries" autocomplete="off">
+  <div class="srow"><label style="flex-direction:row;align-items:center;gap:6px;color:var(--mute);font-size:12px;font-weight:600">Fill date <input type="date" id="fillDate" style="width:auto;height:40px"></label><button type="button" class="btn ghost" id="fillBtn" title="Adds random activities from your earlier records to fill 7 hours on the chosen date, between 10:00 AM and 8:00 PM, around entries you already have">Fill 7 hrs (10 AM to 8 PM)</button><button type="button" class="btn del" id="delSel" disabled>Delete selected (0)</button><input type="search" id="r_q" placeholder="Search in table..." aria-label="Search entries" autocomplete="off">
   <div class="lgd"><span><i style="background:var(--sok)"></i>Done / resolved</span><span><i style="background:var(--spr)"></i>In progress</span><span><i style="background:var(--sop)"></i>Open / new</span><span><i style="background:var(--line)"></i>Other</span></div></div>
   <div class="scroll"><table id="r_tbl"></table></div>
 </div></section>
@@ -1437,7 +1440,7 @@ var BDAYS=[
 ["11-05","Virat Kohli","Happy birthday, Virat Kohli!","bday"],
 ["12-12","Rajinikanth","Happy birthday, Rajinikanth sir!","bday"]
 ];
-var CRICKET_KEY="";   // free key from cricapi.com, paste between the quotes to see live scores
+var CRICKET_KEY="0fbc1353-5343-4043-8f4a-c2a8aec2840d";   // free key from cricapi.com, paste between the quotes to see live scores
 var NEWS_FEEDS={in:["India",'https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en'],tg:["Telangana",'https://news.google.com/rss/search?q=Telangana&hl=en-IN&gl=IN&ceid=IN:en'],ap:["Andhra Pradesh",'https://news.google.com/rss/search?q=Andhra+Pradesh&hl=en-IN&gl=IN&ceid=IN:en']};
 var newsTab="in";
 
@@ -1528,7 +1531,7 @@ function fillPlan(day){
 }
 function fillDay(){
   if(editId){toast("Save or cancel the entry you are editing first.");return}
-  const day=$("#f_date").value||today();
+  const day=$("#fillDate").value||today();
   const pool=db.rows.filter(r=>r.date&&(String(r.biz||"").trim()||String(r.rem||"").trim()));
   const pick=pool.length?pool:[{biz:"",code:"",src:"",prod:defProd(),issue:"",stat:"",contact:"",rem:"Routine activity"}];
   const plan=fillPlan(day);
@@ -1546,6 +1549,7 @@ function fillDay(){
   toast(plan.out.length+" activities added to "+sd(day)+"."+short);
 }
 $("#fillBtn").onclick=fillDay;
+$("#fillDate").value=today();
 
 
 // ---------- multi-select and bulk delete in Records ----------
