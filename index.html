@@ -1514,20 +1514,41 @@ function fillPlan(day){
   const gaps=[];let cur=FILL_START;
   busy.forEach(b=>{if(b[0]>cur)gaps.push([cur,Math.min(b[0],FILL_END)]);cur=Math.max(cur,b[1])});
   if(cur<FILL_END)gaps.push([cur,FILL_END]);
-  let rem=FILL_MIN;const out=[];
-  for(const g of gaps){
-    let t=g[0];
-    while(rem>0&&g[1]-t>=10){
-      const avail=g[1]-t;
-      let d=rem<=90&&rem<=avail?rem:Math.min(avail,fillRand());
-      if(d>rem)d=rem;
-      if(rem-d>0&&rem-d<10)d=Math.max(10,Math.min(avail,rem-15));
-      if(d<10)break;
-      out.push([t,t+d]);t+=d;rem-=d;
-    }
-    if(rem<=0)break;
+  const free=gaps.reduce((a,g)=>a+Math.max(0,g[1]-g[0]),0);
+  // 1. activity lengths that add up to 7 hours (15-90 minutes each)
+  const lens=[];let rem=FILL_MIN;
+  while(rem>0){
+    let d=rem<=90?rem:fillRand();
+    if(d>rem)d=rem;
+    if(rem-d>0&&rem-d<15)d=rem-15;
+    if(d<10)break;
+    lens.push(d);rem-=d;
   }
-  return{out,filled:FILL_MIN-rem};
+  // 2. the spare time in the window becomes random breaks between activities (none before the first one)
+  const slack=Math.max(0,free-lens.reduce((a,b)=>a+b,0));
+  const n=lens.length,pauses=new Array(n).fill(0);
+  if(n>1&&slack>0){
+    const w=[];for(let i=1;i<n;i++)w.push(Math.random()+0.05);
+    const W=w.reduce((a,b)=>a+b,0);let used=0;
+    for(let i=1;i<n;i++){const p=5*Math.floor(slack*w[i-1]/W/5);pauses[i]=p;used+=p}
+    pauses[n-1]+=slack-used;
+  }
+  // 3. place them in order, never over an existing entry
+  let gi=0,t=gaps.length?gaps[0][0]:0;const out=[];
+  for(let i=0;i<n;i++){
+    let need=lens[i];
+    if(gi<gaps.length&&t+pauses[i]+need<=gaps[gi][1])t+=pauses[i];
+    while(need>0&&gi<gaps.length){
+      const avail=gaps[gi][1]-t;
+      if(avail<10){gi++;if(gi<gaps.length)t=gaps[gi][0];continue}
+      const part=Math.min(avail,need);
+      out.push([t,t+part]);t+=part;need-=part;
+      if(need>0){gi++;if(gi<gaps.length)t=gaps[gi][0]}
+    }
+    if(gi>=gaps.length)break;
+  }
+  const filled=out.reduce((a,p)=>a+p[1]-p[0],0);
+  return{out,filled};
 }
 function fillDay(){
   if(editId){toast("Save or cancel the entry you are editing first.");return}
