@@ -1682,13 +1682,17 @@ loadNews();loadCricket();festRender();
 const FILL_MIN=420, FILL_START=600, FILL_END=1200, FILL_STEP=5;   // 10:00 AM to 8:00 PM
 function fillRand(){ return FILL_STEP*(3+Math.floor(Math.random()*15)); }   // 15..90 minutes in 5-minute steps
 function fillPlan(day){
-  const busy=db.rows.filter(r=>r.date===day&&r.s&&r.e).map(r=>{const a=toM(r.s);let b=toM(r.e);if(b<=a)b+=1440;return[a,b]}).sort((x,y)=>x[0]-y[0]);
-  const gaps=[];let cur=FILL_START;
-  busy.forEach(b=>{if(b[0]>cur)gaps.push([cur,Math.min(b[0],FILL_END)]);cur=Math.max(cur,b[1])});
-  if(cur<FILL_END)gaps.push([cur,FILL_END]);
-  const free=gaps.reduce((a,g)=>a+Math.max(0,g[1]-g[0]),0);
-  // 1. activity lengths that add up to 7 hours (15-90 minutes each)
-  const lens=[];let rem=FILL_MIN;
+  const span=r=>{if(!r.s||!r.e)return 0;let a=toM(r.s),b=toM(r.e);if(b<=a)b+=1440;return b-a};
+  const today_=db.rows.filter(r=>r.date===day);
+  const existing=today_.reduce((a,r)=>a+span(r),0);
+  const remaining=Math.max(0,FILL_MIN-existing);
+  const lastEnd=today_.reduce((m,r)=>{if(!r.e)return m;const b=toM(r.e);return Math.max(m,b)},0);
+  const start=Math.max(FILL_START,lastEnd);
+  const free=FILL_END-start;
+  const info={remaining,existing,start};
+  if(remaining<=0||free<10)return Object.assign({out:[],filled:0},info);
+  // 1. activity lengths that add up to the remaining time (15-90 minutes each)
+  const lens=[];let rem=remaining;
   while(rem>0){
     let d=rem<=90?rem:fillRand();
     if(d>rem)d=rem;
@@ -1696,7 +1700,7 @@ function fillPlan(day){
     if(d<10)break;
     lens.push(d);rem-=d;
   }
-  // 2. the spare time in the window becomes random breaks between activities (none before the first one)
+  // 2. spare time before 8:00 PM becomes random breaks between activities; the first one starts at the last end time
   const slack=Math.max(0,free-lens.reduce((a,b)=>a+b,0));
   const n=lens.length,pauses=new Array(n).fill(0);
   if(n>1&&slack>0){
@@ -1705,22 +1709,19 @@ function fillPlan(day){
     for(let i=1;i<n;i++){const p=5*Math.floor(slack*w[i-1]/W/5);pauses[i]=p;used+=p}
     pauses[n-1]+=slack-used;
   }
-  // 3. place them in order, never over an existing entry
-  let gi=0,t=gaps.length?gaps[0][0]:0;const out=[];
+  // 3. place them in order from the start time, never before it and never past 8:00 PM
+  let t=start;const out=[];
   for(let i=0;i<n;i++){
     let need=lens[i];
-    if(gi<gaps.length&&t+pauses[i]+need<=gaps[gi][1])t+=pauses[i];
-    while(need>0&&gi<gaps.length){
-      const avail=gaps[gi][1]-t;
-      if(avail<10){gi++;if(gi<gaps.length)t=gaps[gi][0];continue}
-      const part=Math.min(avail,need);
-      out.push([t,t+part]);t+=part;need-=part;
-      if(need>0){gi++;if(gi<gaps.length)t=gaps[gi][0]}
-    }
-    if(gi>=gaps.length)break;
+    if(t+pauses[i]+need<=FILL_END)t+=pauses[i];
+    const avail=FILL_END-t;
+    if(avail<10)break;
+    const part=Math.min(avail,need);
+    out.push([t,t+part]);t+=part;need-=part;
+    if(need>0)break;
   }
   const filled=out.reduce((a,p)=>a+p[1]-p[0],0);
-  return{out,filled};
+  return Object.assign({out,filled},info);
 }
 function fillDay(){
   if(editId){toast("Save or cancel the entry you are editing first.");return}
@@ -1728,11 +1729,13 @@ function fillDay(){
   const pool=db.rows.filter(r=>r.date&&(String(r.biz||"").trim()||String(r.rem||"").trim()));
   const pick=pool.length?pool:[{biz:"",code:"",src:"",prod:defProd(),issue:"",stat:"",contact:"",rem:"Routine activity"}];
   const plan=fillPlan(day);
-  if(!plan.out.length){toast("No free time left on "+sd(day)+".");return}
+  if(plan.remaining<=0){toast(sd(day)+" already has "+fmt(plan.existing)+", which is 7 hours or more. Nothing added.");return}
+  if(!plan.out.length){toast("No time left before 8:00 PM after your last entry on "+sd(day)+".");return}
   const total=plan.out.reduce((a,p)=>a+(p[1]-p[0]),0);
-  const short=plan.filled<FILL_MIN?" Only "+fmt(plan.filled)+" fits around your existing entries.":"";
+  const short=plan.filled<plan.remaining?" Only "+fmt(plan.filled)+" fits before 8:00 PM.":"";
+  const have=plan.existing?" Your "+fmt(plan.existing)+" of entries are kept.":"";
   const src=pool.length?"your earlier records":"a routine activity (you have no earlier records yet)";
-  if(!confirm("Add "+plan.out.length+" random activities totalling "+fmt(total)+" between 10:00 AM and 8:00 PM on "+sd(day)+"?\nThey are copied from "+src+".\nEdit or delete any of them afterwards."+short))return;
+  if(!confirm("Add "+plan.out.length+" random activities totalling "+fmt(total)+" from "+fmt(plan.start)+" to reach 7 hours on "+sd(day)+"?"+have+"\nThey are copied from "+src+".\nEdit or delete any of them afterwards."+short))return;
   plan.out.forEach(p=>{
     const s=pick[Math.floor(Math.random()*pick.length)];
     const row=Object.assign({id:uid(),date:day,s:fmt(p[0]),e:fmt(p[1]),dur:fmt(p[1]-p[0]),code:s.code||"",src:s.src||"",prod:s.prod||"",contact:s.contact||"",biz:s.biz||"",issue:s.issue||"",ticket:"",stat:s.stat||"",rem:s.rem||""},API?{_u:1}:{});
