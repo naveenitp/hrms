@@ -1680,7 +1680,12 @@ loadNews();loadCricket();festRender();
 
 // ---------- fill a day with 7 hours of random activities from earlier records ----------
 const FILL_MIN=420, FILL_START=600, FILL_END=1200, FILL_STEP=5;   // 10:00 AM to 8:00 PM
-function fillRand(){ return FILL_STEP*(3+Math.floor(Math.random()*15)); }   // 15..90 minutes in 5-minute steps
+function fillRand(){   // mostly short slots (5-20 min), some medium (25-45), a few longer (50-60); always multiples of 5
+  const r=Math.random();
+  if(r<0.55)return 5*(1+Math.floor(Math.random()*4));
+  if(r<0.88)return 5*(5+Math.floor(Math.random()*5));
+  return 5*(10+Math.floor(Math.random()*3));
+}
 function fillPlan(day){
   const span=r=>{if(!r.s||!r.e)return 0;let a=toM(r.s),b=toM(r.e);if(b<=a)b+=1440;return b-a};
   const today_=db.rows.filter(r=>r.date===day);
@@ -1694,10 +1699,10 @@ function fillPlan(day){
   // 1. activity lengths that add up to the remaining time (15-90 minutes each)
   const lens=[];let rem=remaining;
   while(rem>0){
-    let d=rem<=90?rem:fillRand();
+    let d=fillRand();
     if(d>rem)d=rem;
-    if(rem-d>0&&rem-d<15)d=rem-15;
-    if(d<10)break;
+    if(rem-d>0&&rem-d<5)d=rem;
+    if(d<5)break;
     lens.push(d);rem-=d;
   }
   // 2. spare time before 8:00 PM becomes random breaks between activities; the first one starts at the last end time
@@ -1715,7 +1720,7 @@ function fillPlan(day){
     let need=lens[i];
     if(t+pauses[i]+need<=FILL_END)t+=pauses[i];
     const avail=FILL_END-t;
-    if(avail<10)break;
+    if(avail<5)break;
     const part=Math.min(avail,need);
     out.push([t,t+part]);t+=part;need-=part;
     if(need>0)break;
